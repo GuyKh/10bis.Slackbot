@@ -1,7 +1,7 @@
 {
-  "name": "slack-genius",
-  "version": "1.0.0",
-  "description": "_A Slackbot that searches genius.com_",
+  "name": "10bis_slackbot",
+  "version": "0.0.1",
+  "description": "_A Slackbot that searches 10Bis site_",
   "main": "index.js",
   "dependencies": {
     "body-parser": "^1.14.2",
@@ -16,12 +16,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mager/slack-genius.git"
+    "url": "git+https://github.com/mager/10bis.Slackbot.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mager/slack-genius/issues"
+    "url": "https://github.com/viperium/10bis.Slackbot/issues"
   },
-  "homepage": "https://github.com/mager/slack-genius#readme"
+  "homepage": "https://github.com/viperium/10bis.Slackbot#readme"
 }
