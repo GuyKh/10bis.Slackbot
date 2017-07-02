@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', (process.env.PORT || 9001));
 
 app.get('/', function(req, res){
-  res.send('It works, Guy!');
+  res.send('Sanity passed!');
 });
 
 app.post('/post', function(req, res){
@@ -23,8 +23,9 @@ app.post('/post', function(req, res){
   //   }
   // });
 
-      var now = new Date();
+    var now = new Date();
   
+    var restaurantName = req.body.text;
 
     var parsed_url = url.format({
     pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -49,11 +50,9 @@ app.post('/post', function(req, res){
       StreetAddress:'',
       desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
       timestamp:(new Date).getTime(),
-      searchPhrase:req.body.text
+      searchPhrase:restaurantName
     }
   });
-
-  console.log(parsed_url);
 
   request(parsed_url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
@@ -62,20 +61,26 @@ app.post('/post', function(req, res){
       if (!data || !data.length || data.length < 1){
         var body = {
           response_type: "ephemeral",
-          text: 'No Restaurants Found'
+          text: 'No Restaurants Found for: ' + restaurantName
         };
 
         res.send(body);
       }
       
-      var returnText = 'Found '+data.length+' restaurants.\n\n';
+      var returnText = 'Found '+data.length+' restaurants';
+      var restaurantText = '';
       for (i = 0; i < data.length; i++) { 
-        returnText += '['+(i+1)+'] ' + data[i].RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + data[i].RestaurantId + '\n\n';
+        restaurantText += '['+(i+1)+'] ' + data[i].RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + data[i].RestaurantId + '\n\n';
       }
 
       var body = {
         response_type: "in_channel",
-        text: returnText
+        text: returnText,
+        attachments: [
+          {
+              "text":restaurantText
+          }
+        ]
       }
 
       res.send(body);
