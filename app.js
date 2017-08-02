@@ -4,6 +4,9 @@ var url = require('url');
 var dateFormat = require('dateformat');
 var request = require('request');
 
+var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
+                        "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
+
 var generateRequest = function(restaurantName) {
     var now = new Date();
 
@@ -62,7 +65,7 @@ module.exports = {
         var messageFormatter = verifyMessage(req);
         if (!messageFormatter){
             res.status(400);
-            res.send("invalid message");
+            res.send("Invalid Message");
             return;
         }
 
@@ -72,6 +75,11 @@ module.exports = {
         if (!restaurantName) {
             var body = messageFormatter.getBadMessage();
             res.send(body);
+        }
+
+        if(restaurantName.length === 0){
+            var body = messageFormatter.getSuccessMessage(defaultResponse, "");
+            return
         }
 
         var parsed_url = generateRequest(restaurantName);
