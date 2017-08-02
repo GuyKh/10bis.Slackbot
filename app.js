@@ -1,5 +1,8 @@
 var slackMessage = require('./slackMessage.js');
 var hipChatMessage = require('./hipChatMessage.js');
+var url = require('url');
+var dateFormat = require('dateformat');
+var request = require('request');
 
 var generateRequest = function(restaurantName) {
     var now = new Date();
@@ -30,6 +33,8 @@ var generateRequest = function(restaurantName) {
             searchPhrase: restaurantName
         }
     });
+
+    return parsed_url;
 }
 
 var generateResponse = function(data) {
@@ -42,16 +47,34 @@ var generateResponse = function(data) {
     return [returnText, restaurantText];
 }
 
+var verifyMessage = function(req) {
+    if (hipChatMessage.isValidMessage(req))
+        return hipChatMessage;
+    else if (slackMessage.isValidMessage(req))
+        return slackMessage;
+
+    return null;
+}
+
+
 module.exports = {
     process: function(req, res) {
-        var messageFormatter = slackMessage;
+        var messageFormatter = verifyMessage(req);
+        if (!messageFormatter){
+            res.status(400);
+            res.send("invalid message");
+            return;
+        }
 
-        var restaurantName = this.generateRequest(messageFormatter.getRestaurantName(req));
+
+        var restaurantName = messageFormatter.getRestaurantName(req);
 
         if (!restaurantName) {
             var body = messageFormatter.getBadMessage();
             res.send(body);
         }
+
+        var parsed_url = generateRequest(restaurantName);
 
         request(parsed_url, function(error, response, body) {
             if (!error && response.statusCode == 200) {
@@ -62,7 +85,7 @@ module.exports = {
                     res.send(body);
                 }
 
-                var generatedResponse = this.generateResponse(data);
+                var generatedResponse = generateResponse(data);
 
                 var body = messageFormatter.getSuccessMessage(generatedResponse[0], generatedResponse[1]);
 
