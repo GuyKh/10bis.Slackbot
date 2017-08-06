@@ -7,6 +7,13 @@ var request = require('request');
 var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
+// Constants of Send Address
+var CITY_ID = 24;
+var STREET_ID = 4298;
+var HOUSE_NUMBER = 154;
+var LONG = 34.795532;
+var LAT = 32.0793166;
+
 var generateRequest = function(restaurantName) {
     var now = new Date();
 
@@ -20,14 +27,14 @@ var generateRequest = function(restaurantName) {
             pageSize: 10,
             OrderBy: 'Default',
             cuisineType: '',
-            CityId: 0,
-            StreetId: 0,
+            CityId: this.CITY_ID, 
+            StreetId: this.STREET_ID,
             FilterByKosher: false,
             FilterByBookmark: false,
             FilterByCoupon: false,
-            Latitude: 0,
-            Longitude: 0,
-            HouseNumber: '',
+            Latitude: this.LAT,
+            Longitude: this.LONG,
+            HouseNumber: this.HOUSE_NUMBER,
             CityName: '',
             StreetAddress: '',
             desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
