@@ -52,9 +52,21 @@ var filterByRestaurantName = function(data) {
     return filteredRestaurants;
 }
 
-var generateResponse = function(data) {
-    var restaurants = filterByRestaurantName(data);
+var sortRestaurantsByDistance =  function(data) {
+        return data.sort(
+            function(a,b) {
+                if (!a.distanceFromUserInMeters && b.distanceFromUserInMeters) return -1;
+                if (a.distanceFromUserInMeters && !b.distanceFromUserInMeters) return 1;
+                if (!a.distanceFromUserInMeters && !b.distanceFromUserInMeters) return 0;
+                
+                return (a.distanceFromUserInMeters > b.distanceFromUserInMeters) ? 1 : ((b.distanceFromUserInMeters > a.distanceFromUserInMeters) ? -1 : 0);
+            }
+        );
+}
 
+var generateResponse = function(data) {
+
+    var restaurants = filterByRestaurantName(sortRestaurantsByDistance(data));
     var returnText = 'Found ' + restaurants.length + ' restaurants';
     var restaurantText = '';
 

@@ -227,4 +227,85 @@ describe('App', function () {
                 expect(result[0]).to.equal('Found 0 restaurants');
                 expect(result[1]).to.equal('');
             });
+
+            it('sortRestaurantsByDistance() should sort restaurants by distance', function () {
+                var sortRestaurantsByDistance = app.__get__('sortRestaurantsByDistance');
+
+                var restaurant1 = {
+                    RestaurantName: 'Rest1',
+                    RestaurantId: 1,
+                    distanceFromUserInMeters: 10
+                };
+
+                var restaurant2 = {
+                    RestaurantName: 'Rest2',
+                    distanceFromUserInMeters: 20
+                };
+
+                var restaurant3 = {
+                    RestaurantName: 'Rest3',
+                    distanceFromUserInMeters: 15
+                };
+                
+                var result = sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
+
+                expect(result).not.to.equal(undefined);
+                expect(result.length).to.equal(3);
+                expect(result[0].RestaurantName).to.be.equal('Rest1');
+                expect(result[1].RestaurantName).to.be.equal('Rest3');
+                expect(result[2].RestaurantName).to.be.equal('Rest2');
+            });
+
+            it('sortRestaurantsByDistance() should do nothing when fields are equal', function () {
+                var sortRestaurantsByDistance = app.__get__('sortRestaurantsByDistance');
+
+                var restaurant1 = {
+                    RestaurantName: 'Rest1',
+                    RestaurantId: 1,
+                    distanceFromUserInMeters: 15
+                };
+
+                var restaurant2 = {
+                    RestaurantName: 'Rest2',
+                    distanceFromUserInMeters: 7
+                };
+
+                var restaurant3 = {
+                    RestaurantName: 'Rest3',
+                    distanceFromUserInMeters: 7
+                };
+                
+                var result = sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
+
+                expect(result).not.to.equal(undefined);
+                expect(result.length).to.equal(3);
+                expect(result[0].RestaurantName).to.be.equal('Rest2');
+                expect(result[1].RestaurantName).to.be.equal('Rest3');
+                expect(result[2].RestaurantName).to.be.equal('Rest1');
+            });
+
+            it('sortRestaurantsByDistance() should do nothing when no field', function () {
+                var sortRestaurantsByDistance = app.__get__('sortRestaurantsByDistance');
+
+                var restaurant1 = {
+                    RestaurantName: 'Rest1',
+                    RestaurantId: 1,
+                };
+
+                var restaurant2 = {
+                    RestaurantName: 'Rest2',
+                };
+
+                var restaurant3 = {
+                    RestaurantName: 'Rest3',
+                };
+                
+                var result = sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
+
+                expect(result).not.to.equal(undefined);
+                expect(result.length).to.equal(3);
+                expect(result[0].RestaurantName).to.be.equal('Rest1');
+                expect(result[1].RestaurantName).to.be.equal('Rest2');
+                expect(result[2].RestaurantName).to.be.equal('Rest3');
+            });
 });
