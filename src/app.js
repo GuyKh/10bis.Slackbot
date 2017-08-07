@@ -7,6 +7,13 @@ var request = require('request');
 var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
+// Constants of Send Address
+var CITY_ID = 24;
+var STREET_ID = 4298;
+var HOUSE_NUMBER = 154;
+var LONG = 34.795532;
+var LAT = 32.0793166;
+
 var generateRequest = function(restaurantName) {
     var now = new Date();
 
@@ -17,22 +24,20 @@ var generateRequest = function(restaurantName) {
             ShowOnlyOpenForDelivery: false,
             id: 0,
             pageNum: 0,
-            pageSize: 10,
-            OrderBy: 'Default',
-            cuisineType: '',
-            CityId: 0,
-            StreetId: 0,
+            pageSize: 50,
+            OrderBy: "Default",
+            cuisineType: "",
+            CityId: CITY_ID,
+            StreetId: STREET_ID,
             FilterByKosher: false,
             FilterByBookmark: false,
             FilterByCoupon: false,
-            Latitude: 0,
-            Longitude: 0,
-            HouseNumber: '',
-            CityName: '',
-            StreetAddress: '',
+            searchPhrase: restaurantName,
+            Latitude: LAT,
+            Longitude: LONG,
+            HouseNumber: HOUSE_NUMBER,
             desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date).getTime(),
-            searchPhrase: restaurantName
+            timestamp: (new Date).getTime()
         }
     });
 
@@ -52,18 +57,18 @@ var filterByRestaurantName = function(data) {
     return filteredRestaurants;
 }
 
-var generateResponse = function(data) {
-    var restaurants = filterByRestaurantName(data);
+var sortRestaurantsByDistance = function(data) {
+        return data.sort(
+            function(objectA, objectB) {
+                if (!objectA.distanceFromUserInMeters && objectB.distanceFromUserInMeters) return -1;
+                if (objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) return 1;
+                if (!objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) return 0;
 
-    var returnText = 'Found ' + restaurants.length + ' restaurants';
-    var restaurantText = '';
-
-    restaurants.forEach(function(restaurant, index){
-        restaurantText += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + '\n\n';
-    });
-
-    return [returnText, restaurantText];
+                return (objectA.distanceFromUserInMeters > objectB.distanceFromUserInMeters) ? 1 : ((objectB.distanceFromUserInMeters > objectA.distanceFromUserInMeters) ? -1 : 0);
+            }
+        );
 }
+
 
 var verifyMessage = function(req, formatters) {
     if (!req || !formatters || !(formatters.constructor == Array))
@@ -93,6 +98,8 @@ module.exports = {
             return;
         }
 
+        restaurantName = restaurantName.trim();
+
         if(restaurantName.length === 0){ // Behavior for empty command ('/10bis' with no content)
             body = messageFormatter.getSuccessMessage(defaultResponse, "");
             res.send(body);
@@ -107,15 +114,13 @@ module.exports = {
 
                 var resBody = "";
                 if (!data || !data.length || data.length < 1) {
-                    resBody = messageFormatter.getBadMessage();
+                    resBody = messageFormatter.getErrorMessage();
                     res.send(resBody);
+                    return;
                 }
 
-                var generatedResponse = generateResponse(data);
-
-                resBody = messageFormatter.getSuccessMessage(generatedResponse[0], generatedResponse[1]);
+                resBody = messageFormatter.generateResponse(filterByRestaurantName(sortRestaurantsByDistance(data)));
                 res.send(resBody);
-
             } else {
                 res.status(400);
                 res.send('None shall pass');
