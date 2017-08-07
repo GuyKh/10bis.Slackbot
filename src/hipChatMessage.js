@@ -1,3 +1,5 @@
+var guid = require('guid');
+
 // hipChatMessage.js
 
 /*
@@ -92,7 +94,14 @@ module.exports = {
         return false;
     },
 
-    getSuccessMessage: function(text) {
+    generateDescription: function(restaurant){
+        var description = "";
+        description += restaurant.RestaurantCuisineList + "\n";
+        description += "מינימום הזמנה: " + restaurant.MinimumOrder;
+        return description;
+    },
+
+    getSuccessMessage: function(text, restaurant) {
         var body = {
             color: "green",
             message: text,
@@ -100,6 +109,25 @@ module.exports = {
             message_format: "text"
         }
 
+        if (restaurant){
+            var card =
+            {
+                style: "link",
+                url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                id: guid.create(),
+                title: restaurant.RestaurantName,
+                description: this.generateDescription(restaurant),
+                icon: {
+                    "url": restaurant.RestaurantLogoUrl
+                },
+                date: (new Date).getTime(),
+                thumbnail: {
+                    url: restaurant.RestaurantLogoUrl
+                }
+            }
+
+            body.card = card;
+        }
         return body;
     },
 
@@ -111,13 +139,15 @@ module.exports = {
             title += "\n";
             restaurants.forEach(function(restaurant, index){
                 var suffix = '';
-                if (index < restaurant.length)
+                if (index < restaurants.length)
                     suffix = '\n\n';
                 restaurantText += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + suffix;
             });
         }
 
-        return this.getSuccessMessage(title + restaurantText);
+        if (restaurants.length == 1)
+            return this.getSuccessMessage(title, restaurants[0]);
+        return this.getSuccessMessage(title + restaurantText, null);
     }
 
 };

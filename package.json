@@ -8,6 +8,7 @@
     "dateformat": "^2.0.0",
     "ejs": "2.5.7",
     "express": "4.15.3",
+    "guid": "0.0.12",
     "json-schema": "^0.2.3",
     "request": "^2.67.0"
   },

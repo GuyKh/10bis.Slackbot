@@ -98,6 +98,8 @@ module.exports = {
             return;
         }
 
+        restaurantName = restaurantName.trim();
+
         if(restaurantName.length === 0){ // Behavior for empty command ('/10bis' with no content)
             body = messageFormatter.getSuccessMessage(defaultResponse, "");
             res.send(body);
@@ -112,13 +114,13 @@ module.exports = {
 
                 var resBody = "";
                 if (!data || !data.length || data.length < 1) {
-                    resBody = messageFormatter.getBadMessage();
+                    resBody = messageFormatter.getErrorMessage();
                     res.send(resBody);
+                    return;
                 }
 
                 resBody = messageFormatter.generateResponse(filterByRestaurantName(sortRestaurantsByDistance(data)));
                 res.send(resBody);
-
             } else {
                 res.status(400);
                 res.send('None shall pass');
