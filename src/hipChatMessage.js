@@ -97,10 +97,7 @@ module.exports = {
     generateDescription: function(restaurant){
         var description = "";
         description += restaurant.RestaurantCuisineList + "\n";
-        description += "שעות פעילות: " + restaurant.ActivityHours + "\n";
-        description += "מינימום הזמנה: " + restaurant.MinimumOrder + "\n";
-        description += "דמי משלוח: " + restaurant.DeliveryPrice + "\n";
-        description += "זמן משלוח: " + restaurant.EstimatedDeliveryTime;
+        description += "מינימום הזמנה: " + restaurant.MinimumOrder;
         return description;
     },
 

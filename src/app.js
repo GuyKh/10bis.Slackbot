@@ -98,6 +98,8 @@ module.exports = {
             return;
         }
 
+        restaurantName = restaurantName.trim();
+
         if(restaurantName.length === 0){ // Behavior for empty command ('/10bis' with no content)
             body = messageFormatter.getSuccessMessage(defaultResponse, "");
             res.send(body);
