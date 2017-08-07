@@ -112,13 +112,13 @@ module.exports = {
 
                 var resBody = "";
                 if (!data || !data.length || data.length < 1) {
-                    resBody = messageFormatter.getBadMessage();
+                    resBody = messageFormatter.getErrorMessage();
                     res.send(resBody);
+                    return;
                 }
 
                 resBody = messageFormatter.generateResponse(filterByRestaurantName(sortRestaurantsByDistance(data)));
                 res.send(resBody);
-
             } else {
                 res.status(400);
                 res.send('None shall pass');
