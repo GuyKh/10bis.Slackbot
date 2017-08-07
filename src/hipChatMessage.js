@@ -1,3 +1,5 @@
+var guid = require('guid');
+
 // hipChatMessage.js
 
 /*
@@ -92,7 +94,7 @@ module.exports = {
         return false;
     },
 
-    getSuccessMessage: function(text) {
+    getSuccessMessage: function(text, restaurant) {
         var body = {
             color: "green",
             message: text,
@@ -100,6 +102,25 @@ module.exports = {
             message_format: "text"
         }
 
+        if (restaurant){
+            var card =
+            {
+                style: "link",
+                url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                id: guid.create(),
+                title: restaurant.RestaurantName,
+                description: restaurant.RestaurantCuisineList,
+                icon: {
+                    "url": restaurant.RestaurantLogoUrl
+                },
+                date: (new Date).getTime(),
+                thumbnail: {
+                    url: restaurant.RestaurantLogoUrl
+                }
+            }
+
+            body.card = card;
+        }
         return body;
     },
 
@@ -117,7 +138,9 @@ module.exports = {
             });
         }
 
-        return this.getSuccessMessage(title + restaurantText);
+        if (restaurants.length == 1)
+            return this.getSuccessMessage(title, restaurants[0]);
+        return this.getSuccessMessage(title + restaurantText, null);
     }
 
 };
