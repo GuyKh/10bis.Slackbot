@@ -24,22 +24,20 @@ var generateRequest = function(restaurantName) {
             ShowOnlyOpenForDelivery: false,
             id: 0,
             pageNum: 0,
-            pageSize: 10,
-            OrderBy: 'Default',
-            cuisineType: '',
-            CityId: this.CITY_ID, 
-            StreetId: this.STREET_ID,
+            pageSize: 50,
+            OrderBy: "Default",
+            cuisineType: "",
+            CityId: CITY_ID,
+            StreetId: STREET_ID,
             FilterByKosher: false,
             FilterByBookmark: false,
             FilterByCoupon: false,
-            Latitude: this.LAT,
-            Longitude: this.LONG,
-            HouseNumber: this.HOUSE_NUMBER,
-            CityName: '',
-            StreetAddress: '',
+            searchPhrase: restaurantName,
+            Latitude: LAT,
+            Longitude: LONG,
+            HouseNumber: HOUSE_NUMBER,
             desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date).getTime(),
-            searchPhrase: restaurantName
+            timestamp: (new Date).getTime()
         }
     });
 
@@ -59,30 +57,18 @@ var filterByRestaurantName = function(data) {
     return filteredRestaurants;
 }
 
-var sortRestaurantsByDistance =  function(data) {
+var sortRestaurantsByDistance = function(data) {
         return data.sort(
-            function(a,b) {
-                if (!a.distanceFromUserInMeters && b.distanceFromUserInMeters) return -1;
-                if (a.distanceFromUserInMeters && !b.distanceFromUserInMeters) return 1;
-                if (!a.distanceFromUserInMeters && !b.distanceFromUserInMeters) return 0;
-                
-                return (a.distanceFromUserInMeters > b.distanceFromUserInMeters) ? 1 : ((b.distanceFromUserInMeters > a.distanceFromUserInMeters) ? -1 : 0);
+            function(objectA, objectB) {
+                if (!objectA.distanceFromUserInMeters && objectB.distanceFromUserInMeters) return -1;
+                if (objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) return 1;
+                if (!objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) return 0;
+
+                return (objectA.distanceFromUserInMeters > objectB.distanceFromUserInMeters) ? 1 : ((objectB.distanceFromUserInMeters > objectA.distanceFromUserInMeters) ? -1 : 0);
             }
         );
 }
 
-var generateResponse = function(data) {
-
-    var restaurants = filterByRestaurantName(sortRestaurantsByDistance(data));
-    var returnText = 'Found ' + restaurants.length + ' restaurants';
-    var restaurantText = '';
-
-    restaurants.forEach(function(restaurant, index){
-        restaurantText += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + '\n\n';
-    });
-
-    return [returnText, restaurantText];
-}
 
 var verifyMessage = function(req, formatters) {
     if (!req || !formatters || !(formatters.constructor == Array))
@@ -130,9 +116,7 @@ module.exports = {
                     res.send(resBody);
                 }
 
-                var generatedResponse = generateResponse(data);
-
-                resBody = messageFormatter.getSuccessMessage(generatedResponse[0], generatedResponse[1]);
+                resBody = messageFormatter.generateResponse(filterByRestaurantName(sortRestaurantsByDistance(data)));
                 res.send(resBody);
 
             } else {

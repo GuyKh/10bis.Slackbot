@@ -2,6 +2,7 @@
 var chai = require('chai');
 var expect = chai.expect; // we are using the "expect" style of Chai
 var hipChatMessage = require('./../src/hipChatMessage.js');
+var helper = require('./helper.js');
 
 var message = '{ "event": "room_message",                   ' +
     '"item": {                                              ' +
@@ -48,7 +49,7 @@ var badMessage = '{ "event": "room_message",                ' +
 
 var goodResponse = '{                                     ' +
     '"color": "green",                                    ' +
-    '"message": "Title",                                  ' +
+    '"message": "Found 0 Restaurants",                    ' +
     '"notify": false,                                     ' +
     '"message_format": "text"                             ' +
 '}';
@@ -59,7 +60,6 @@ var errorResponse = '{                                    ' +
     '"notify": false,                                     ' +
     '"message_format": "text"                             ' +
 '}';
-
 
 describe('HipChatMessage', function() {
   it('isValidMessage() should return true if default format message is sent', function() {
@@ -90,29 +90,29 @@ describe('HipChatMessage', function() {
     expect(hipChatMessage.isValidMessage(req)).to.equal(true);
   });
 
-  it('isValidMessage() should return true if message body doesn\'t start with the command', function() {
+  it('isValidMessage() should return false if message body doesn\'t start with the command', function() {
     var req = {};
     req.body = JSON.parse(message);
     req.body.item.message.message = "/test";
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it('getSuccessMessage() should return a valid message without restaurant list', function() {
+  it('generateResponse() should return a valid message without restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = hipChatMessage.getSuccessMessage("Title", null);
+    var response = hipChatMessage.generateResponse([]);
 
     expect(response.color).to.equal(expectedResponse.color);
-    expect(response.message).to.equal(expectedResponse.message);
+    expect(response.message).to.equal('Found 0 restaurants');
     expect(response.notify).to.equal(expectedResponse.notify);
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-    it('getSuccessMessage() should return a valid message with restaurant list', function() {
+  it('generateResponse() should return a valid message with restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = hipChatMessage.getSuccessMessage("Title", "List");
+    var response = hipChatMessage.generateResponse(helper.restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
-    expect(response.message).to.equal(expectedResponse.message + "\n List");
+    expect(response.message.startsWith("Found 2 restaurants")).to.equal(true);
     expect(response.notify).to.equal(expectedResponse.notify);
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });

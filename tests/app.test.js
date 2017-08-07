@@ -115,16 +115,14 @@ describe('App', function () {
                 expect(verifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])).to.equal(undefined);
             });
 
-            
+
             it('generateRequest() should return a valid request', function () {
                 var generateRequest = app.__get__('generateRequest');
 
-                var now = new Date();
-
                 var generatedRequest = generateRequest("Rest");
 
-                expect(generatedRequest).not.to.equal(undefined);
-                expect(generatedRequest.includes('searchPhrase=Rest')).to.be.true;
+                expect(generatedRequest).not.to.equal(null);
+                expect(generatedRequest.includes('searchPhrase=Rest')).to.equal(true);
             });
 
             it('filterByRestaurantName() should filter restaurants with the same name', function () {
@@ -144,21 +142,25 @@ describe('App', function () {
                     RestaurantName: 'Rest1',
                     RestaurantId: 3
                 };
-                
+
                 var result = filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(undefined);
+                expect(result).not.to.equal(null);
                 expect(result.length).to.equal(2);
-                expect(result.some(function(element, index){return element.RestaurantName=="Rest1"})).to.be.true;
-                expect(result.some(function(element, index){return element.RestaurantName=="Rest2"})).to.be.true;
+                expect(result.some(function(element){
+                    return element.RestaurantName == "Rest1";
+                 })).to.equal(true);
+                expect(result.some(function(element){
+                    return element.RestaurantName == "Rest2";
+                 })).to.equal(true);
             });
 
                it('filterByRestaurantName() should be ok with an empty array', function () {
                 var filterByRestaurantName = app.__get__('filterByRestaurantName');
-                
+
                 var result = filterByRestaurantName([]);
 
-                expect(result).not.to.equal(undefined);
+                expect(result).not.to.equal(null);
                 expect(result.length).to.equal(0);
             });
 
@@ -179,53 +181,17 @@ describe('App', function () {
                     RestaurantName: 'Rest1',
                     RestaurantId: 3
                 };
-                
+
                 var result = filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(undefined);
+                expect(result).not.to.equal(null);
                 expect(result.length).to.equal(2);
-                expect(result.some(function(element, index){return element.RestaurantName=="Rest1"})).to.be.true;
-                expect(result.some(function(element, index){return element.RestaurantName=="Rest2"})).to.be.true;
-            });
-
-            it('generateResponse() should return valid answer', function () {
-                var generateResponse = app.__get__('generateResponse');
-
-                var restaurant1 = {
-                    RestaurantName: 'Rest1',
-                    RestaurantId: 1
-                };
-
-                var restaurant2 = {
-                    RestaurantName: 'Rest2',
-                    RestaurantId: 2
-                };
-
-                var restaurant3 = {
-                    RestaurantName: 'Rest3',
-                    RestaurantId: 3
-                };
-                
-                var result = generateResponse([restaurant1, restaurant2, restaurant3]);
-
-                expect(result).not.to.equal(undefined);
-                expect(result.length).to.equal(2);
-                expect(result[0]).to.equal('Found 3 restaurants');
-                expect(result[1]).not.to.equal('');
-                expect(result[1].includes('[1] Rest1')).to.be.true;
-                expect(result[1].includes('[2] Rest2')).to.be.true;
-                expect(result[1].includes('[3] Rest3')).to.be.true;
-            });
-
-            it('generateResponse() should return valid answer with 0 results', function () {
-                var generateResponse = app.__get__('generateResponse');
-
-                var result = generateResponse([]);
-
-                expect(result).not.to.equal(undefined);
-                expect(result.length).to.equal(2);
-                expect(result[0]).to.equal('Found 0 restaurants');
-                expect(result[1]).to.equal('');
+                expect(result.some(function(element){
+                    return element.RestaurantName == "Rest1"
+                })).to.equal(true);
+                expect(result.some(function(element){
+                    return element.RestaurantName == "Rest2"
+                })).to.equal(true);
             });
 
             it('sortRestaurantsByDistance() should sort restaurants by distance', function () {
@@ -246,10 +212,10 @@ describe('App', function () {
                     RestaurantName: 'Rest3',
                     distanceFromUserInMeters: 15
                 };
-                
+
                 var result = sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(undefined);
+                expect(result).not.to.equal(null);
                 expect(result.length).to.equal(3);
                 expect(result[0].RestaurantName).to.be.equal('Rest1');
                 expect(result[1].RestaurantName).to.be.equal('Rest3');
@@ -274,10 +240,10 @@ describe('App', function () {
                     RestaurantName: 'Rest3',
                     distanceFromUserInMeters: 7
                 };
-                
+
                 var result = sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(undefined);
+                expect(result).not.to.equal(null);
                 expect(result.length).to.equal(3);
                 expect(result[0].RestaurantName).to.be.equal('Rest2');
                 expect(result[1].RestaurantName).to.be.equal('Rest3');
@@ -289,20 +255,22 @@ describe('App', function () {
 
                 var restaurant1 = {
                     RestaurantName: 'Rest1',
-                    RestaurantId: 1,
+                    RestaurantId: 1
                 };
 
                 var restaurant2 = {
                     RestaurantName: 'Rest2',
+                    RestaurantId: 2
                 };
 
                 var restaurant3 = {
                     RestaurantName: 'Rest3',
+                    RestaurantId: 3
                 };
-                
+
                 var result = sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(undefined);
+                expect(result).not.to.equal(null);
                 expect(result.length).to.equal(3);
                 expect(result[0].RestaurantName).to.be.equal('Rest1');
                 expect(result[1].RestaurantName).to.be.equal('Rest2');

@@ -2,6 +2,7 @@
 var chai = require('chai');
 var expect = chai.expect; // we are using the "expect" style of Chai
 var slackMessage = require('./../src/slackMessage.js');
+var helper = require('./helper.js');
 
 var message = '{' +
    '"token":"ItoB7oEyZIbNmHPfxHQ2GrbC",' +
@@ -15,20 +16,9 @@ var message = '{' +
    '"text":"דיקסי"' +
 '}';
 
-var badMessage = '{' +
-   '"token":"ItoB7oEyZIbNmHPfxHQ2GrbC",' +
-   '"team_id":"T0001",' +
-   '"team_domain":"example",' +
-   '"channel_id":"C2147483705",' +
-   '"channel_name":"test",' +
-   '"user_id":"U2147483697",' +
-   '"user_name":"Steve",' +
-   '"command":"/10bis"' +
-'}';
-
 var goodResponse = '{' +
     '"response_type":"in_channel",' +
-    '"text":"Title",' +
+    '"text":"Found 0 restaurants",' +
     '"attachments":[' +
         '{' +
             '"text":"List"' +
@@ -78,22 +68,23 @@ describe('SlackMessage', function() {
     expect(slackMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it('getSuccessMessage() should return a valid message without restaurant list', function() {
+  it('generateResponse() should return a valid message without restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = slackMessage.getSuccessMessage("Title", null);
+    var response = slackMessage.generateResponse([]);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text);
-    expect(response.attachments.text).to.equal(undefined);
+    expect(response).not.to.have.property('attachments');
   });
 
-    it('getSuccessMessage() should return a valid message with restaurant list', function() {
+    it('generateResponse() should return a valid message with restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = slackMessage.getSuccessMessage("Title", "List");
+    var response = slackMessage.generateResponse(helper.restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
-    expect(response.text).to.equal(expectedResponse.text);
-    expect(response.attachments.text).to.equal(expectedResponse.attachments.text);
+    expect(response.text).to.equal("Found 2 restaurants");
+    expect(response.attachments).not.equal(null);
+    expect(response.attachments.length).to.equal(2);
   });
 
   it('getRestaurantName() should return right restaruant name from request', function() {

@@ -31,7 +31,26 @@ HipChat Response:
     "color": "green",
     "message": "It's going to be sunny tomorrow! (yey)",
     "notify": false,
-    "message_format": "text"
+    "message_format": "text",
+    "card": {
+        {
+            "style": "link",
+            "url": "http://www.website.com/some-article",
+            "id": "c253adc6-11fa-4941-ae26-7180d67e814a",
+            "title": "Sample link card",
+            "description": "This is some information about the link shared.\nin 2 lines of text",
+            "icon": {
+                "url": "http://bit.ly/1Qrfs1M"
+            },
+            "date": 1453867674631,
+            "thumbnail": {
+                "url": "http://bit.ly/1TmKuKQ",
+                "url@2x": "http://bit.ly/1TmKuKQ",
+                "width": 1193,
+                "height": 564
+            }
+        }
+    }
 }
 */
 
@@ -73,19 +92,32 @@ module.exports = {
         return false;
     },
 
-    getSuccessMessage: function(title, restaurantText) {
-        var extra = "";
-        if (restaurantText && restaurantText.length > 0){
-            extra += "\n " + restaurantText;
-        }
-
+    getSuccessMessage: function(text) {
         var body = {
             color: "green",
-            message: title + extra,
+            message: text,
             notify: false,
             message_format: "text"
         }
 
         return body;
+    },
+
+    generateResponse: function(restaurants){
+        var title = 'Found ' + restaurants.length + ' restaurants';
+        var restaurantText = '';
+
+        if (restaurants.length > 0){
+            title += "\n";
+            restaurants.forEach(function(restaurant, index){
+                var suffix = '';
+                if (index < restaurant.length)
+                    suffix = '\n\n';
+                restaurantText += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + suffix;
+            });
+        }
+
+        return this.getSuccessMessage(title + restaurantText);
     }
+
 };
