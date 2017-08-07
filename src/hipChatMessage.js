@@ -94,6 +94,16 @@ module.exports = {
         return false;
     },
 
+    generateDescription: function(restaurant){
+        var description = "";
+        description += restaurant.RestaurantCuisineList + "\n";
+        description += "שעות פעילות: " + restaurant.ActivityHours + "\n";
+        description += "מינימום הזמנה: " + restaurant.MinimumOrder + "\n";
+        description += "דמי משלוח: " + restaurant.DeliveryPrice + "\n";
+        description += "זמן משלוח: " + restaurant.EstimatedDeliveryTime;
+        return description;
+    },
+
     getSuccessMessage: function(text, restaurant) {
         var body = {
             color: "green",
@@ -109,7 +119,7 @@ module.exports = {
                 url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
                 id: guid.create(),
                 title: restaurant.RestaurantName,
-                description: restaurant.RestaurantCuisineList,
+                description: this.generateDescription(restaurant),
                 icon: {
                     "url": restaurant.RestaurantLogoUrl
                 },
