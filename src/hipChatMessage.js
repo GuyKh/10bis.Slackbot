@@ -132,7 +132,7 @@ module.exports = {
             title += "\n";
             restaurants.forEach(function(restaurant, index){
                 var suffix = '';
-                if (index < restaurant.length)
+                if (index < restaurants.length)
                     suffix = '\n\n';
                 restaurantText += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + suffix;
             });
