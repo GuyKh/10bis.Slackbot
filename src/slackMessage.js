@@ -94,7 +94,7 @@ module.exports = {
                         }
                     ],
                     thumb_url: restaurant.RestaurantLogoUrl,
-                    ts: (new Date).getTime()
+                    ts: (Math.floor(Date.now() / 1000))
         };
     },
 
