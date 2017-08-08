@@ -85,20 +85,16 @@ module.exports = {
                         {
                         "title": "מינימום הזמנה",
                         "value": restaurant.MinimumOrder,
-                        "short": false
+                        "short": true
                         },
                         {
                         "title": "דמי משלוח",
                         "value": restaurant.DeliveryPrice,
-                        "short": false
-                        },
-                        {
-                        "title": "זמן משלוח",
-                        "value": restaurant.DeliveryTime,
-                        "short": false
+                        "short": true
                         }
                     ],
                     thumb_url: restaurant.RestaurantLogoUrl,
+                    image_url: restaurant.RestaurantLogoUrl,
                     ts: (new Date).getTime()
         };
     },
