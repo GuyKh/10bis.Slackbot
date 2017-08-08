@@ -1,5 +1,3 @@
-var guid = require('guid');
-
 // hipChatMessage.js
 
 /*
@@ -55,6 +53,7 @@ HipChat Response:
     }
 }
 */
+var uuid = require('uuid/v4');
 
 var commandOperator = "/10bis";
 
@@ -114,7 +113,7 @@ module.exports = {
             {
                 style: "link",
                 url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
-                id: guid.create(),
+                id: uuid(),
                 title: restaurant.RestaurantName,
                 description: this.generateDescription(restaurant),
                 icon: {
