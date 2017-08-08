@@ -1,4 +1,4 @@
-# 10Bis Slackbot
+# 10Bis Slackbot [![Build Status](https://secure.travis-ci.org/GuyKh/10bis.Slackbot.svg?branch=master)](https://travis-ci.org/GuyKh/10bis.Slackbot) #
 
 _A Slackbot that searches 10bis_.
 
