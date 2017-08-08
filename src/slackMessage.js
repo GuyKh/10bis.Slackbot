@@ -17,10 +17,28 @@ Response:
     "response_type": "in_channel",
     "text": "It's 80 degrees right now.",
     "attachments": [
-        {
-            "text":"Partly cloudy today and tomorrow"
-        }
-    ]
+            {
+                "fallback": "Required plain-text summary of the attachment.",
+                "color": "#36a64f",
+                "title": "גוטה בריא ומהיר",
+                "title_link": "https://api.slack.com/",
+                "text": "אוכל ביתי, בשרים, סלטים/סנדוויצ`ים",
+                "fields": [
+                    {
+                        "title": "Priority",
+                        "value": "High",
+                        "short": false
+                    },
+                    {
+                        "title": "Priority",
+                        "value": "High",
+                        "short": false
+                    }
+                ],
+                "thumb_url": "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif",
+                "ts": 123456789
+            }
+        ]
 }
 */
 var commandOperator = "/10bis";
@@ -54,19 +72,58 @@ module.exports = {
         return false;
     },
 
+    generateRestaurantCard = function(restaurant){
+        var restaurantName = restaurant.RestaurantName;
+
+        return {
+                    fallback = "[1] " + restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                    title: restaurantName,
+                    color: '#36a64f',
+                    title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                    text: restaurant.RestaurantCuisineList,
+                    fields: [
+                        {
+                        "title": "מינימום הזמנה",
+                        "value": restaurant.MinimumOrder,
+                        "short": false
+                        },
+                        {
+                        "title": "דמי משלוח",
+                        "value": restaurant.DeliveryPrice,
+                        "short": false
+                        },
+                        {
+                        "title": "זמן משלוח",
+                        "value": restaurant.DeliveryTime,
+                        "short": false
+                        }
+                    ],
+                    thumb_url: restaurant.RestaurantLogoUrl,
+                    ts: (new Date).getTime()
+        };
+    },
+
     generateResponse: function (restaurants) {
         var title = 'Found ' + restaurants.length + ' restaurants';
 
         var attachments = [];
         if (restaurants.length > 0) {
 
-            restaurants.forEach(function (restaurant, index) {
-                var restaurantsString = '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+            if (restaurants.length == 1){
+                // Create a special card
+                var restaurant = restarants[0];
 
-                attachments.push({
-                    text: restaurantsString
+                attachments.push(generateRestaurantCard(restaurants[0]));
+            } else {
+                // Create a list
+                restaurants.forEach(function (restaurant, index) {
+                    var restaurantsString = '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+
+                    attachments.push({
+                        text: restaurantsString
+                    });
                 });
-            });
+            }
         }
 
         var body = {
