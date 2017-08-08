@@ -72,11 +72,11 @@ module.exports = {
         return false;
     },
 
-    generateRestaurantCard = function(restaurant){
+    generateRestaurantCard: function(restaurant){
         var restaurantName = restaurant.RestaurantName;
 
         return {
-                    fallback = "[1] " + restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                    fallback: "[1] " + restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
                     title: restaurantName,
                     color: '#36a64f',
                     title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
@@ -111,9 +111,7 @@ module.exports = {
 
             if (restaurants.length == 1){
                 // Create a special card
-                var restaurant = restarants[0];
-
-                attachments.push(generateRestaurantCard(restaurants[0]));
+                attachments.push(this.generateRestaurantCard(restaurants[0]));
             } else {
                 // Create a list
                 restaurants.forEach(function (restaurant, index) {
