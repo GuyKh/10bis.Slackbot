@@ -64,7 +64,12 @@ var sortRestaurantsByDistance = function(data) {
                 if (objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) return 1;
                 if (!objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) return 0;
 
-                return (objectA.distanceFromUserInMeters > objectB.distanceFromUserInMeters) ? 1 : ((objectB.distanceFromUserInMeters > objectA.distanceFromUserInMeters) ? -1 : 0);
+                if (objectA.distanceFromUserInMeters > objectB.distanceFromUserInMeters)
+                    return 1;
+                if (objectB.distanceFromUserInMeters > objectA.distanceFromUserInMeters)
+                    return -1;
+
+                return 0;
             }
         );
 }
