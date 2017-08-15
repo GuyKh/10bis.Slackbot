@@ -100,6 +100,23 @@ module.exports = {
         return description;
     },
 
+    generateRestaurantCard: function(restaurant){
+        return {
+            style: "link",
+            url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            id: uuid(),
+            title: restaurant.RestaurantName,
+            description: this.generateDescription(restaurant),
+            icon: {
+                "url": restaurant.RestaurantLogoUrl
+            },
+            date: (new Date).getTime(),
+            thumbnail: {
+                url: restaurant.RestaurantLogoUrl
+            }
+        };
+    },
+
     getSuccessMessage: function(text, restaurant) {
         var body = {
             color: "green",
@@ -109,23 +126,7 @@ module.exports = {
         }
 
         if (restaurant){
-            var card =
-            {
-                style: "link",
-                url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
-                id: uuid(),
-                title: restaurant.RestaurantName,
-                description: this.generateDescription(restaurant),
-                icon: {
-                    "url": restaurant.RestaurantLogoUrl
-                },
-                date: (new Date).getTime(),
-                thumbnail: {
-                    url: restaurant.RestaurantLogoUrl
-                }
-            }
-
-            body.card = card;
+            body.card = this.generateRestaurantCard(restaurant);
         }
         return body;
     },
