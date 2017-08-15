@@ -26,6 +26,28 @@ var goodResponse = '{' +
     ']' +
 '}';
 
+var validCard = {
+  fallback: "[1] דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  title: "דיקסי",
+  color: '#36a64f',
+  title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  text: "מסעדה אמריקאית",
+  fields: [
+      {
+      "title": "מינימום הזמנה",
+      "value": "26 שח",
+      "short": true
+      },
+      {
+      "title": "דמי משלוח",
+      "value": "10 שח",
+      "short": true
+      }
+  ],
+  thumb_url: "http://image.jpg",
+  ts: (Math.floor(Date.now() / 1000))
+}
+
 var errorResponse = '{' +
     '"response_type":"ephemeral",' +
     '"text":"No Restaurants Found"' +
@@ -123,7 +145,7 @@ describe('SlackMessage', function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-    it('getErrorMessage() should return a valid error message with passed restaurants name', function() {
+  it('getErrorMessage() should return a valid error message with passed restaurants name', function() {
     var expectedResponse = JSON.parse(errorResponse);
     var response = slackMessage.getErrorMessage("גוטה");
 
@@ -133,5 +155,19 @@ describe('SlackMessage', function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
+  it('generateRestaurantCard() should return a valid card', function() {
+    var restaruant = {
+      RestaurantName: "דיקסי",
+      RestaurantId: 123,
+      MinimumOrder: "26 שח",
+      DeliveryPrice: "10 שח",
+      RestaurantCuisineList: "מסעדה אמריקאית",
+      RestaurantLogoUrl: "http://image.jpg"
+    };
+
+    var response = slackMessage.generateRestaurantCard(restaruant);
+
+    expect(response).to.deep.equal(validCard);
+  });
 
 });

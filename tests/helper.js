@@ -1,4 +1,9 @@
 module.exports = {
+    compareKeys: function(objectA, objectB) {
+        var aKeys = Object.keys(objectA).sort();
+        var bKeys = Object.keys(objectB).sort();
+        return JSON.stringify(aKeys) === JSON.stringify(bKeys);
+      },
     restaurants: [{
         "RestaurantId": 13048,
         "RestaurantName": "גוטה בריא ומהיר",

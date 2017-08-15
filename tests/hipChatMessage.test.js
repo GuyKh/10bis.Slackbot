@@ -61,6 +61,21 @@ var errorResponse = '{                                    ' +
     '"message_format": "text"                             ' +
 '}';
 
+var validCard = {
+  style: "link",
+  url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + 123,
+  id: "ce399a28-a35a-4561-9262-ca28ccebbd6b",
+  title: "דיקסי",
+  description: "מסעדה אמריקאית\nמינימום הזמנה: 26 שח",
+  icon: {
+      "url": "http://image.jpg"
+  },
+  date: (new Date).getTime(),
+  thumbnail: {
+      url: "http://image.jpg"
+  }
+}
+
 describe('HipChatMessage', function() {
   it('isValidMessage() should return true if default format message is sent', function() {
     var req = {};
@@ -161,6 +176,30 @@ describe('HipChatMessage', function() {
     expect(response.message).to.equal(expectedResponse.message + " for: גוטה");
     expect(response.notify).to.equal(expectedResponse.notify);
     expect(response.message_format).to.equal(expectedResponse.message_format);
+  });
+
+  it('generateRestaurantCard() should return a valid card', function() {
+    var restaruant = {
+      RestaurantName: "דיקסי",
+      RestaurantId: 123,
+      MinimumOrder: "26 שח",
+      DeliveryPrice: "10 שח",
+      RestaurantCuisineList: "מסעדה אמריקאית",
+      RestaurantLogoUrl: validCard.thumbnail.url
+    };
+
+    var response = hipChatMessage.generateRestaurantCard(restaruant);
+
+      // Can't do the following due to on the spot generation of guid and time
+      // expect(response).to.deep.equal(validCard);
+      expect(helper.compareKeys(response, validCard)).to.equal(true);
+
+      expect(response.description).to.equal(validCard.description);
+      expect(response.icon.url).to.equal(validCard.icon.url);
+      expect(response.style).to.equal(validCard.style);
+      expect(response.thumbnail.url).to.equal(validCard.thumbnail.url);
+      expect(response.title).to.equal(validCard.title);
+      expect(response.url).to.equal(validCard.url);
   });
 
 
