@@ -166,8 +166,17 @@ describe('SlackMessage', function() {
     };
 
     var response = slackMessage.generateRestaurantCard(restaruant);
+    
+    // Can't do the following due to on the spot generation of guid and time
+    // expect(response).to.deep.equal(validCard);
+    
+    expect(response.color).to.equal(validCard.color);
+    expect(response.fallback).to.equal(validCard.fallback);
+    expect(response.fields).to.deep.equal(validCard.fields);
+    expect(response.text).to.equal(validCard.text);
+    expect(response.title).to.equal(validCard.title);
+    expect(response.title_link).to.equal(validCard.title_link);
 
-    expect(response).to.deep.equal(validCard);
   });
 
 });
