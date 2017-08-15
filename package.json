@@ -22,7 +22,8 @@
     "rewire": "^2.5.2"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha tests/*.js --reporter spec"
+    "test": "./node_modules/.bin/mocha tests/*.js --reporter spec",
+    "eslint": "./node_modules/.bin/eslint -c .eslintrc.js src/*.js tests/*.js index.js"
   },
   "repository": {
     "type": "git",
