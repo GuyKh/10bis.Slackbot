@@ -104,7 +104,7 @@ describe('App', function () {
 
                 var req = {};
                 req.body = JSON.parse(slackInvalidMessage);
-                expect(verifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])).to.equal(undefined);
+                expect(verifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])).to.be.an('undefined');
             });
 
             it('verifyMessage() should return null if invalid HipChat message is passed', function () {
@@ -112,7 +112,7 @@ describe('App', function () {
 
                 var req = {};
                 req.body = JSON.parse(hipChatInvalidMessage);
-                expect(verifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])).to.equal(undefined);
+                expect(verifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])).to.be.an('undefined');
             });
 
 
