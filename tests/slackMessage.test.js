@@ -166,10 +166,10 @@ describe('SlackMessage', function() {
     };
 
     var response = slackMessage.generateRestaurantCard(restaruant);
-    
+
     // Can't do the following due to on the spot generation of guid and time
     // expect(response).to.deep.equal(validCard);
-    
+
     expect(response.color).to.equal(validCard.color);
     expect(response.fallback).to.equal(validCard.fallback);
     expect(response.fields).to.deep.equal(validCard.fields);
