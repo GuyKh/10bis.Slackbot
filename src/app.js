@@ -119,7 +119,7 @@ module.exports = {
 
                 var resBody = "";
                 if (!data || !data.length || data.length < 1) {
-                    resBody = messageFormatter.getErrorMessage();
+                    resBody = messageFormatter.getErrorMessage(restaurantName);
                     res.send(resBody);
                     return;
                 }

@@ -72,6 +72,13 @@ var hipChatInvalidMessage = '{ "event": "room_message",     ' +
 '}';
 
 describe('App', function () {
+    describe('Basic methods and module', function() {
+        it('should have a process Method', function(){
+          expect(typeof app).to.equal('object');
+          expect(typeof app.process).to.equal('function');
+        });
+    });
+
             it('verifyMessage() should return null if no items are passed in', function () {
                 var verifyMessage = app.__get__('verifyMessage');
 
