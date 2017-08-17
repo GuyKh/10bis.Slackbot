@@ -54,6 +54,28 @@ var errorResponse = '{' +
 '}';
 
 describe('SlackMessage', function() {
+  describe('Basic methods and module', function() {
+  it('should have a generateResponse Method', function(){
+    expect(typeof slackMessage).to.equal('object');
+    expect(typeof slackMessage.generateResponse).to.equal('function');
+  });
+  it('should have a generateRestaurantCard Method', function(){
+    expect(typeof slackMessage).to.equal('object');
+    expect(typeof slackMessage.generateRestaurantCard).to.equal('function');
+  });
+  it('should have a getErrorMessage Method', function(){
+    expect(typeof slackMessage).to.equal('object');
+    expect(typeof slackMessage.getErrorMessage).to.equal('function');
+  });
+  it('should have a getRestaurantName Method', function(){
+    expect(typeof slackMessage).to.equal('object');
+    expect(typeof slackMessage.getRestaurantName).to.equal('function');
+  });
+  it('should have a isValidMessage Method', function(){
+    expect(typeof slackMessage).to.equal('object');
+    expect(typeof slackMessage.isValidMessage).to.equal('function');
+  });
+});
   it('isValidMessage() should return true if default format message is sent', function() {
     var req = {};
     req.body = JSON.parse(message);

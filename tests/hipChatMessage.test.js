@@ -77,6 +77,29 @@ var validCard = {
 }
 
 describe('HipChatMessage', function() {
+  describe('Basic methods and module', function() {
+    it('should have a generateResponse Method', function(){
+      expect(typeof hipChatMessage).to.equal('object');
+      expect(typeof hipChatMessage.generateResponse).to.equal('function');
+    });
+    it('should have a generateRestaurantCard Method', function(){
+      expect(typeof hipChatMessage).to.equal('object');
+      expect(typeof hipChatMessage.generateRestaurantCard).to.equal('function');
+    });
+    it('should have a getErrorMessage Method', function(){
+      expect(typeof hipChatMessage).to.equal('object');
+      expect(typeof hipChatMessage.getErrorMessage).to.equal('function');
+    });
+    it('should have a getRestaurantName Method', function(){
+      expect(typeof hipChatMessage).to.equal('object');
+      expect(typeof hipChatMessage.getRestaurantName).to.equal('function');
+    });
+    it('should have a isValidMessage Method', function(){
+      expect(typeof hipChatMessage).to.equal('object');
+      expect(typeof hipChatMessage.isValidMessage).to.equal('function');
+    });
+  });
+
   it('isValidMessage() should return true if default format message is sent', function() {
     var req = {};
     req.body = JSON.parse(message);
