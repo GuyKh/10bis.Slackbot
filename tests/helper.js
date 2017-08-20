@@ -125,4 +125,4 @@ module.exports = {
         "PickupStartTime": "00:00",
         "PickupEndTime": "00:00"
     }]
-}
+};

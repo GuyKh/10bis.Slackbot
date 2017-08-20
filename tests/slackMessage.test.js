@@ -46,7 +46,7 @@ var validCard = {
   ],
   thumb_url: "http://image.jpg",
   ts: (Math.floor(Date.now() / 1000))
-}
+};
 
 var errorResponse = '{' +
     '"response_type":"ephemeral",' +

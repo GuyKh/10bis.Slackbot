@@ -37,12 +37,12 @@ var generateRequest = function(restaurantName) {
             Longitude: LONG,
             HouseNumber: HOUSE_NUMBER,
             desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date).getTime()
+            timestamp: (new Date()).getTime()
         }
     });
 
     return parsed_url;
-}
+};
 
 var filterByRestaurantName = function(data) {
     var flags = {};
@@ -55,7 +55,7 @@ var filterByRestaurantName = function(data) {
     });
 
     return filteredRestaurants;
-}
+};
 
 var sortRestaurantsByDistance = function(data) {
         return data.sort(
@@ -72,17 +72,17 @@ var sortRestaurantsByDistance = function(data) {
                 return 0;
             }
         );
-}
+};
 
 
 var verifyMessage = function(req, formatters) {
-    if (!req || !formatters || !(formatters.constructor == Array))
+    if (!req || !formatters || formatters.constructor != Array)
         return null;
 
     return formatters.find(function(formatter){
         return formatter.isValidMessage(req);
         });
-}
+};
 
 module.exports = {
     process: function(req, res) {
