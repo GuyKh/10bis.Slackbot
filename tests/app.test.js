@@ -194,10 +194,10 @@ describe('App', function () {
                 expect(result).not.to.equal(null);
                 expect(result.length).to.equal(2);
                 expect(result.some(function(element){
-                    return element.RestaurantName == "Rest1"
+                    return element.RestaurantName == "Rest1";
                 })).to.equal(true);
                 expect(result.some(function(element){
-                    return element.RestaurantName == "Rest2"
+                    return element.RestaurantName == "Rest2";
                 })).to.equal(true);
             });
 

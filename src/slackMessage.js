@@ -122,7 +122,7 @@ module.exports = {
         var body = {
             response_type: "in_channel",
             text: title
-        }
+        };
 
         if (attachments.length > 0) {
             body.attachments = attachments;

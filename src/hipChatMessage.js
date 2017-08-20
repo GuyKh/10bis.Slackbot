@@ -110,7 +110,7 @@ module.exports = {
             icon: {
                 "url": restaurant.RestaurantLogoUrl
             },
-            date: (new Date).getTime(),
+            date: (new Date()).getTime(),
             thumbnail: {
                 url: restaurant.RestaurantLogoUrl
             }
@@ -123,7 +123,7 @@ module.exports = {
             message: text,
             notify: false,
             message_format: "text"
-        }
+        };
 
         if (restaurant){
             body.card = this.generateRestaurantCard(restaurant);

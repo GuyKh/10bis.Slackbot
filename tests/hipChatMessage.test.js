@@ -70,11 +70,11 @@ var validCard = {
   icon: {
       "url": "http://image.jpg"
   },
-  date: (new Date).getTime(),
+  date: (new Date()).getTime(),
   thumbnail: {
       url: "http://image.jpg"
   }
-}
+};
 
 describe('HipChatMessage', function() {
   describe('Basic methods and module', function() {
