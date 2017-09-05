@@ -58,7 +58,7 @@ var uuid = require('uuid/v4');
 var commandOperator = "/10bis";
 
 module.exports = {
-    getErrorMessage: function(restaurantName) {
+    getErrorMessage: function (restaurantName) {
         var restaurantString = "";
         if (restaurantName)
             restaurantString = " for: " + restaurantName;
@@ -73,7 +73,7 @@ module.exports = {
         return body;
     },
 
-    getRestaurantName: function(req) {
+    getRestaurantName: function (req) {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
             var message = req.body.item.message.message;
 
@@ -85,7 +85,7 @@ module.exports = {
         return null;
     },
 
-    isValidMessage: function(req) {
+    isValidMessage: function (req) {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
             return req.body.item.message.message.startsWith(commandOperator);
         }
@@ -93,14 +93,14 @@ module.exports = {
         return false;
     },
 
-    generateDescription: function(restaurant){
+    generateDescription: function (restaurant) {
         var description = "";
         description += restaurant.RestaurantCuisineList + "\n";
         description += "מינימום הזמנה: " + restaurant.MinimumOrder;
         return description;
     },
 
-    generateRestaurantCard: function(restaurant){
+    generateRestaurantCard: function (restaurant) {
         return {
             style: "link",
             url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
@@ -117,7 +117,7 @@ module.exports = {
         };
     },
 
-    getSuccessMessage: function(text, restaurant) {
+    getSuccessMessage: function (text, restaurant) {
         var body = {
             color: "green",
             message: text,
@@ -125,19 +125,19 @@ module.exports = {
             message_format: "text"
         };
 
-        if (restaurant){
+        if (restaurant) {
             body.card = this.generateRestaurantCard(restaurant);
         }
         return body;
     },
 
-    generateResponse: function(restaurants){
+    generateSearchResponse: function (restaurants) {
         var title = 'Found ' + restaurants.length + ' restaurants';
         var restaurantText = '';
 
-        if (restaurants.length > 0){
+        if (restaurants.length > 0) {
             title += "\n";
-            restaurants.forEach(function(restaurant, index){
+            restaurants.forEach(function (restaurant, index) {
                 var suffix = '';
                 if (index < restaurants.length)
                     suffix = '\n\n';
@@ -148,6 +148,30 @@ module.exports = {
         if (restaurants.length == 1)
             return this.getSuccessMessage(title, restaurants[0]);
         return this.getSuccessMessage(title + restaurantText, null);
+    },
+
+    generateTotalOrdersResponse: function (restaurants) {
+        var restaurantsString = "";
+        if (restaurants.length > 0) {
+
+            // Create a list
+            restaurants.forEach(function (restaurant, index) {
+                restaurantsString += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+                restaurantsString += "\n";
+                restaurantsString += "מינימום הזמנה: " + restaurant.MinimumOrder + "\t הוזמן עד כה: " + restaurant.PoolSum;
+            });
+        } else {
+            restaurantsString = "No pool order restaurants found";
+        }
+
+        var body = {
+            color: "green",
+            message: restaurantsString,
+            notify: false,
+            message_format: "text"
+        };
+
+        return body;
     }
 
 };

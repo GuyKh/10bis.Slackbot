@@ -1,54 +1,31 @@
-// tests/app.test.js
 var chai = require('chai');
 var expect = chai.expect; // we are using the "expect" style of Chai
 var rewire = require('rewire');
 var app = rewire('./../src/app.js');
+var helper = require('./helper.js');
 var slackMessageFormatter = require('./../src/slackMessage.js');
 var hipChatMessageFormatter = require('./../src/hipChatMessage.js');
 
-var slackValidMessage = '{' +
-   '"token":"ItoB7oEyZIbNmHPfxHQ2GrbC",' +
-   '"team_id":"T0001",' +
-   '"team_domain":"example",' +
-   '"channel_id":"C2147483705",' +
-   '"channel_name":"test",' +
-   '"user_id":"U2147483697",' +
-   '"user_name":"Steve",' +
-   '"command":"/10bis",' +
-   '"text":"דיקסי"' +
-'}';
+var slackValidMessage = '{ "token":"ItoB7oEyZIbNmHPfxHQ2GrbC", "team_id":"T0001","team_domain":"example","channel_id":"C2147483705","channel_name":"test", "user_id":"U2147483697",' +
+   '"user_name":"Steve","command":"/10bis","text":"דיקסי"}';
 
-var validHipChatMessage = '{ "event": "room_message",       ' +
-    '"item": {                                              ' +
-        '"message": {                                       ' +
-            '"date": "2015-01-20T22:45:06.662545+00:00",    ' +
-            '"from": {                                      ' +
-                '"id": 1661743,                             ' +
-                '"mention_name": "Blinky",                  ' +
-                '"name": "Blinky the Three Eyed Fish"       ' +
-            '},                                             ' +
-            '"id": "00a3eb7f-fac5-496a-8d64-a9050c712ca1",  ' +
-            '"mentions": [],                                ' +
-            '"message": "/10bis דיקסי",                       ' +
-            '"type": "message"                              ' +
-        '},                                                 ' +
-        '"room": {                                          ' +
-            '"id": 1147567,                                 ' +
-            '"name": "The Weather Channel"                  ' +
-        '}                                                  ' +
-    '},                                                     ' +
-    '"webhook_id": 578829                                   ' +
+var validHipChatMessage = '{ "event": "room_message",       "item": {                                              ' +
+        '"message": {                                       "date": "2015-01-20T22:45:06.662545+00:00",    ' +
+            '"from": {                                      "id": 1661743,                             ' +
+                '"mention_name": "Blinky",                  "name": "Blinky the Three Eyed Fish"       ' +
+            '},                                             "id": "00a3eb7f-fac5-496a-8d64-a9050c712ca1",  ' +
+            '"mentions": [],                                "message": "/10bis דיקסי",                       ' +
+            '"type": "message"                              },                                                 ' +
+        '"room": {                                          "id": 1147567,                                 ' +
+            '"name": "The Weather Channel"                  }                                                  ' +
+    '},                                                     "webhook_id": 578829                                   ' +
 '}';
 
 var slackInvalidMessage = '{' +
-   '"token":"ItoB7oEyZIbNmHPfxHQ2GrbC",' +
-   '"team_id":"T0001",' +
-   '"team_domain":"example",' +
-   '"channel_id":"C2147483705",' +
-   '"channel_name":"test",' +
-   '"user_id":"U2147483697",' +
-   '"user_name":"Steve"' +
-'}';
+   '"token":"ItoB7oEyZIbNmHPfxHQ2GrbC","team_id":"T0001",' +
+   '"team_domain":"example","channel_id":"C2147483705",' +
+   '"channel_name":"test","user_id":"U2147483697",' +
+   '"user_name":"Steve"}';
 
 var hipChatInvalidMessage = '{ "event": "room_message",     ' +
     '"item": {                                              ' +
@@ -123,13 +100,22 @@ describe('App', function () {
             });
 
 
-            it('generateRequest() should return a valid request', function () {
-                var generateRequest = app.__get__('generateRequest');
+            it('generateSearchRequest() should return a valid request', function () {
+                var generateRequest = app.__get__('generateSearchRequest');
 
                 var generatedRequest = generateRequest("Rest");
 
                 expect(generatedRequest).not.to.equal(null);
                 expect(generatedRequest.includes('searchPhrase=Rest')).to.equal(true);
+            });
+
+            it('generateGetTotalOrdersRequest() should return a valid request', function () {
+                var generateGetTotalOrdersRequest = app.__get__('generateGetTotalOrdersRequest');
+
+                var generatedRequest = generateGetTotalOrdersRequest();
+
+                expect(generatedRequest).not.to.equal(null);
+                expect(generatedRequest.includes('deliveryMethod=Delivery')).to.equal(true);
             });
 
             it('filterByRestaurantName() should filter restaurants with the same name', function () {
@@ -283,4 +269,18 @@ describe('App', function () {
                 expect(result[1].RestaurantName).to.be.equal('Rest2');
                 expect(result[2].RestaurantName).to.be.equal('Rest3');
             });
+
+            it('filterTotalOrders() should filter the restaurants correctly', function () {
+                var filterTotalOrders = app.__get__('filterTotalOrders');
+
+                var filteredRestaurants = helper.restaurants.filter(filterTotalOrders);
+
+                expect(filteredRestaurants).not.to.equal(null);
+                expect(filteredRestaurants.length).to.equal(1);
+                filteredRestaurants.forEach(function(restaurant){
+                    expect(restaurant.PoolSumNumber > 0).to.be.equal(true);
+                    expect(restaurant.IsOverPoolMin).to.be.equal(true);
+                });
+            });
+
 });

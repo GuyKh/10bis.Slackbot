@@ -42,6 +42,7 @@ Response:
 }
 */
 var commandOperator = "/10bis";
+var MAX_RESTAURANT_CARDS = 5;
 
 module.exports = {
     getErrorMessage: function (restaurantName) {
@@ -76,7 +77,7 @@ module.exports = {
         var restaurantName = restaurant.RestaurantName;
 
         return {
-                    fallback: "[1] " + restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                    fallback: restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
                     title: restaurantName,
                     color: '#36a64f',
                     title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
@@ -98,15 +99,45 @@ module.exports = {
         };
     },
 
-    generateResponse: function (restaurants) {
+    generateRestaurantTotalCard: function(restaurant){
+        var restaurantName = restaurant.RestaurantName;
+
+        return {
+                    fallback: restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                    title: restaurantName,
+                    color: '#36a64f',
+                    title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+                    text: restaurant.RestaurantCuisineList,
+                    fields: [
+                        {
+                            "title": "הוזמן עד כה",
+                            "value": restaurant.PoolSum,
+                            "short": true
+                        }, {
+                            "title": "מינימום הזמנה",
+                            "value": restaurant.MinimumOrder,
+                            "short": true
+                        }
+                    ],
+                    thumb_url: restaurant.RestaurantLogoUrl,
+                    ts: (Math.floor(Date.now() / 1000))
+        };
+    },
+
+
+    generateSearchResponse: function (restaurants) {
         var title = 'Found ' + restaurants.length + ' restaurants';
 
         var attachments = [];
         if (restaurants.length > 0) {
 
-            if (restaurants.length == 1){
-                // Create a special card
-                attachments.push(this.generateRestaurantCard(restaurants[0]));
+            if (restaurants.length < MAX_RESTAURANT_CARDS){
+                var generateRestaurantCard = this.generateRestaurantCard;
+
+                // For up to 5 restaurants, create a card
+                restaurants.forEach(function (restaurant, index) {
+                    attachments.push(generateRestaurantCard(restaurant, index));
+                });
             } else {
                 // Create a list
                 restaurants.forEach(function (restaurant, index) {
@@ -117,6 +148,45 @@ module.exports = {
                     });
                 });
             }
+        }
+
+        var body = {
+            response_type: "in_channel",
+            text: title
+        };
+
+        if (attachments.length > 0) {
+            body.attachments = attachments;
+        }
+
+        return body;
+    },
+
+    generateTotalOrdersResponse: function (restaurants) {
+        var title = 'Found ' + restaurants.length + ' restaurants';
+
+        var attachments = [];
+        if (restaurants.length > 0) {
+
+            if (restaurants.length < MAX_RESTAURANT_CARDS){
+                var generateRestaurantTotalCard = this.generateRestaurantTotalCard;
+
+                // For up to 5 restaurants, create a card
+                restaurants.forEach(function (restaurant, index) {
+                    attachments.push(generateRestaurantTotalCard(restaurant, index));
+                });
+            } else {
+                // Create a list
+                restaurants.forEach(function (restaurant, index) {
+                    var restaurantsString = '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+
+                    attachments.push({
+                        text: restaurantsString
+                    });
+                });
+            }
+        } else {
+            title = "No pool order restaurants found";
         }
 
         var body = {
