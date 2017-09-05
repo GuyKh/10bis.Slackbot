@@ -140,7 +140,7 @@ var search = function(res, messageFormatter, restaurantName){
 
 var filterTotalOrders = function (restarant){
     // Filter all restaurants will positive pool value
-    return restarant.IsOverPoolMin;
+    return restarant.IsOverPoolMin && restarant.PoolSumNumber > 0;
 };
 
 var getTotalOrders = function(res, messageFormatter){
