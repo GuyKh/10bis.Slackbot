@@ -185,6 +185,8 @@ module.exports = {
                     });
                 });
             }
+        } else {
+            title = "No pool order restaurants found";
         }
 
         var body = {

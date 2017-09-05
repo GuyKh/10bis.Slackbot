@@ -236,7 +236,7 @@ describe('SlackMessage', function() {
     var response = slackMessage.generateTotalOrdersResponse([]);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
-    expect(response.text).to.equal(expectedResponse.text);
+    expect(response.text).to.equal("No pool order restaurants found");
     expect(response).not.to.have.property('attachments');
   });
 
