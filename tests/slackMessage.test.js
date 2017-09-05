@@ -27,7 +27,7 @@ var goodResponse = '{' +
 '}';
 
 var validCard = {
-  fallback: "[1] דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  fallback: "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   title: "דיקסי",
   color: '#36a64f',
   title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
@@ -48,6 +48,28 @@ var validCard = {
   ts: (Math.floor(Date.now() / 1000))
 };
 
+var validTotalCard = {
+  fallback: "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  title: "דיקסי",
+  color: '#36a64f',
+  title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  text: "מסעדה אמריקאית",
+  fields: [
+      {
+      "title": "הוזמן עד כה",
+      "value": "₪ 90.00",
+      "short": true
+      },
+      {
+      "title": "מינימום הזמנה",
+      "value": "₪70.00",
+      "short": true
+      }
+  ],
+  thumb_url: "http://image.jpg",
+  ts: (Math.floor(Date.now() / 1000))
+};
+
 var errorResponse = '{' +
     '"response_type":"ephemeral",' +
     '"text":"No Restaurants Found"' +
@@ -55,13 +77,21 @@ var errorResponse = '{' +
 
 describe('SlackMessage', function() {
   describe('Basic methods and module', function() {
-  it('should have a generateResponse Method', function(){
+  it('should have a generateSearchResponse Method', function(){
     expect(typeof slackMessage).to.equal('object');
-    expect(typeof slackMessage.generateResponse).to.equal('function');
+    expect(typeof slackMessage.generateSearchResponse).to.equal('function');
+  });
+  it('should have a generateTotalOrdersResponse Method', function(){
+    expect(typeof slackMessage).to.equal('object');
+    expect(typeof slackMessage.generateTotalOrdersResponse).to.equal('function');
   });
   it('should have a generateRestaurantCard Method', function(){
     expect(typeof slackMessage).to.equal('object');
     expect(typeof slackMessage.generateRestaurantCard).to.equal('function');
+  });
+  it('should have a generateRestaurantTotalCard Method', function(){
+    expect(typeof slackMessage).to.equal('object');
+    expect(typeof slackMessage.generateRestaurantTotalCard).to.equal('function');
   });
   it('should have a getErrorMessage Method', function(){
     expect(typeof slackMessage).to.equal('object');
@@ -112,18 +142,18 @@ describe('SlackMessage', function() {
     expect(slackMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it('generateResponse() should return a valid message without restaurant list', function() {
+  it('generateSearchResponse() should return a valid message without restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = slackMessage.generateResponse([]);
+    var response = slackMessage.generateSearchResponse([]);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text);
     expect(response).not.to.have.property('attachments');
   });
 
-    it('generateResponse() should return a valid message with restaurant list', function() {
+    it('generateSearchResponse() should return a valid message with restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = slackMessage.generateResponse(helper.restaurants);
+    var response = slackMessage.generateSearchResponse(helper.restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 2 restaurants");
@@ -201,4 +231,46 @@ describe('SlackMessage', function() {
 
   });
 
+  it('generateTotalOrdersResponse() should return a valid message without restaurant list', function() {
+    var expectedResponse = JSON.parse(goodResponse);
+    var response = slackMessage.generateTotalOrdersResponse([]);
+
+    expect(response.response_type).to.equal(expectedResponse.response_type);
+    expect(response.text).to.equal(expectedResponse.text);
+    expect(response).not.to.have.property('attachments');
+  });
+
+    it('generateTotalOrdersResponse() should return a valid message with restaurant list', function() {
+    var expectedResponse = JSON.parse(goodResponse);
+    var response = slackMessage.generateTotalOrdersResponse(helper.restaurants);
+
+    expect(response.response_type).to.equal(expectedResponse.response_type);
+    expect(response.text).to.equal("Found 2 restaurants");
+    expect(response.attachments).not.equal(null);
+    expect(response.attachments.length).to.equal(2);
+  });
+
+  it('generateRestaurantTotalCard() should return a valid card', function() {
+    var restaruant = {
+      RestaurantName: "דיקסי",
+      RestaurantId: 123,
+      MinimumOrder: "₪70.00",
+      PoolSum: "₪ 90.00",
+      RestaurantCuisineList: "מסעדה אמריקאית",
+      RestaurantLogoUrl: "http://image.jpg"
+    };
+
+    var response = slackMessage.generateRestaurantTotalCard(restaruant);
+
+    // Can't do the following due to on the spot generation of guid and time
+    // expect(response).to.deep.equal(validCard);
+
+    expect(response.color).to.equal(validTotalCard.color);
+    expect(response.fallback).to.equal(validTotalCard.fallback);
+    expect(response.fields).to.deep.equal(validTotalCard.fields);
+    expect(response.text).to.equal(validTotalCard.text);
+    expect(response.title).to.equal(validTotalCard.title);
+    expect(response.title_link).to.equal(validTotalCard.title_link);
+
+  });
 });

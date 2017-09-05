@@ -78,9 +78,13 @@ var validCard = {
 
 describe('HipChatMessage', function() {
   describe('Basic methods and module', function() {
-    it('should have a generateResponse Method', function(){
+    it('should have a generateSearchResponse Method', function(){
       expect(typeof hipChatMessage).to.equal('object');
-      expect(typeof hipChatMessage.generateResponse).to.equal('function');
+      expect(typeof hipChatMessage.generateSearchResponse).to.equal('function');
+    });
+    it('should have a generateTotalOrdersResponse Method', function(){
+      expect(typeof hipChatMessage).to.equal('object');
+      expect(typeof hipChatMessage.generateTotalOrdersResponse).to.equal('function');
     });
     it('should have a generateRestaurantCard Method', function(){
       expect(typeof hipChatMessage).to.equal('object');
@@ -135,9 +139,9 @@ describe('HipChatMessage', function() {
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it('generateResponse() should return a valid message without restaurant list', function() {
+  it('generateSearchResponse() should return a valid message without restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = hipChatMessage.generateResponse([]);
+    var response = hipChatMessage.generateSearchResponse([]);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message).to.equal('Found 0 restaurants');
@@ -145,9 +149,9 @@ describe('HipChatMessage', function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it('generateResponse() should return a valid message with restaurant list', function() {
+  it('generateSearchResponse() should return a valid message with restaurant list', function() {
     var expectedResponse = JSON.parse(goodResponse);
-    var response = hipChatMessage.generateResponse(helper.restaurants);
+    var response = hipChatMessage.generateSearchResponse(helper.restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message.startsWith("Found 2 restaurants")).to.equal(true);
@@ -223,6 +227,28 @@ describe('HipChatMessage', function() {
       expect(response.thumbnail.url).to.equal(validCard.thumbnail.url);
       expect(response.title).to.equal(validCard.title);
       expect(response.url).to.equal(validCard.url);
+  });
+
+  it('generateTotalOrdersResponse() should return a valid message without restaurant list', function() {
+    var expectedResponse = JSON.parse(goodResponse);
+    var response = hipChatMessage.generateTotalOrdersResponse([]);
+
+    expect(response.color).to.equal(expectedResponse.color);
+    expect(response.message).to.equal("No pool order restaurants found");
+    expect(response.notify).to.equal(expectedResponse.notify);
+    expect(response.message_format).to.equal(expectedResponse.message_format);
+  });
+
+    it('generateTotalOrdersResponse() should return a valid message with restaurant list', function() {
+    var expectedResponse = JSON.parse(goodResponse);
+    var response = hipChatMessage.generateTotalOrdersResponse(helper.restaurants);
+
+    expect(response.color).to.equal(expectedResponse.color);
+    expect(response.message.includes("[1]")).to.equal(true);
+    expect(response.message.includes("[2]")).to.equal(true);
+    expect(response.message.includes("[3]")).to.equal(false);
+    expect(response.notify).to.equal(expectedResponse.notify);
+    expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
 
