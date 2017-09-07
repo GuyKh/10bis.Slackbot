@@ -3,6 +3,8 @@ var hipChatMessage = require('./hipChatMessage.js');
 var url = require('url');
 var dateFormat = require('dateformat');
 var request = require('request');
+var winston = require('winston');
+winston.level = process.env.LOG_LEVEL;
 
 var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
@@ -145,6 +147,8 @@ var filterTotalOrders = function (restarant){
 
 var getTotalOrders = function(res, messageFormatter){
          var parsed_url = generateGetTotalOrdersRequest();
+
+        winston.log('debug', 'Total Orders Url: ' + parsed_url);
 
          request(parsed_url, function(error, response, body) {
              if (!error && response.statusCode == 200) {
