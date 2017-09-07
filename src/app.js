@@ -148,7 +148,7 @@ var filterTotalOrders = function (restarant){
 var getTotalOrders = function(res, messageFormatter){
          var parsed_url = generateGetTotalOrdersRequest();
 
-        winston.log('debug', 'Total Orders Url: ' + parsed_url);
+        winston.debug('Total Orders Url: ' + parsed_url);
 
          request(parsed_url, function(error, response, body) {
              if (!error && response.statusCode == 200) {
