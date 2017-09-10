@@ -1,16 +1,22 @@
 var slackMessage = require('./slackMessage.js');
 var hipChatMessage = require('./hipChatMessage.js');
 var url = require('url');
-var dateFormat = require('dateformat');
 var request = require('request');
+var moment = require('moment-timezone');
+var winston = require('winston');
+winston.level = process.env.LOG_LEVEL;
+
 
 var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
 var TOTAL_KEYWORD = "total";
+var DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm:ss";
+var TIMEZONE = 'Asia/Jerusalem';
+
 
 var generateSearchRequest = function(restaurantName) {
-    var now = new Date();
+    var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -31,8 +37,8 @@ var generateSearchRequest = function(restaurantName) {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date()).getTime()
+            desiredDateAndTime: encodeURI(now),
+            timestamp: new Date().getTime()
         }
     });
 
@@ -40,7 +46,7 @@ var generateSearchRequest = function(restaurantName) {
 };
 
 var generateGetTotalOrdersRequest = function() {
-    var now = new Date();
+    var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -61,8 +67,8 @@ var generateGetTotalOrdersRequest = function() {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date()).getTime()
+            desiredDateAndTime: encodeURI(now),
+            timestamp: new Date().getTime()
         }
     });
 
@@ -145,6 +151,7 @@ var filterTotalOrders = function (restarant){
 
 var getTotalOrders = function(res, messageFormatter){
          var parsed_url = generateGetTotalOrdersRequest();
+         winston.debug('Total Orders Url: ' + parsed_url);
 
          request(parsed_url, function(error, response, body) {
              if (!error && response.statusCode == 200) {

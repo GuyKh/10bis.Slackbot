@@ -1,8 +1,12 @@
 var express = require('express');
 var app = express();
 var botApp = require('./src/app.js');
+var debug = require('debug')('10bis.slackbot');
+var appName = '10bis.slackbot';
+var winston = require('winston');
+winston.level = process.env.LOG_LEVEL;
 
-
+debug('booting %s', appName);
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
