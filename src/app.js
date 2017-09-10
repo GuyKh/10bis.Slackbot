@@ -19,7 +19,7 @@ var TIMEZONE = 'Asia/Jerusalem';
 var formatDateTime = function(now) {
     // 10bis query format is: 10%2F09%2F2017+19%3A45%3A57
     // which is 'dd/mm/yyyy HH:MM:ss' but the encodeURI struggles with the space
-    return encodeURI(dateFormat(now, DATE_FORMAT)) + '+' + encodeURI(dateFormat(now, TIME_FORMAT));
+    return encodeURI(dateFormat(now, DATE_FORMAT)) + ' ' + encodeURI(dateFormat(now, TIME_FORMAT));
 };
 
 var generateSearchRequest = function(restaurantName) {
