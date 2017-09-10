@@ -33,7 +33,7 @@ var generateSearchRequest = function(restaurantName) {
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
             desiredDateAndTime: dateFormat(now, DATETIME_FORMAT),
-            timestamp: (new Date()).getTime()            
+            timestamp: (new Date()).getTime()
         }
     });
 
