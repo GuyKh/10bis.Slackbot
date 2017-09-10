@@ -3,16 +3,20 @@ var hipChatMessage = require('./hipChatMessage.js');
 var url = require('url');
 var dateFormat = require('dateformat');
 var request = require('request');
+var moment = require('moment-timezone');
 var winston = require('winston');
 winston.level = process.env.LOG_LEVEL;
+
 
 var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
 var TOTAL_KEYWORD = "total";
+var DATETIME_FORMAT = 'dd/mm/yyyy HH:MM:ss';
+var TIMEZONE = 'Asia/Jerusalem';
 
 var generateSearchRequest = function(restaurantName) {
-    var now = new Date();
+    var now = moment.tz(TIMEZONE).toDate();
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -24,17 +28,17 @@ var generateSearchRequest = function(restaurantName) {
             pageSize: 50,
             OrderBy: "Default",
             cuisineType: "",
-            CityId: 0, //process.env.CITY_ID,
-            StreetId: 0, //process.env.STREET_ID,
+            CityId: process.env.CITY_ID,
+            StreetId: process.env.STREET_ID,
             FilterByKosher: false,
             FilterByBookmark: false,
             FilterByCoupon: false,
             searchPhrase: restaurantName,
-            Latitude: 0, //process.env.LAT,
-            Longitude: 0, //process.env.LONG,
-            HouseNumber: 1, //process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date()).getTime()
+            Latitude: process.env.LAT,
+            Longitude: process.env.LONG,
+            HouseNumber: process.env.HOUSE_NUMBER,
+            desiredDateAndTime: encodeURI(dateFormat(now, DATETIME_FORMAT)),
+            timestamp: now.getTime()
         }
     });
 
@@ -42,7 +46,7 @@ var generateSearchRequest = function(restaurantName) {
 };
 
 var generateGetTotalOrdersRequest = function() {
-    var now = new Date();
+    var now = moment.tz(TIMEZONE).toDate();
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -63,8 +67,8 @@ var generateGetTotalOrdersRequest = function() {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date()).getTime()
+            desiredDateAndTime: encodeURI(dateFormat(now, DATETIME_FORMAT)),
+            timestamp: now.getTime()
         }
     });
 
@@ -147,8 +151,7 @@ var filterTotalOrders = function (restarant){
 
 var getTotalOrders = function(res, messageFormatter){
          var parsed_url = generateGetTotalOrdersRequest();
-
-        winston.debug('Total Orders Url: ' + parsed_url);
+         winston.debug('Total Orders Url: ' + parsed_url);
 
          request(parsed_url, function(error, response, body) {
              if (!error && response.statusCode == 200) {
