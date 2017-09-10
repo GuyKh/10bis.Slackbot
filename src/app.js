@@ -1,7 +1,6 @@
 var slackMessage = require('./slackMessage.js');
 var hipChatMessage = require('./hipChatMessage.js');
 var url = require('url');
-var dateFormat = require('dateformat');
 var request = require('request');
 var moment = require('moment-timezone');
 var winston = require('winston');
@@ -12,18 +11,12 @@ var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
 var TOTAL_KEYWORD = "total";
-var DATE_FORMAT = 'dd/mm/yyyy';
-var TIME_FORMAT = 'HH:MM:ss';
+var DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm:ss";
 var TIMEZONE = 'Asia/Jerusalem';
 
-var formatDateTime = function(now) {
-    // 10bis query format is: 10%2F09%2F2017+19%3A45%3A57
-    // which is 'dd/mm/yyyy HH:MM:ss' but the encodeURI struggles with the space
-    return encodeURI(dateFormat(now, DATE_FORMAT)) + ' ' + encodeURI(dateFormat(now, TIME_FORMAT));
-};
 
 var generateSearchRequest = function(restaurantName) {
-    var now = moment.tz(TIMEZONE).toDate();
+    var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -44,8 +37,8 @@ var generateSearchRequest = function(restaurantName) {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: formatDateTime(now),
-            timestamp: now.getTime()
+            desiredDateAndTime: encodeURI(now),
+            timestamp: new Date().getTime()
         }
     });
 
@@ -53,7 +46,7 @@ var generateSearchRequest = function(restaurantName) {
 };
 
 var generateGetTotalOrdersRequest = function() {
-    var now = moment.tz(TIMEZONE).toDate();
+    var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -74,8 +67,8 @@ var generateGetTotalOrdersRequest = function() {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: formatDateTime(now),
-            timestamp: now.getTime()
+            desiredDateAndTime: encodeURI(now),
+            timestamp: new Date().getTime()
         }
     });
 
