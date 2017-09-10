@@ -3,13 +3,12 @@ var hipChatMessage = require('./hipChatMessage.js');
 var url = require('url');
 var dateFormat = require('dateformat');
 var request = require('request');
-var winston = require('winston');
-winston.level = process.env.LOG_LEVEL;
 
 var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
 var TOTAL_KEYWORD = "total";
+var DATETIME_FORMAT = 'dd%252Fmm%252Fyyyy%2BHH%253AMM%253Ass';
 
 var generateSearchRequest = function(restaurantName) {
     var now = new Date();
@@ -24,17 +23,17 @@ var generateSearchRequest = function(restaurantName) {
             pageSize: 50,
             OrderBy: "Default",
             cuisineType: "",
-            CityId: 0, //process.env.CITY_ID,
-            StreetId: 0, //process.env.STREET_ID,
+            CityId: process.env.CITY_ID,
+            StreetId: process.env.STREET_ID,
             FilterByKosher: false,
             FilterByBookmark: false,
             FilterByCoupon: false,
             searchPhrase: restaurantName,
-            Latitude: 0, //process.env.LAT,
-            Longitude: 0, //process.env.LONG,
-            HouseNumber: 1, //process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date()).getTime()
+            Latitude: process.env.LAT,
+            Longitude: process.env.LONG,
+            HouseNumber: process.env.HOUSE_NUMBER,
+            desiredDateAndTime: dateFormat(now, DATETIME_FORMAT),
+            timestamp: (new Date()).getTime()            
         }
     });
 
@@ -63,8 +62,8 @@ var generateGetTotalOrdersRequest = function() {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, "dd%2Fmm%2Fyyyy+HH%3AMM%3Ass"),
-            timestamp: (new Date()).getTime()
+            desiredDateAndTime: dateFormat(now, DATETIME_FORMAT),
+            timestamp: now.getTime()
         }
     });
 
@@ -142,13 +141,11 @@ var search = function(res, messageFormatter, restaurantName){
 
 var filterTotalOrders = function (restarant){
     // Filter all restaurants will positive pool value
-    return restarant.PoolSumNumber > 0;
+    return restarant.IsOverPoolMin && restarant.PoolSumNumber > 0;
 };
 
 var getTotalOrders = function(res, messageFormatter){
          var parsed_url = generateGetTotalOrdersRequest();
-
-        winston.debug('Total Orders Url: ' + parsed_url);
 
          request(parsed_url, function(error, response, body) {
              if (!error && response.statusCode == 200) {
