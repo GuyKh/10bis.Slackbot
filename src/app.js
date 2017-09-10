@@ -11,7 +11,7 @@ var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
 var TOTAL_KEYWORD = "total";
-var DATETIME_FORMAT = 'dd%252Fmm%252Fyyyy%2BHH%253AMM%253Ass';
+var DATETIME_FORMAT = 'dd/mm/yyyy HH:MM:ss';
 
 var generateSearchRequest = function(restaurantName) {
     var now = new Date();
@@ -35,7 +35,7 @@ var generateSearchRequest = function(restaurantName) {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, DATETIME_FORMAT),
+            desiredDateAndTime: encodeURI(dateFormat(now, DATETIME_FORMAT)),
             timestamp: (new Date()).getTime()
         }
     });
@@ -65,7 +65,7 @@ var generateGetTotalOrdersRequest = function() {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: dateFormat(now, DATETIME_FORMAT),
+            desiredDateAndTime: encodeURI(dateFormat(now, DATETIME_FORMAT)),
             timestamp: now.getTime()
         }
     });
