@@ -11,12 +11,21 @@ var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
 var TOTAL_KEYWORD = "total";
-var DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm:ss";
+//var DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm:ss";
+var DATE_FORMAT = "DD/MM/YYYY";
+var TIME_FORMAT = "HH:mm:ss";
 var TIMEZONE = 'Asia/Jerusalem';
 
 
+var getFormatedDateTime = function(){
+    var date = moment.tz(TIMEZONE).format(DATE_FORMAT);
+    var time = moment.tz(TIMEZONE).format(TIME_FORMAT);
+
+    return encodeURI(date) + '+' + encodeURI(time);
+};
+
 var generateSearchRequest = function(restaurantName) {
-    var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
+    //var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -37,7 +46,7 @@ var generateSearchRequest = function(restaurantName) {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: encodeURI(now),
+            desiredDateAndTime: getFormatedDateTime(),
             timestamp: new Date().getTime()
         }
     });
@@ -46,7 +55,7 @@ var generateSearchRequest = function(restaurantName) {
 };
 
 var generateGetTotalOrdersRequest = function() {
-    var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
+    //var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -67,7 +76,7 @@ var generateGetTotalOrdersRequest = function() {
             Latitude: process.env.LAT,
             Longitude: process.env.LONG,
             HouseNumber: process.env.HOUSE_NUMBER,
-            desiredDateAndTime: encodeURI(now),
+            desiredDateAndTime: getFormatedDateTime(),
             timestamp: new Date().getTime()
         }
     });
