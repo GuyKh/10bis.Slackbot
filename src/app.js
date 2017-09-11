@@ -11,7 +11,6 @@ var defaultResponse = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
 
 var TOTAL_KEYWORD = "total";
-//var DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm:ss";
 var DATE_FORMAT = "DD/MM/YYYY";
 var TIME_FORMAT = "HH:mm:ss";
 var TIMEZONE = 'Asia/Jerusalem';
@@ -21,11 +20,10 @@ var getFormatedDateTime = function(){
     var date = moment.tz(TIMEZONE).format(DATE_FORMAT);
     var time = moment.tz(TIMEZONE).format(TIME_FORMAT);
 
-    return encodeURI(date) + '+' + encodeURI(time);
+    return date + '+' + time;
 };
 
 var generateSearchRequest = function(restaurantName) {
-    //var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -51,11 +49,12 @@ var generateSearchRequest = function(restaurantName) {
         }
     });
 
+    parsed_url = parsed_url.replace('%2B', '+');
+
     return parsed_url;
 };
 
 var generateGetTotalOrdersRequest = function() {
-    //var now = moment.tz(TIMEZONE).format(DATE_TIME_FORMAT);
 
     var parsed_url = url.format({
         pathname: 'https://www.10bis.co.il/Restaurants/SearchRestaurants',
@@ -80,6 +79,9 @@ var generateGetTotalOrdersRequest = function() {
             timestamp: new Date().getTime()
         }
     });
+
+
+    parsed_url = parsed_url.replace('%2B', '+');
 
     return parsed_url;
 };
