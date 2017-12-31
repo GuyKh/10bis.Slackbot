@@ -30,7 +30,8 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha tests/*.js --reporter spec",
     "eslint": "./node_modules/.bin/eslint -c .eslintrc.js src/*.js tests/*.js index.js",
-    "tslint": "./node_modules/.bin/tslint --project ./"
+    "tslint": "./node_modules/.bin/tslint --project ./",
+    "start": "./node_modules/.bin/tsc --module commonjs --outDir build/ --sourceMap --target ES6 -p ./tsconfig.json && node index.js"
   },
   "repository": {
     "type": "git",
