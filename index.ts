@@ -6,14 +6,16 @@ var botApp = require("./src/app.js");
 var debug = require("debug")("10bis.slackbot");
 var appName = "10bis.slackbot";
 var winston = require("winston");
-winston.level = process.env.LOG_LEVEL;
+const logLevel : string = process.env.LOG_LEVEL;
+winston.level = logLevel;
 
 debug("booting %s", appName);
 var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.set("port", (process.env.PORT || 9001));
+const port : string = process.env.PORT;
+app.set("port", (port || 9001));
 
 app.get("/", function(req : Commons.Request, res : Commons.Response) {
     res.send("Sanity passed!");

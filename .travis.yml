@@ -11,5 +11,6 @@ install:
 - npm install eslint-plugin-mocha -g
 - npm install eslint-plugin-chai-expect -g
 script:
+- .\node_modules\.bin\tsc -p ./tsconfig.json
 - npm run eslint
 - npm test

@@ -1,5 +1,5 @@
 module.exports = {
-    compareKeys: function(objectA : object, objectB : object) {
+    compareKeys: function(objectA : Object, objectB : Object) {
         var aKeys = Object.keys(objectA).sort();
         var bKeys = Object.keys(objectB).sort();
         return JSON.stringify(aKeys) === JSON.stringify(bKeys);
