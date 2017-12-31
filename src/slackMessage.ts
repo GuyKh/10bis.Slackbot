@@ -1,3 +1,7 @@
+import {SlackModule} from "../src/slackModule";
+import { Commons } from "./commons";
+
+
 /*
 Request:
 {
@@ -45,27 +49,29 @@ var commandOperator = "/10bis";
 var MAX_RESTAURANT_CARDS = 5;
 
 module.exports = {
-    getErrorMessage: function (restaurantName) {
+    getErrorMessage: function (restaurantName : string) {
         var restaurantString = "";
-        if (restaurantName)
+        if (restaurantName) {
             restaurantString = " for: " + restaurantName;
+        }
 
         var body = {
             response_type: "ephemeral",
-            text: 'No Restaurants Found' + restaurantString
+            text: "No Restaurants Found" + restaurantString
         };
 
         return body;
     },
 
-    getRestaurantName: function (req) {
-        if (req && req.body)
+    getRestaurantName: function (req : SlackModule.SlackRequest) {
+        if (req && req.body) {
             return req.body.text;
+        }
 
         return null;
     },
 
-    isValidMessage: function (req) {
+    isValidMessage: function (req : SlackModule.SlackRequest) {
         if (req && req.body && req.body.command && req.body.command === commandOperator) {
             return true;
         }
@@ -73,13 +79,13 @@ module.exports = {
         return false;
     },
 
-    generateRestaurantCard: function(restaurant){
+    generateRestaurantCard: function(restaurant : Commons.Restaurant) {
         var restaurantName = restaurant.RestaurantName;
 
         return {
                     fallback: restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
                     title: restaurantName,
-                    color: '#36a64f',
+                    color: "#36a64f",
                     title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
                     text: restaurant.RestaurantCuisineList,
                     fields: [
@@ -99,49 +105,54 @@ module.exports = {
         };
     },
 
-    generateRestaurantTotalCard: function(restaurant){
+    generateRestaurantTotalCard: function(restaurant : Commons.Restaurant) {
         var restaurantName = restaurant.RestaurantName;
 
-        return {
-                    fallback: restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
-                    title: restaurantName,
-                    color: '#36a64f',
-                    title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
-                    text: restaurant.RestaurantCuisineList,
-                    fields: [
-                        {
-                            "title": "הוזמן עד כה",
-                            "value": restaurant.PoolSum,
-                            "short": true
-                        }, {
-                            "title": "מינימום הזמנה",
-                            "value": restaurant.MinimumOrder,
-                            "short": true
-                        }
-                    ],
-                    thumb_url: restaurant.RestaurantLogoUrl,
-                    ts: (Math.floor(Date.now() / 1000))
-        };
+        let slackAttachment = new SlackModule.SlackAttachment(
+            restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            restaurantName,
+            "#36a64f",
+            "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            restaurant.RestaurantCuisineList,
+            restaurant.RestaurantLogoUrl,
+            (Math.floor(Date.now() / 1000))
+        );
+
+        slackAttachment.fields = [];
+        slackAttachment.fields.push(new SlackModule.SlackAttachmentField(
+            "הוזמן עד כה",
+            restaurant.PoolSum,
+            true
+        ));
+
+        slackAttachment.fields.push(new SlackModule.SlackAttachmentField(
+            "מינימום הזמנה",
+            restaurant.MinimumOrder,
+            true
+        ));
+
+        return slackAttachment;
     },
 
 
-    generateSearchResponse: function (restaurants) {
-        var title = 'Found ' + restaurants.length + ' restaurants';
+    generateSearchResponse: function (restaurants : Commons.Restaurant[]) {
+        var title = "Found " + restaurants.length + " restaurants";
 
         var attachments = [];
         if (restaurants.length > 0) {
 
-            if (restaurants.length < MAX_RESTAURANT_CARDS){
+            if (restaurants.length < MAX_RESTAURANT_CARDS) {
                 var generateRestaurantCard = this.generateRestaurantCard;
 
                 // For up to 5 restaurants, create a card
-                restaurants.forEach(function (restaurant, index) {
+                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
                     attachments.push(generateRestaurantCard(restaurant, index));
                 });
             } else {
                 // Create a list
-                restaurants.forEach(function (restaurant, index) {
-                    var restaurantsString = '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
+                    var restaurantsString = "[" + (index + 1) + "] " + restaurant.RestaurantName +
+                     " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
 
                     attachments.push({
                         text: restaurantsString
@@ -152,7 +163,8 @@ module.exports = {
 
         var body = {
             response_type: "in_channel",
-            text: title
+            text: title,
+            attachments: null
         };
 
         if (attachments.length > 0) {
@@ -162,42 +174,40 @@ module.exports = {
         return body;
     },
 
-    generateTotalOrdersResponse: function (restaurants) {
-        var title = 'Found ' + restaurants.length + ' restaurants';
+    generateTotalOrdersResponse: function (restaurants : Commons.Restaurant[]) {
+        var title = "Found " + restaurants.length + " restaurants";
 
         var attachments = [];
         if (restaurants.length > 0) {
 
-            if (restaurants.length < MAX_RESTAURANT_CARDS){
+            if (restaurants.length < MAX_RESTAURANT_CARDS) {
                 var generateRestaurantTotalCard = this.generateRestaurantTotalCard;
 
                 // For up to 5 restaurants, create a card
-                restaurants.forEach(function (restaurant, index) {
+                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
                     attachments.push(generateRestaurantTotalCard(restaurant, index));
                 });
             } else {
                 // Create a list
-                restaurants.forEach(function (restaurant, index) {
-                    var restaurantsString = '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
+                    var restaurantsString = "[" + (index + 1) + "] " + restaurant.RestaurantName +
+                    " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
 
-                    attachments.push({
-                        text: restaurantsString
-                    });
+                    attachments.push(
+                        new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null)
+                     );
                 });
             }
         } else {
             title = "No pool order restaurants found";
         }
 
-        var body = {
-            response_type: "in_channel",
-            text: title
-        };
+        let slackResponse = new SlackModule.SlackResponse("in_channel", title, null);
 
         if (attachments.length > 0) {
-            body.attachments = attachments;
+            slackResponse.attachments = attachments;
         }
 
-        return body;
+        return slackResponse;
     }
 };

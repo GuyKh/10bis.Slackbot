@@ -58,3 +58,7 @@ typings/
 .env
 
 .vscode/launch.json
+
+# Ignores compiled TypeScript files
+**/*.map
+**/*.js

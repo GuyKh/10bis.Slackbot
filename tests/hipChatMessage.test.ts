@@ -1,65 +1,40 @@
+import { Req } from "./app.test";
+import { deepCopy } from "./commons";
+import { HipChatModule } from "../src/hipChatModule";
+
 // tests/hipChatMessage.test.js
-var chai = require('chai');
+var chai = require("chai");
 var expect = chai.expect; // we are using the "expect" style of Chai
-var hipChatMessage = require('./../src/hipChatMessage.js');
-var helper = require('./helper.js');
+var hipChatMessage = require("./../src/hipChatMessage.js");
+var helper = require("./helper.js");
 
-var message = '{ "event": "room_message",                   ' +
-    '"item": {                                              ' +
-        '"message": {                                       ' +
-            '"date": "2015-01-20T22:45:06.662545+00:00",    ' +
-            '"from": {                                      ' +
-                '"id": 1661743,                             ' +
-                '"mention_name": "Blinky",                  ' +
-                '"name": "Blinky the Three Eyed Fish"       ' +
-            '},                                             ' +
-            '"id": "00a3eb7f-fac5-496a-8d64-a9050c712ca1",  ' +
-            '"mentions": [],                                ' +
-            '"message": "/10bis דיקסי",                       ' +
-            '"type": "message"                              ' +
-        '},                                                 ' +
-        '"room": {                                          ' +
-            '"id": 1147567,                                 ' +
-            '"name": "The Weather Channel"                  ' +
-        '}                                                  ' +
-    '},                                                     ' +
-    '"webhook_id": 578829                                   ' +
-'}';
+let message = new HipChatModule.HipChatReqBody("room_message",
+                  new HipChatModule.HipChatReqItem(
+                      new HipChatModule.HipChatReqItemMessage(
+                        new Date("2015-01-20T22:45:06.66254500:00"),
+                        new HipChatModule.HipChatReqItemMessageFrom(1661743, "Blinky", "Blinky the Three Eyed Fish"),
+                        "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
+                         [],
+                         "/10bis דיקסי",
+                         "message"),
+                      new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")),
+                  578829);
 
-var badMessage = '{ "event": "room_message",                ' +
-    '"item": {                                              ' +
-        '"message": {                                       ' +
-            '"date": "2015-01-20T22:45:06.662545+00:00",    ' +
-            '"from": {                                      ' +
-                '"id": 1661743,                             ' +
-                '"mention_name": "Blinky",                  ' +
-                '"name": "Blinky the Three Eyed Fish"       ' +
-          '},                                               ' +
-            '"id": "00a3eb7f-fac5-496a-8d64-a9050c712ca1",  ' +
-            '"mentions": [],                                ' +
-            '"type": "message"                              ' +
-        '},                                                 ' +
-        '"room": {                                          ' +
-            '"id": 1147567,                                 ' +
-            '"name": "The Weather Channel"                  ' +
-        '}                                                  ' +
-    '},                                                     ' +
-    '"webhook_id": 578829                                   ' +
-'}';
+let badMessage = new HipChatModule.HipChatReqBody("room_message",
+      new HipChatModule.HipChatReqItem(
+          new HipChatModule.HipChatReqItemMessage(
+            new Date("2015-01-20T22:45:06.66254500:00"),
+            new HipChatModule.HipChatReqItemMessageFrom(1661743, "Blinky", "Blinky the Three Eyed Fish"),
+            "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
+              [],
+              null,
+              "message"),
+          new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")),
+      578829);
 
-var goodResponse = '{                                     ' +
-    '"color": "green",                                    ' +
-    '"message": "Found 0 Restaurants",                    ' +
-    '"notify": false,                                     ' +
-    '"message_format": "text"                             ' +
-'}';
+let goodResponse = new HipChatModule.HipChatResponse("green", "Found 0 Restaurants", false, "text");
 
-var errorResponse = '{                                    ' +
-    '"color": "red",                                      ' +
-    '"message": "No Restaurants Found",                   ' +
-    '"notify": false,                                     ' +
-    '"message_format": "text"                             ' +
-'}';
+let errorResponse = new HipChatModule.HipChatResponse("red", "No Restaurants Found", false, "text");
 
 var validCard = {
   style: "link",
@@ -76,81 +51,77 @@ var validCard = {
   }
 };
 
-describe('HipChatMessage', function() {
-  describe('Basic methods and module', function() {
-    it('should have a generateSearchResponse Method', function(){
-      expect(typeof hipChatMessage).to.equal('object');
-      expect(typeof hipChatMessage.generateSearchResponse).to.equal('function');
+describe("HipChatMessage", function() {
+  describe("Basic methods and module", function() {
+    it("should have a generateSearchResponse Method", function() {
+      expect(typeof hipChatMessage).to.equal("object");
+      expect(typeof hipChatMessage.generateSearchResponse).to.equal("function");
     });
-    it('should have a generateTotalOrdersResponse Method', function(){
-      expect(typeof hipChatMessage).to.equal('object');
-      expect(typeof hipChatMessage.generateTotalOrdersResponse).to.equal('function');
+    it("should have a generateTotalOrdersResponse Method", function() {
+      expect(typeof hipChatMessage).to.equal("object");
+      expect(typeof hipChatMessage.generateTotalOrdersResponse).to.equal("function");
     });
-    it('should have a generateRestaurantCard Method', function(){
-      expect(typeof hipChatMessage).to.equal('object');
-      expect(typeof hipChatMessage.generateRestaurantCard).to.equal('function');
+    it("should have a generateRestaurantCard Method", function() {
+      expect(typeof hipChatMessage).to.equal("object");
+      expect(typeof hipChatMessage.generateRestaurantCard).to.equal("function");
     });
-    it('should have a getErrorMessage Method', function(){
-      expect(typeof hipChatMessage).to.equal('object');
-      expect(typeof hipChatMessage.getErrorMessage).to.equal('function');
+    it("should have a getErrorMessage Method", function() {
+      expect(typeof hipChatMessage).to.equal("object");
+      expect(typeof hipChatMessage.getErrorMessage).to.equal("function");
     });
-    it('should have a getRestaurantName Method', function(){
-      expect(typeof hipChatMessage).to.equal('object');
-      expect(typeof hipChatMessage.getRestaurantName).to.equal('function');
+    it("should have a getRestaurantName Method", function() {
+      expect(typeof hipChatMessage).to.equal("object");
+      expect(typeof hipChatMessage.getRestaurantName).to.equal("function");
     });
-    it('should have a isValidMessage Method', function(){
-      expect(typeof hipChatMessage).to.equal('object');
-      expect(typeof hipChatMessage.isValidMessage).to.equal('function');
+    it("should have a isValidMessage Method", function() {
+      expect(typeof hipChatMessage).to.equal("object");
+      expect(typeof hipChatMessage.isValidMessage).to.equal("function");
     });
   });
 
-  it('isValidMessage() should return true if default format message is sent', function() {
-    var req = {};
-    req.body = JSON.parse(message);
+  it("isValidMessage() should return true if default format message is sent", function() {
+    let req = new Req(deepCopy(message));
     expect(hipChatMessage.isValidMessage(req)).to.equal(true);
   });
 
-  it('isValidMessage() should return false if message body is passing null', function() {
+  it("isValidMessage() should return false if message body is passing null", function() {
     expect(hipChatMessage.isValidMessage(null)).to.equal(false);
   });
 
-  it('isValidMessage() should return false if message body is missing', function() {
-    var req = {};
-    req.body = JSON.parse(badMessage);
+  it("isValidMessage() should return false if message body is missing", function() {
+    let req = new Req(deepCopy(badMessage));
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it('isValidMessage() should return false if request body is missing', function() {
+  it("isValidMessage() should return false if request body is missing", function() {
     var req = {};
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it('isValidMessage() should return true if message body is only the command', function() {
-    var req = {};
-    req.body = JSON.parse(message);
+  it("isValidMessage() should return true if message body is only the command", function() {
+    let req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = "/10bis";
     expect(hipChatMessage.isValidMessage(req)).to.equal(true);
   });
 
-  it('isValidMessage() should return false if message body doesn\'t start with the command', function() {
-    var req = {};
-    req.body = JSON.parse(message);
+  it("isValidMessage() should return false if message body doesn't start with the command", function() {
+    let req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = "/test";
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it('generateSearchResponse() should return a valid message without restaurant list', function() {
-    var expectedResponse = JSON.parse(goodResponse);
+  it("generateSearchResponse() should return a valid message without restaurant list", function() {
+    let expectedResponse = deepCopy(goodResponse);
     var response = hipChatMessage.generateSearchResponse([]);
 
     expect(response.color).to.equal(expectedResponse.color);
-    expect(response.message).to.equal('Found 0 restaurants');
+    expect(response.message).to.equal("Found 0 restaurants");
     expect(response.notify).to.equal(expectedResponse.notify);
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it('generateSearchResponse() should return a valid message with restaurant list', function() {
-    var expectedResponse = JSON.parse(goodResponse);
+  it("generateSearchResponse() should return a valid message with restaurant list", function() {
+    let expectedResponse = deepCopy(goodResponse);
     var response = hipChatMessage.generateSearchResponse(helper.restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
@@ -159,34 +130,31 @@ describe('HipChatMessage', function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it('getRestaurantName() should return right restaruant name from request', function() {
-    var req = {};
-    req.body = JSON.parse(message);
+  it("getRestaurantName() should return right restaruant name from request", function() {
+    let req = new HipChatModule.HipChatReq(deepCopy(message));
     var restaurantName = hipChatMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal("דיקסי");
   });
 
-  it('getRestaurantName() should return an empty restaruant name from request with only command', function() {
-    var req = {};
-    req.body = JSON.parse(message);
+  it("getRestaurantName() should return an empty restaruant name from request with only command", function() {
+    let req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = "/10bis";
     var restaurantName = hipChatMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal("");
   });
 
-  it('getRestaurantName() should return null with bad field', function() {
-    var req = {};
-    req.body = JSON.parse(message);
+  it("getRestaurantName() should return null with bad field", function() {
+    let req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = null;
     var restaurantName = hipChatMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal(null);
   });
 
-  it('getErrorMessage() should return a valid error message without restaurants name', function() {
-    var expectedResponse = JSON.parse(errorResponse);
+  it("getErrorMessage() should return a valid error message without restaurants name", function() {
+    let expectedResponse = deepCopy(errorResponse);
     var response = hipChatMessage.getErrorMessage(null);
 
     expect(response.color).to.equal(expectedResponse.color);
@@ -195,8 +163,8 @@ describe('HipChatMessage', function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-    it('getErrorMessage() should return a valid error message with passed restaurants name', function() {
-    var expectedResponse = JSON.parse(errorResponse);
+    it("getErrorMessage() should return a valid error message with passed restaurants name", function() {
+    let expectedResponse = deepCopy(errorResponse);
     var response = hipChatMessage.getErrorMessage("גוטה");
 
     expect(response.color).to.equal(expectedResponse.color);
@@ -205,7 +173,7 @@ describe('HipChatMessage', function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it('generateRestaurantCard() should return a valid card', function() {
+  it("generateRestaurantCard() should return a valid card", function() {
     var restaruant = {
       RestaurantName: "דיקסי",
       RestaurantId: 123,
@@ -217,7 +185,7 @@ describe('HipChatMessage', function() {
 
     var response = hipChatMessage.generateRestaurantCard(restaruant);
 
-      // Can't do the following due to on the spot generation of guid and time
+      // Can"t do the following due to on the spot generation of guid and time
       // expect(response).to.deep.equal(validCard);
       expect(helper.compareKeys(response, validCard)).to.equal(true);
 
@@ -229,8 +197,8 @@ describe('HipChatMessage', function() {
       expect(response.url).to.equal(validCard.url);
   });
 
-  it('generateTotalOrdersResponse() should return a valid message without restaurant list', function() {
-    var expectedResponse = JSON.parse(goodResponse);
+  it("generateTotalOrdersResponse() should return a valid message without restaurant list", function() {
+    let expectedResponse = deepCopy(goodResponse);
     var response = hipChatMessage.generateTotalOrdersResponse([]);
 
     expect(response.color).to.equal(expectedResponse.color);
@@ -239,8 +207,8 @@ describe('HipChatMessage', function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-    it('generateTotalOrdersResponse() should return a valid message with restaurant list', function() {
-    var expectedResponse = JSON.parse(goodResponse);
+    it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
+    let expectedResponse = deepCopy(goodResponse);
     var response = hipChatMessage.generateTotalOrdersResponse(helper.restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);

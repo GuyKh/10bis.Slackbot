@@ -1,3 +1,6 @@
+import { Commons } from "./commons";
+import { HipChatModule } from "./hipChatModule";
+
 // hipChatMessage.js
 
 /*
@@ -53,19 +56,20 @@ HipChat Response:
     }
 }
 */
-var uuid = require('uuid/v4');
+var uuid = require("uuid/v4");
 
 var commandOperator = "/10bis";
 
 module.exports = {
-    getErrorMessage: function (restaurantName) {
+    getErrorMessage: function (restaurantName : string) {
         var restaurantString = "";
-        if (restaurantName)
+        if (restaurantName) {
             restaurantString = " for: " + restaurantName;
+        }
 
         var body = {
             color: "red",
-            message: 'No Restaurants Found' + restaurantString,
+            message: "No Restaurants Found" + restaurantString,
             notify: false,
             message_format: "text"
         };
@@ -73,7 +77,7 @@ module.exports = {
         return body;
     },
 
-    getRestaurantName: function (req) {
+    getRestaurantName: function (req : HipChatModule.HipChatReq) {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
             var message = req.body.item.message.message;
 
@@ -85,7 +89,7 @@ module.exports = {
         return null;
     },
 
-    isValidMessage: function (req) {
+    isValidMessage: function (req : HipChatModule.HipChatReq) {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
             return req.body.item.message.message.startsWith(commandOperator);
         }
@@ -93,14 +97,14 @@ module.exports = {
         return false;
     },
 
-    generateDescription: function (restaurant) {
+    generateDescription: function (restaurant : Commons.Restaurant) {
         var description = "";
         description += restaurant.RestaurantCuisineList + "\n";
         description += "מינימום הזמנה: " + restaurant.MinimumOrder;
         return description;
     },
 
-    generateRestaurantCard: function (restaurant) {
+    generateRestaurantCard: function (restaurant : Commons.Restaurant) {
         return {
             style: "link",
             url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
@@ -117,12 +121,13 @@ module.exports = {
         };
     },
 
-    getSuccessMessage: function (text, restaurant) {
+    getSuccessMessage: function (text : string, restaurant : Commons.Restaurant) {
         var body = {
             color: "green",
             message: text,
             notify: false,
-            message_format: "text"
+            message_format: "text",
+            card: null
         };
 
         if (restaurant) {
@@ -131,32 +136,36 @@ module.exports = {
         return body;
     },
 
-    generateSearchResponse: function (restaurants) {
-        var title = 'Found ' + restaurants.length + ' restaurants';
-        var restaurantText = '';
+    generateSearchResponse: function (restaurants : Commons.Restaurant[]) {
+        var title = "Found " + restaurants.length + " restaurants";
+        var restaurantText = "";
 
         if (restaurants.length > 0) {
             title += "\n";
-            restaurants.forEach(function (restaurant, index) {
-                var suffix = '';
-                if (index < restaurants.length)
-                    suffix = '\n\n';
-                restaurantText += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + suffix;
+            restaurants.forEach(function (restaurant : Commons.Restaurant, index: number) {
+                var suffix = "";
+                if (index < restaurants.length) {
+                    suffix = "\n\n";
+                }
+                restaurantText += "[" + (index + 1) + "] " + restaurant.RestaurantName +
+                " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + suffix;
             });
         }
 
-        if (restaurants.length == 1)
+        if (restaurants.length === 1) {
             return this.getSuccessMessage(title, restaurants[0]);
+        }
         return this.getSuccessMessage(title + restaurantText, null);
     },
 
-    generateTotalOrdersResponse: function (restaurants) {
+    generateTotalOrdersResponse: function (restaurants : Commons.Restaurant[]) {
         var restaurantsString = "";
         if (restaurants.length > 0) {
 
             // Create a list
-            restaurants.forEach(function (restaurant, index) {
-                restaurantsString += '[' + (index + 1) + '] ' + restaurant.RestaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+            restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
+                restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
+                " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
                 restaurantsString += "\n";
                 restaurantsString += "מינימום הזמנה: " + restaurant.MinimumOrder + "\t הוזמן עד כה: " + restaurant.PoolSum;
             });
