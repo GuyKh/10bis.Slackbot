@@ -16,11 +16,11 @@
     "request": "^2.83.0",
     "typescript": "^2.6.2",
     "uuid": "^3.1.0",
+    "@types/mocha": "^2.2.45",
+    "@types/node": "^8.5.2",
     "winston": "^2.4.0"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.45",
-    "@types/node": "^8.5.2",
     "chai": "^4.1.2",
     "mocha": "^4.1.0",
     "rewire": "^3.0.2",
