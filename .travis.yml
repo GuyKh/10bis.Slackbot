@@ -7,10 +7,8 @@ node_js:
 - "node"
 install:
 - npm install
-- npm install eslint -g
-- npm install eslint-plugin-mocha -g
-- npm install eslint-plugin-chai-expect -g
+- npm install tslint -g
 script:
 - .\node_modules\.bin\tsc -p ./tsconfig.json
-- npm run eslint
+- npm run tslint
 - npm test
