@@ -1,1 +1,1 @@
-web: node index.js
+web: tsc -p ./tsconfig.json && node index.js
