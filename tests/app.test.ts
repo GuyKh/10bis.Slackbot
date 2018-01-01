@@ -151,7 +151,7 @@ describe("App", function () {
                     return element.RestaurantName === restaurant1.RestaurantName;
                  })).to.equal(true);
                 expect(result.some(function(element : Commons.Restaurant) {
-                    return element.RestaurantName === restaurant2.RestaurantName;;
+                    return element.RestaurantName === restaurant2.RestaurantName;
                  })).to.equal(true);
             });
 
