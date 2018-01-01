@@ -1,7 +1,7 @@
 import { Commons } from "./commons";
+import { HipChatMessageFormatter } from "./hipChatMessage";
+import { SlackMessageFormatter } from "./slackMessage";
 
-var slackMessage = require("./slackMessage.js");
-var hipChatMessage = require("./hipChatMessage.js");
 var url = require("url");
 var request = require("request");
 var moment = require("moment-timezone");
@@ -104,14 +104,14 @@ var filterByRestaurantName = function(restaurants :  Commons.Restaurant[]) {
 var sortRestaurantsByDistance = function(restaurants :  Commons.Restaurant[]) {
         return restaurants.sort(
             function(objectA : Commons.Restaurant, objectB : Commons.Restaurant) {
-                if (!objectA.distanceFromUserInMeters && objectB.distanceFromUserInMeters) { return -1; }
-                if (objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) { return 1; }
-                if (!objectA.distanceFromUserInMeters && !objectB.distanceFromUserInMeters) { return 0; }
+                if (!objectA.DistanceFromUserInMeters && objectB.DistanceFromUserInMeters) { return -1; }
+                if (objectA.DistanceFromUserInMeters && !objectB.DistanceFromUserInMeters) { return 1; }
+                if (!objectA.DistanceFromUserInMeters && !objectB.DistanceFromUserInMeters) { return 0; }
 
-                if (objectA.distanceFromUserInMeters > objectB.distanceFromUserInMeters) {
+                if (objectA.DistanceFromUserInMeters > objectB.DistanceFromUserInMeters) {
                     return 1;
                 }
-                if (objectB.distanceFromUserInMeters > objectA.distanceFromUserInMeters) {
+                if (objectB.DistanceFromUserInMeters > objectA.DistanceFromUserInMeters) {
                     return -1;
                 }
 
@@ -133,7 +133,7 @@ var verifyMessage = function(req : Commons.Request, formatters : Commons.Message
 
 var search = function(res : Commons.Response, messageFormatter : Commons.MessageFormatter, restaurantName : string) {
     if (restaurantName.length === 0) { // Behavior for empty command ("/10bis" with no content)
-            var body = messageFormatter.getSuccessMessage(defaultResponse, "");
+            var body = messageFormatter.getDefaultResponse();
             res.send(body);
             return;
         }
@@ -144,7 +144,7 @@ var search = function(res : Commons.Response, messageFormatter : Commons.Message
             if (!error && response.statusCode === 200) {
                 var data = JSON.parse(body);
 
-                var resBody = "";
+                let resBody;
                 if (!data || !data.length || data.length < 1) {
                     resBody = messageFormatter.getErrorMessage(restaurantName);
                     res.send(resBody);
@@ -173,9 +173,9 @@ var getTotalOrders = function(res : Commons.Response, messageFormatter : Commons
              if (!error && response.statusCode === 200) {
                  var data = JSON.parse(body);
 
-                 let resBody = "";
+                 let resBody;
                  if (!data || !data.length || data.length < 1) {
-                     resBody = messageFormatter.getErrorMessage();
+                     resBody = messageFormatter.getErrorMessage(null);
                      res.send(resBody);
                      return;
                  }
@@ -193,7 +193,10 @@ var getTotalOrders = function(res : Commons.Response, messageFormatter : Commons
 
 module.exports = {
     process: function(req: Commons.Request, res: Commons.Response) {
-        var messageFormatter = verifyMessage(req, [hipChatMessage, slackMessage]);
+        let hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+        let slackMessageFormatter = SlackMessageFormatter.getInstance();
+
+        var messageFormatter = verifyMessage(req, [hipChatMessageFormatter, slackMessageFormatter]);
         if (!messageFormatter) {
             res.status(400);
             res.send("Invalid Message");
@@ -201,11 +204,11 @@ module.exports = {
         }
 
 
-        var restaurantName = messageFormatter.getRestaurantName(req);
-        var body = "";
+        let restaurantName = messageFormatter.getRestaurantName(req);
+        let body;
 
         if (!restaurantName) {
-            body = messageFormatter.getErrorMessage();
+            body = messageFormatter.getErrorMessage(null);
             res.send(body);
             return;
         }

@@ -1,11 +1,12 @@
 import { SlackModule } from "../src/slackModule";
-import { deepCopy } from "./commons";
+import { deepCopy, restaurants } from "./commons";
+import { SlackMessageFormatter } from "../src/slackMessage";
+import { Commons } from "../src/commons";
 
 // tests/slackMessage.test.js
 var chai = require("chai");
 var expect = chai.expect; // we are using the "expect" style of Chai
-var slackMessage = require("./../src/slackMessage.js");
-var helper = require("./helper.js");
+let slackMessage = SlackMessageFormatter.getInstance();
 
 let message = new SlackModule.SlackMessage("ItoB7oEyZIbNmHPfxHQ2GrbC", "T0001", "example",
                 "C2147483705", "test", "U2147483697", "Steve", "/10bis", "דיקסי");
@@ -13,54 +14,37 @@ let message = new SlackModule.SlackMessage("ItoB7oEyZIbNmHPfxHQ2GrbC", "T0001", 
 let goodResponse = new SlackModule.SlackResponse("in_channel", "Found 0 restaurants", []);
 goodResponse.attachments.push(new SlackModule.SlackAttachment(null, null, null, null, "List", null, null));
 
-var validCard = {
-  fallback: "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
-  title: "דיקסי",
-  color: "#36a64f",
-  title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
-  text: "מסעדה אמריקאית",
-  fields: [
-      {
-      "title": "מינימום הזמנה",
-      "value": "26 שח",
-      "short": true
-      },
-      {
-      "title": "דמי משלוח",
-      "value": "10 שח",
-      "short": true
-      }
-  ],
-  thumb_url: "http://image.jpg",
-  ts: (Math.floor(Date.now() / 1000))
-};
+let validCard = new SlackModule.SlackAttachment(
+  "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  "דיקסי",
+  "#36a64f",
+  "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  "מסעדה אמריקאית",
+  "http://image.jpg",
+  (Math.floor(Date.now() / 1000))
+  );
+validCard.fields = [
+  new SlackModule.SlackAttachmentField("מינימום הזמנה", "26 שח", true),
+  new SlackModule.SlackAttachmentField("דמי משלוח", "10 שח", true)
+];
 
-var validTotalCard = {
-  fallback: "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
-  title: "דיקסי",
-  color: "#36a64f",
-  title_link: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
-  text: "מסעדה אמריקאית",
-  fields: [
-      {
-      "title": "הוזמן עד כה",
-      "value": "₪ 90.00",
-      "short": true
-      },
-      {
-      "title": "מינימום הזמנה",
-      "value": "₪70.00",
-      "short": true
-      }
-  ],
-  thumb_url: "http://image.jpg",
-  ts: (Math.floor(Date.now() / 1000))
-};
 
-var errorResponse = "{" +
-    "\"response_type\":\"ephemeral\"," +
-    "\"text\":\"No Restaurants Found\"" +
-"}";
+let validTotalCard = new SlackModule.SlackAttachment(
+  "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  "דיקסי",
+  "#36a64f",
+  "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  "מסעדה אמריקאית",
+  "http://image.jpg",
+  (Math.floor(Date.now() / 1000))
+);
+
+validTotalCard.fields = [
+  new SlackModule.SlackAttachmentField("הוזמן עד כה", "₪ 90.00", true),
+  new SlackModule.SlackAttachmentField("מינימום הזמנה", "₪70.00", true)
+];
+
+let errorResponse = new SlackModule.SlackResponse("ephemeral", "No Restaurants Found", null);
 
 describe("SlackMessage", function() {
   describe("Basic methods and module", function() {
@@ -108,7 +92,7 @@ describe("SlackMessage", function() {
   });
 
   it("isValidMessage() should return false if request body is missing", function() {
-    var req = {};
+    var req = null;
     expect(slackMessage.isValidMessage(req)).to.equal(false);
   });
 
@@ -138,7 +122,7 @@ describe("SlackMessage", function() {
 
     it("generateSearchResponse() should return a valid message with restaurant list", function() {
     var expectedResponse = deepCopy(goodResponse);
-    var response = slackMessage.generateSearchResponse(helper.restaurants);
+    var response = slackMessage.generateSearchResponse(restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 2 restaurants");
@@ -172,34 +156,31 @@ describe("SlackMessage", function() {
   });
 
   it("getErrorMessage() should return a valid error message without restaurants name", function() {
-    var expectedResponse = JSON.parse(errorResponse);
-    var response = slackMessage.getErrorMessage(null);
+    var expectedResponse = deepCopy(errorResponse);
+    var response = <SlackModule.SlackResponse> slackMessage.getErrorMessage(null);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text);
-    expect(response.notify).to.equal(expectedResponse.notify);
-    expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
   it("getErrorMessage() should return a valid error message with passed restaurants name", function() {
-    var expectedResponse = JSON.parse(errorResponse);
-    var response = slackMessage.getErrorMessage("גוטה");
+    var expectedResponse = deepCopy(errorResponse);
+    var response = <SlackModule.SlackResponse> slackMessage.getErrorMessage("גוטה");
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text + " for: גוטה");
-    expect(response.notify).to.equal(expectedResponse.notify);
-    expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
   it("generateRestaurantCard() should return a valid card", function() {
-    var restaruant = {
-      RestaurantName: "דיקסי",
-      RestaurantId: 123,
-      MinimumOrder: "26 שח",
-      DeliveryPrice: "10 שח",
-      RestaurantCuisineList: "מסעדה אמריקאית",
-      RestaurantLogoUrl: "http://image.jpg"
-    };
+
+    let restaruant = new Commons.RestaurantBuilder()
+      .setRestaurantName( "דיקסי")
+      .setRestaurantId(123)
+      .setMinimumOrder("26 שח")
+      .setDeliveryPrice("10 שח")
+      .setRestaurantCuisineList("מסעדה אמריקאית")
+      .setRestaurantLogoUrl("http://image.jpg")
+      .build();
 
     var response = slackMessage.generateRestaurantCard(restaruant);
 
@@ -226,7 +207,7 @@ describe("SlackMessage", function() {
 
     it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
     var expectedResponse = deepCopy(goodResponse);
-    var response = slackMessage.generateTotalOrdersResponse(helper.restaurants);
+    var response = slackMessage.generateTotalOrdersResponse(restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 2 restaurants");
@@ -235,14 +216,14 @@ describe("SlackMessage", function() {
   });
 
   it("generateRestaurantTotalCard() should return a valid card", function() {
-    var restaruant = {
-      RestaurantName: "דיקסי",
-      RestaurantId: 123,
-      MinimumOrder: "₪70.00",
-      PoolSum: "₪ 90.00",
-      RestaurantCuisineList: "מסעדה אמריקאית",
-      RestaurantLogoUrl: "http://image.jpg"
-    };
+    let restaruant = new Commons.RestaurantBuilder()
+      .setRestaurantName("דיקסי")
+      .setRestaurantId(123)
+      .setMinimumOrder("₪70.00")
+      .setPoolSum("₪ 90.00")
+      .setRestaurantCuisineList("מסעדה אמריקאית")
+      .setRestaurantLogoUrl("http://image.jpg")
+      .build();
 
     var response = slackMessage.generateRestaurantTotalCard(restaruant);
 

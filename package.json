@@ -1,6 +1,6 @@
 {
   "name": "10bis_slackbot",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "_A Slackbot that searches 10Bis site_",
   "main": "index.js",
   "dependencies": {
@@ -28,7 +28,7 @@
     "tslint": "^5.8.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha tests/*.js --reporter spec",
+    "test": "./node_modules/.bin/mocha tests/*.ts --reporter spec -r ts-node/register",
     "eslint": "./node_modules/.bin/eslint -c .eslintrc.js src/*.js tests/*.js index.js",
     "tslint": "./node_modules/.bin/tslint --project ./",
     "start": "./node_modules/.bin/tsc --module commonjs --outDir build/ --sourceMap --target ES6 -p ./tsconfig.json && node index.js"

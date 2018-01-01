@@ -47,8 +47,12 @@ HipChat Response:
             },
             "date": 1453867674631,
             "thumbnail": {
-                "url": "http://bit.ly/1TmKuKQ",
-                "url@2x": "http://bit.ly/1TmKuKQ",
+            static getInstance(): any {
+        throw new Error("Method not implemented.");
+    }
+        "url": "http://bit.ly/1TmKuKQ",
+                "url@2x": "http://b    static getInstance: any;
+it.ly/1TmKuKQ",
                 "width": 1193,
                 "height": 564
             }
@@ -60,24 +64,43 @@ var uuid = require("uuid/v4");
 
 var commandOperator = "/10bis";
 
-module.exports = {
-    getErrorMessage: function (restaurantName : string) {
+export class HipChatMessageFormatter implements Commons.MessageFormatter {
+
+    private static _instance: HipChatMessageFormatter = new HipChatMessageFormatter();
+
+    constructor() {
+        if (HipChatMessageFormatter._instance) {
+            throw new Error("Error: Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.");
+        }
+        HipChatMessageFormatter._instance = this;
+    }
+
+    public static getInstance(): HipChatMessageFormatter {
+        return HipChatMessageFormatter._instance;
+    }
+
+    getDefaultResponse(): Commons.TenBisResponse {
+        return new HipChatModule.HipChatResponse(
+            "green",
+            Commons.DefaultResponseString,
+            false,
+            "text");
+    }
+
+    getErrorMessage(restaurantName: string): Commons.TenBisResponse {
         var restaurantString = "";
         if (restaurantName) {
             restaurantString = " for: " + restaurantName;
         }
 
-        var body = {
-            color: "red",
-            message: "No Restaurants Found" + restaurantString,
-            notify: false,
-            message_format: "text"
-        };
+        return new HipChatModule.HipChatResponse(
+            "red",
+            "No Restaurants Found" + restaurantString,
+            false,
+            "text");
+    }
 
-        return body;
-    },
-
-    getRestaurantName: function (req : HipChatModule.HipChatReq) {
+    getRestaurantName(req: HipChatModule.HipChatReq): string {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
             var message = req.body.item.message.message;
 
@@ -87,56 +110,8 @@ module.exports = {
         }
 
         return null;
-    },
-
-    isValidMessage: function (req : HipChatModule.HipChatReq) {
-        if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
-            return req.body.item.message.message.startsWith(commandOperator);
-        }
-
-        return false;
-    },
-
-    generateDescription: function (restaurant : Commons.Restaurant) {
-        var description = "";
-        description += restaurant.RestaurantCuisineList + "\n";
-        description += "מינימום הזמנה: " + restaurant.MinimumOrder;
-        return description;
-    },
-
-    generateRestaurantCard: function (restaurant : Commons.Restaurant) {
-        return {
-            style: "link",
-            url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
-            id: uuid(),
-            title: restaurant.RestaurantName,
-            description: this.generateDescription(restaurant),
-            icon: {
-                "url": restaurant.RestaurantLogoUrl
-            },
-            date: (new Date()).getTime(),
-            thumbnail: {
-                url: restaurant.RestaurantLogoUrl
-            }
-        };
-    },
-
-    getSuccessMessage: function (text : string, restaurant : Commons.Restaurant) {
-        var body = {
-            color: "green",
-            message: text,
-            notify: false,
-            message_format: "text",
-            card: null
-        };
-
-        if (restaurant) {
-            body.card = this.generateRestaurantCard(restaurant);
-        }
-        return body;
-    },
-
-    generateSearchResponse: function (restaurants : Commons.Restaurant[]) {
+    }
+    generateSearchResponse(restaurants: Commons.Restaurant[]): Commons.TenBisResponse {
         var title = "Found " + restaurants.length + " restaurants";
         var restaurantText = "";
 
@@ -156,9 +131,9 @@ module.exports = {
             return this.getSuccessMessage(title, restaurants[0]);
         }
         return this.getSuccessMessage(title + restaurantText, null);
-    },
+    }
 
-    generateTotalOrdersResponse: function (restaurants : Commons.Restaurant[]) {
+    generateTotalOrdersResponse(restaurants: Commons.Restaurant[]): HipChatModule.HipChatResponse {
         var restaurantsString = "";
         if (restaurants.length > 0) {
 
@@ -173,14 +148,50 @@ module.exports = {
             restaurantsString = "No pool order restaurants found";
         }
 
-        var body = {
-            color: "green",
-            message: restaurantsString,
-            notify: false,
-            message_format: "text"
-        };
+        let response = new HipChatModule.HipChatResponse(
+            "green",
+            restaurantsString,
+            false,
+            "text"
+        );
 
-        return body;
+        return response;
     }
 
-};
+    isValidMessage(req: HipChatModule.HipChatReq): boolean {
+        if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
+            return req.body.item.message.message.startsWith(commandOperator);
+        }
+
+        return false;
+    }
+
+    generateDescription(restaurant : Commons.Restaurant): string {
+        let description = "";
+        description += restaurant.RestaurantCuisineList + "\n";
+        description += "מינימום הזמנה: " + restaurant.MinimumOrder;
+        return description;
+    }
+
+    generateRestaurantCard (restaurant : Commons.Restaurant) : HipChatModule.HipChatCard {
+        return new HipChatModule.HipChatCard(
+            "link",
+            "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            uuid(),
+            restaurant.RestaurantName,
+            this.generateDescription(restaurant),
+            new HipChatModule.UrlObject(restaurant.RestaurantLogoUrl),
+            (new Date()).getTime(),
+            new HipChatModule.UrlObject(restaurant.RestaurantLogoUrl)
+        );
+    }
+
+    getSuccessMessage (text : string, restaurant : Commons.Restaurant) : HipChatModule.HipChatResponse {
+        var response = new HipChatModule.HipChatResponse("green", text, false, "text");
+
+        if (restaurant) {
+            response.card = this.generateRestaurantCard(restaurant);
+        }
+        return response;
+    }
+}

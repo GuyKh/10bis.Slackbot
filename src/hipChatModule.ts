@@ -78,12 +78,45 @@ export module HipChatModule {
         message: string;
         message_format: string;
         notify: boolean;
+        card: HipChatCard;
 
         constructor(color: string, message: string, notify: boolean, message_format: string) {
             this.color = color;
             this.message = message;
             this.notify = notify;
             this.message_format = message_format;
+        }
+    }
+
+    export class HipChatCard {
+        style: string;
+        url: string;
+        id: string;
+        title: string;
+        description: string;
+        icon: UrlObject;
+        date: number;
+        thumbnail: UrlObject;
+
+
+        constructor(style: string, url: string, id: string, title: string, description: string,
+            icon: UrlObject, date: number,  thumbnail: UrlObject) {
+                this.style = style;
+                this.url = url;
+                this.id = id;
+                this.title = title;
+                this.description = description;
+                this.icon = icon;
+                this.date = date;
+                this.thumbnail = thumbnail;
+        }
+    }
+
+    export class UrlObject {
+        url: string;
+
+        constructor(url : string) {
+            this.url = url;
         }
     }
 }

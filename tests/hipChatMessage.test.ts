@@ -1,12 +1,13 @@
 import { Req } from "./app.test";
-import { deepCopy } from "./commons";
+import { deepCopy, restaurants, compareKeys } from "./commons";
 import { HipChatModule } from "../src/hipChatModule";
+import { HipChatMessageFormatter } from "../src/hipChatMessage";
+import { Commons } from "../src/commons";
 
 // tests/hipChatMessage.test.js
 var chai = require("chai");
 var expect = chai.expect; // we are using the "expect" style of Chai
-var hipChatMessage = require("./../src/hipChatMessage.js");
-var helper = require("./helper.js");
+let hipChatMessage = HipChatMessageFormatter.getInstance();
 
 let message = new HipChatModule.HipChatReqBody("room_message",
                   new HipChatModule.HipChatReqItem(
@@ -36,20 +37,16 @@ let goodResponse = new HipChatModule.HipChatResponse("green", "Found 0 Restauran
 
 let errorResponse = new HipChatModule.HipChatResponse("red", "No Restaurants Found", false, "text");
 
-var validCard = {
-  style: "link",
-  url: "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + 123,
-  id: "ce399a28-a35a-4561-9262-ca28ccebbd6b",
-  title: "דיקסי",
-  description: "מסעדה אמריקאית\nמינימום הזמנה: 26 שח",
-  icon: {
-      "url": "http://image.jpg"
-  },
-  date: (new Date()).getTime(),
-  thumbnail: {
-      url: "http://image.jpg"
-  }
-};
+let validCard = new HipChatModule.HipChatCard(
+  "link",
+  "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + 123,
+  "ce399a28-a35a-4561-9262-ca28ccebbd6b",
+  "דיקסי",
+  "מסעדה אמריקאית\nמינימום הזמנה: 26 שח",
+  new HipChatModule.UrlObject("http://image.jpg"),
+  (new Date()).getTime(),
+  new HipChatModule.UrlObject("http://image.jpg")
+);
 
 describe("HipChatMessage", function() {
   describe("Basic methods and module", function() {
@@ -80,7 +77,7 @@ describe("HipChatMessage", function() {
   });
 
   it("isValidMessage() should return true if default format message is sent", function() {
-    let req = new Req(deepCopy(message));
+    let req = new HipChatModule.HipChatReq(deepCopy(message));
     expect(hipChatMessage.isValidMessage(req)).to.equal(true);
   });
 
@@ -89,12 +86,12 @@ describe("HipChatMessage", function() {
   });
 
   it("isValidMessage() should return false if message body is missing", function() {
-    let req = new Req(deepCopy(badMessage));
+    let req = new HipChatModule.HipChatReq(deepCopy(badMessage));
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
   it("isValidMessage() should return false if request body is missing", function() {
-    var req = {};
+    var req = null;
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
@@ -112,7 +109,7 @@ describe("HipChatMessage", function() {
 
   it("generateSearchResponse() should return a valid message without restaurant list", function() {
     let expectedResponse = deepCopy(goodResponse);
-    var response = hipChatMessage.generateSearchResponse([]);
+    let response = <HipChatModule.HipChatResponse> hipChatMessage.generateSearchResponse([]);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message).to.equal("Found 0 restaurants");
@@ -122,7 +119,7 @@ describe("HipChatMessage", function() {
 
   it("generateSearchResponse() should return a valid message with restaurant list", function() {
     let expectedResponse = deepCopy(goodResponse);
-    var response = hipChatMessage.generateSearchResponse(helper.restaurants);
+    var response = <HipChatModule.HipChatResponse> hipChatMessage.generateSearchResponse(restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message.startsWith("Found 2 restaurants")).to.equal(true);
@@ -155,7 +152,7 @@ describe("HipChatMessage", function() {
 
   it("getErrorMessage() should return a valid error message without restaurants name", function() {
     let expectedResponse = deepCopy(errorResponse);
-    var response = hipChatMessage.getErrorMessage(null);
+    var response = <HipChatModule.HipChatResponse> hipChatMessage.getErrorMessage(null);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message).to.equal(expectedResponse.message);
@@ -165,7 +162,7 @@ describe("HipChatMessage", function() {
 
     it("getErrorMessage() should return a valid error message with passed restaurants name", function() {
     let expectedResponse = deepCopy(errorResponse);
-    var response = hipChatMessage.getErrorMessage("גוטה");
+    var response = <HipChatModule.HipChatResponse> hipChatMessage.getErrorMessage("גוטה");
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message).to.equal(expectedResponse.message + " for: גוטה");
@@ -174,20 +171,20 @@ describe("HipChatMessage", function() {
   });
 
   it("generateRestaurantCard() should return a valid card", function() {
-    var restaruant = {
-      RestaurantName: "דיקסי",
-      RestaurantId: 123,
-      MinimumOrder: "26 שח",
-      DeliveryPrice: "10 שח",
-      RestaurantCuisineList: "מסעדה אמריקאית",
-      RestaurantLogoUrl: validCard.thumbnail.url
-    };
+    let restaruant = new Commons.RestaurantBuilder()
+    .setRestaurantName( "דיקסי")
+    .setRestaurantId(123)
+    .setMinimumOrder("26 שח")
+    .setDeliveryPrice("10 שח")
+    .setRestaurantCuisineList("מסעדה אמריקאית")
+    .setRestaurantLogoUrl(validCard.thumbnail.url)
+    .build();
 
     var response = hipChatMessage.generateRestaurantCard(restaruant);
 
       // Can"t do the following due to on the spot generation of guid and time
       // expect(response).to.deep.equal(validCard);
-      expect(helper.compareKeys(response, validCard)).to.equal(true);
+      expect(compareKeys(response, validCard)).to.equal(true);
 
       expect(response.description).to.equal(validCard.description);
       expect(response.icon.url).to.equal(validCard.icon.url);
@@ -209,7 +206,7 @@ describe("HipChatMessage", function() {
 
     it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
     let expectedResponse = deepCopy(goodResponse);
-    var response = hipChatMessage.generateTotalOrdersResponse(helper.restaurants);
+    var response = hipChatMessage.generateTotalOrdersResponse(restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message.includes("[1]")).to.equal(true);
