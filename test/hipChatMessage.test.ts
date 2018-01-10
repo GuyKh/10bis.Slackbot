@@ -1,10 +1,11 @@
-import { Req } from "./app.test";
-import { deepCopy, restaurants, compareKeys } from "./commons";
+import { Req } from "./commons.test";
+import { deepCopy, restaurants, compareKeys } from "./testCommons";
 import { HipChatModule } from "../src/hipChatModule";
 import { HipChatMessageFormatter } from "../src/hipChatMessage";
 import { Commons } from "../src/commons";
+import "mocha";
+import { Constants } from "../src/constants";
 
-// tests/hipChatMessage.test.js
 var chai = require("chai");
 var expect = chai.expect; // we are using the "expect" style of Chai
 let hipChatMessage = HipChatMessageFormatter.getInstance();
@@ -47,6 +48,17 @@ let validCard = new HipChatModule.HipChatCard(
   (new Date()).getTime(),
   new HipChatModule.UrlObject("http://image.jpg")
 );
+
+let generateRestaurant = function() : Commons.Restaurant {
+  return new Commons.RestaurantBuilder()
+  .setRestaurantName( "דיקסי")
+  .setRestaurantId(123)
+  .setMinimumOrder("26 שח")
+  .setDeliveryPrice("10 שח")
+  .setRestaurantCuisineList("מסעדה אמריקאית")
+  .setRestaurantLogoUrl(validCard.thumbnail.url)
+  .build();
+};
 
 describe("HipChatMessage", function() {
   describe("Basic methods and module", function() {
@@ -122,7 +134,17 @@ describe("HipChatMessage", function() {
     var response = <HipChatModule.HipChatResponse> hipChatMessage.generateSearchResponse(restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
-    expect(response.message.startsWith("Found 2 restaurants")).to.equal(true);
+    expect(response.message.startsWith("Found 3 restaurants")).to.equal(true);
+    expect(response.notify).to.equal(expectedResponse.notify);
+    expect(response.message_format).to.equal(expectedResponse.message_format);
+  });
+
+  it("generateSearchResponse() should return a valid message with restaurant list of 1 restaurant", function() {
+    let expectedResponse = deepCopy(goodResponse);
+    var response = <HipChatModule.HipChatResponse> hipChatMessage.generateSearchResponse([restaurants[0]]);
+
+    expect(response.color).to.equal(expectedResponse.color);
+    expect(response.message.startsWith("Found 1 restaurants")).to.equal(true);
     expect(response.notify).to.equal(expectedResponse.notify);
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
@@ -171,14 +193,7 @@ describe("HipChatMessage", function() {
   });
 
   it("generateRestaurantCard() should return a valid card", function() {
-    let restaruant = new Commons.RestaurantBuilder()
-    .setRestaurantName( "דיקסי")
-    .setRestaurantId(123)
-    .setMinimumOrder("26 שח")
-    .setDeliveryPrice("10 שח")
-    .setRestaurantCuisineList("מסעדה אמריקאית")
-    .setRestaurantLogoUrl(validCard.thumbnail.url)
-    .build();
+    let restaruant = generateRestaurant();
 
     var response = hipChatMessage.generateRestaurantCard(restaruant);
 
@@ -204,16 +219,68 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-    it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
+  it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
     let expectedResponse = deepCopy(goodResponse);
     var response = hipChatMessage.generateTotalOrdersResponse(restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message.includes("[1]")).to.equal(true);
     expect(response.message.includes("[2]")).to.equal(true);
-    expect(response.message.includes("[3]")).to.equal(false);
+    expect(response.message.includes("[3]")).to.equal(true);
+    expect(response.message.includes("[4]")).to.equal(false);
     expect(response.notify).to.equal(expectedResponse.notify);
     expect(response.message_format).to.equal(expectedResponse.message_format);
+  });
+
+  it("constructor() should throw an exception if launched twice", function() {
+    //Already ran constructor for HipChatMessageFormatter
+    let hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+
+    expect(hipChatMessageFormatter).not.to.equal(null);
+    expect(HipChatMessageFormatter.getInstance()).not.to.equal(null);
+    try {
+      let hcmf = new HipChatMessageFormatter();
+    } catch (err) {
+      expect(err.toString()).to.equal("Error: " + HipChatMessageFormatter.INITIALIZATION_EXCEPTION_STRING);
+    }
+  });
+  it("getDefaultResponse() should return a default response", function() {
+    let hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+
+    let response = hipChatMessageFormatter.getDefaultResponse() as HipChatModule.HipChatResponse;
+
+    expect(response.color).to.equal("green");
+    // tslint:disable-next-line:no-unused-expression
+    expect(response.card).to.be.undefined;
+    expect(response.message).to.equal(Constants.DEFAULT_RESPONSE);
+    expect(response.message_format).to.equal("text");
+    expect(response.notify).to.equal(false);
+  });
+  it("getSucessMessage() should return a good response without a restaurant", function() {
+    let hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+
+    let responseText : string = "Found 1 restaurant";
+    let response = hipChatMessageFormatter.getSuccessMessage(responseText, null) as HipChatModule.HipChatResponse;
+
+    expect(response.color).to.equal("green");
+    // tslint:disable-next-line:no-unused-expression
+    expect(response.card).to.be.undefined;
+    expect(response.message).to.equal(responseText);
+    expect(response.message_format).to.equal("text");
+    expect(response.notify).to.equal(false);
+  });
+  it("getSucessMessage() should return a good response with a restaurant", function() {
+    let hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+
+    let responseText : string = "Found 1 restaurant";
+    let restaruant = generateRestaurant();
+    let response = hipChatMessageFormatter.getSuccessMessage(responseText, restaruant) as HipChatModule.HipChatResponse;
+
+    expect(response.color).to.equal("green");
+    expect(response.card).not.to.equal(null);
+    expect(response.message).to.equal(responseText);
+    expect(response.message_format).to.equal("text");
+    expect(response.notify).to.equal(false);
   });
 
 

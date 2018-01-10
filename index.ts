@@ -1,30 +1,12 @@
-import { Commons } from "./src/commons";
+import app from "./src/app";
 
-var express = require("express");
-var app = express();
-var botApp = require("./src/app.js");
-var debug = require("debug")("10bis.slackbot");
-var appName = "10bis.slackbot";
-var winston = require("winston");
-const logLevel : string = process.env.LOG_LEVEL;
-winston.level = logLevel;
+const port = process.env.PORT || 9001;
 
-debug("booting %s", appName);
-var bodyParser = require("body-parser");
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.listen(port, (err) => {
+  if (err) {
+    return console.log(err);
+  }
 
-const port : string = process.env.PORT;
-app.set("port", (port || 9001));
-
-app.get("/", function(req : Commons.Request, res : Commons.Response) {
-    res.send("Sanity passed!");
+  return console.log(`server is listening on ${port}`);
 });
 
-app.post("/post", function(req : Commons.Request, res : Commons.Response) {
-    botApp.process(req, res);
-});
-
-app.listen(app.get("port"), function() {
-    //console.log("Node app is running on port", app.get("port"));
-});

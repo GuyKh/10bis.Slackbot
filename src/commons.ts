@@ -1,7 +1,149 @@
-export module Commons {
+import * as moment from "moment-timezone";
+import { Constants } from "./constants";
+import * as url from "url";
 
-    export let DefaultResponseString : string = "Hi, I'm a 10bis bot, searching for restaurants\n" +
-                        "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
+export module Commons {
+    export function getFormatedDateTime() : string {
+        var date = moment.tz(Constants.TIMEZONE).format(Constants.DATE_FORMAT);
+        var time = moment.tz(Constants.TIMEZONE).format(Constants.TIME_FORMAT);
+        return date + "+" + time;
+    }
+
+	export class SearchRequestQuery {
+		deliveryMethod: string;
+		ShowOnlyOpenForDelivery: boolean;
+		id: number;
+		pageNum: number;
+		pageSize: number;
+		OrderBy: string;
+		cuisineType: string;
+		CityId: number;
+		StreetId: number;
+		FilterByKosher: boolean;
+		FilterByBookmark: boolean;
+		FilterByCoupon: boolean;
+		searchPhrase: string;
+		Latitude: number;
+		Longitude: number;
+		HouseNumber: number;
+		desiredDateAndTime: string;
+		timestamp: number;
+	}
+
+	export function sortRestaurantsByDistance (restaurants : Commons.Restaurant[]) : Commons.Restaurant[] {
+        return restaurants.sort(
+            function(objectA : Commons.Restaurant, objectB : Commons.Restaurant) {
+                if (!objectA.DistanceFromUserInMeters && objectB.DistanceFromUserInMeters) {
+                    return 1;
+                }
+                if (objectA.DistanceFromUserInMeters && !objectB.DistanceFromUserInMeters) {
+                    return -1;
+                }
+                if (!objectA.DistanceFromUserInMeters && !objectB.DistanceFromUserInMeters) {
+                    return 0;
+                }
+
+                if (objectA.DistanceFromUserInMeters > objectB.DistanceFromUserInMeters) {
+                    return 1;
+                }
+                if (objectB.DistanceFromUserInMeters > objectA.DistanceFromUserInMeters) {
+                    return -1;
+                }
+
+                return 0;
+            }
+        );
+	}
+
+	export function filterTotalOrders (restarant : Commons.Restaurant) : boolean {
+        // Filter all restaurants will positive pool value
+        return restarant.PoolSumNumber > 0;
+    }
+
+	export function verifyMessage (req : Commons.Request, formatters : Commons.MessageFormatter[]) : Commons.MessageFormatter {
+		if (!req || !formatters || formatters.constructor !== Array) {
+			return null;
+		}
+
+		return formatters.find(function(formatter : Commons.MessageFormatter) {
+			return formatter.isValidMessage(req);
+		});
+	}
+
+	export function generateSearchRequest(restaurantName: string) : string {
+        let query : Commons.SearchRequestQuery = new Commons.SearchRequestQuery();
+        query.deliveryMethod = "Delivery";
+        query.ShowOnlyOpenForDelivery = false;
+        query.id = Number.parseInt(process.env.USER_ID);
+        query.pageNum = 0;
+        query.pageSize = 50;
+        query.OrderBy = "Default";
+        query.cuisineType = "";
+        query.CityId = Number.parseInt(process.env.CITY_ID);
+        query.StreetId = Number.parseInt(process.env.STREET_ID);
+        query.FilterByKosher = false;
+        query.FilterByBookmark = false;
+        query.FilterByCoupon = false;
+        query.searchPhrase = restaurantName;
+        query.Latitude = Number.parseInt(process.env.LAT);
+        query.Longitude = Number.parseInt(process.env.LONG);
+        query.HouseNumber = Number.parseInt(process.env.HOUSE_NUMBER);
+        query.desiredDateAndTime = Commons.getFormatedDateTime();
+        query.timestamp = new Date().getTime();
+
+        var parsedUrl = url.format({
+            pathname: "https://www.10bis.co.il/Restaurants/SearchRestaurants",
+            query: query
+        });
+
+        parsedUrl = parsedUrl.replace("%2B", "+");
+
+        return parsedUrl;
+    }
+
+    export function generateGetTotalOrdersRequest() : string {
+        let query : Commons.SearchRequestQuery = new Commons.SearchRequestQuery();
+        query.deliveryMethod = "Delivery";
+        query.ShowOnlyOpenForDelivery = false;
+        query.id = Number.parseInt(process.env.USER_ID);
+        query.pageNum = 0;
+        query.pageSize = 50;
+        query.OrderBy = "pool_sum";
+        query.cuisineType = "";
+        query.CityId = Number.parseInt(process.env.CITY_ID);
+        query.StreetId = Number.parseInt(process.env.STREET_ID);
+        query.FilterByKosher = false;
+        query.FilterByBookmark = false;
+        query.FilterByCoupon = false;
+        query.searchPhrase = "";
+        query.Latitude = Number.parseInt(process.env.LAT);
+        query.Longitude = Number.parseInt(process.env.LONG);
+        query.HouseNumber = Number.parseInt(process.env.HOUSE_NUMBER);
+        query.desiredDateAndTime = Commons.getFormatedDateTime();
+        query.timestamp = new Date().getTime();
+
+        var parsedUrl = url.format({
+            pathname: "https://www.10bis.co.il/Restaurants/SearchRestaurants",
+            query: query
+        });
+
+        parsedUrl = parsedUrl.replace("%2B", "+");
+        return parsedUrl;
+	}
+
+	export function filterByRestaurantName (restaurants : Commons.Restaurant[]) : Commons.Restaurant[] {
+        let flags = {};
+        var filteredRestaurants = restaurants.filter(function(restarant : Commons.Restaurant) {
+            if (flags[restarant.RestaurantName]) {
+                return false;
+            }
+
+            flags[restarant.RestaurantName] = true;
+            return true;
+        });
+
+        return filteredRestaurants;
+    }
 
     export class Restaurant {
         private _restaurantId: number;
@@ -65,7 +207,7 @@ export module Commons {
         private _pickupEndTime: string;
 
 
-	constructor(restaurantBuilder : RestaurantBuilder) {
+	constructor (restaurantBuilder : RestaurantBuilder) {
         this._restaurantId = restaurantBuilder.RestaurantId;
         this._restaurantName = restaurantBuilder.RestaurantName;
         this._restaurantAddress = restaurantBuilder.RestaurantAddress;

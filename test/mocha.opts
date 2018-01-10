@@ -1,0 +1,4 @@
+--ui mocha-typescript
+--require ts-node/register
+--reporter spec
+./test/**.ts

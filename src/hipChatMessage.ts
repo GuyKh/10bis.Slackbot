@@ -1,5 +1,6 @@
 import { Commons } from "./commons";
 import { HipChatModule } from "./hipChatModule";
+import { Constants } from "./constants";
 
 // hipChatMessage.js
 
@@ -68,9 +69,10 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
     private static _instance: HipChatMessageFormatter = new HipChatMessageFormatter();
 
+    public static INITIALIZATION_EXCEPTION_STRING : string = "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
     constructor() {
         if (HipChatMessageFormatter._instance) {
-            throw new Error("Error: Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.");
+            throw new Error(HipChatMessageFormatter.INITIALIZATION_EXCEPTION_STRING);
         }
         HipChatMessageFormatter._instance = this;
     }
@@ -82,7 +84,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     getDefaultResponse(): Commons.TenBisResponse {
         return new HipChatModule.HipChatResponse(
             "green",
-            Commons.DefaultResponseString,
+            Constants.DEFAULT_RESPONSE,
             false,
             "text");
     }
@@ -111,6 +113,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
         return null;
     }
+
     generateSearchResponse(restaurants: Commons.Restaurant[]): Commons.TenBisResponse {
         var title = "Found " + restaurants.length + " restaurants";
         var restaurantText = "";

@@ -1,5 +1,6 @@
 import {SlackModule} from "../src/slackModule";
 import { Commons } from "./commons";
+import { Constants } from "./constants";
 
 
 /*
@@ -51,10 +52,10 @@ var MAX_RESTAURANT_CARDS = 5;
 export class SlackMessageFormatter implements Commons.MessageFormatter {
 
     private static _instance: SlackMessageFormatter = new SlackMessageFormatter();
-
+    public static INSTANTIATION_ERROR : string = "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
     constructor() {
         if (SlackMessageFormatter._instance) {
-            throw new Error("Error: Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.");
+            throw new Error(SlackMessageFormatter.INSTANTIATION_ERROR);
         }
         SlackMessageFormatter._instance = this;
     }
@@ -64,7 +65,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
     }
 
     getDefaultResponse(): Commons.TenBisResponse {
-        return new SlackModule.SlackResponse("ephemeral", Commons.DefaultResponseString, null);
+        return new SlackModule.SlackResponse("ephemeral", Constants.DEFAULT_RESPONSE, null);
     }
     getErrorMessage(restaurantName: string): Commons.TenBisResponse {
         var restaurantString = "";
@@ -98,14 +99,16 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
                     attachments.push(generateRestaurantCard(restaurant));
                 });
             } else {
+
+                let restaurantsString : string = "";
                 // Create a list
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    var restaurantsString = "[" + (index + 1) + "] " + restaurant.RestaurantName +
-                     " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+                    restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
+                     " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + "\n";
+                });
 
-                    attachments.push({
-                        text: restaurantsString
-                    });
+                attachments.push({
+                    text: restaurantsString
                 });
             }
         }
@@ -136,15 +139,18 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
                     attachments.push(generateRestaurantTotalCard(restaurant));
                 });
             } else {
+
+                let restaurantsString : string = "";
+
                 // Create a list
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    var restaurantsString = "[" + (index + 1) + "] " + restaurant.RestaurantName +
-                    " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
-
-                    attachments.push(
-                        new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null)
-                     );
+                    restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
+                    " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + "\n";
                 });
+
+                attachments.push(
+                    new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null)
+                 );
             }
         } else {
             title = "No pool order restaurants found";

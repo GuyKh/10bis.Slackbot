@@ -1,9 +1,9 @@
+import {Constants} from "../src/constants";
 import { SlackModule } from "../src/slackModule";
-import { deepCopy, restaurants } from "./commons";
+import { deepCopy, restaurants } from "./testCommons";
 import { SlackMessageFormatter } from "../src/slackMessage";
 import { Commons } from "../src/commons";
 
-// tests/slackMessage.test.js
 var chai = require("chai");
 var expect = chai.expect; // we are using the "expect" style of Chai
 let slackMessage = SlackMessageFormatter.getInstance();
@@ -125,9 +125,23 @@ describe("SlackMessage", function() {
     var response = slackMessage.generateSearchResponse(restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
-    expect(response.text).to.equal("Found 2 restaurants");
+    expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
-    expect(response.attachments.length).to.equal(2);
+    expect(response.attachments.length).to.equal(3);
+  });
+
+  it("generateSearchResponse() should return a valid message with restaurant list > Maximum Size", function() {
+    let bigAmountOfRestaurants = [];
+    bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
+    bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
+    bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
+
+    var response = slackMessage.generateSearchResponse(bigAmountOfRestaurants);
+
+    expect(response.response_type).to.equal(goodResponse.response_type);
+    expect(response.text).to.equal("Found " + bigAmountOfRestaurants.length + " restaurants");
+    expect(response.attachments).not.equal(null);
+    expect(response.attachments.length).to.equal(1);
   });
 
   it("getRestaurantName() should return right restaruant name from request", function() {
@@ -136,7 +150,13 @@ describe("SlackMessage", function() {
 
     expect(restaurantName).to.equal("דיקסי");
   });
+  it("getRestaurantName() should return null if no body exists", function() {
+    let req = new SlackModule.SlackRequest(deepCopy(message));
+    req.body = null;
+    var restaurantName = slackMessage.getRestaurantName(req);
 
+    expect(restaurantName).to.equal(null);
+  });
   it("getRestaurantName() should return an empty restaruant name from request with only command", function() {
     var req = new SlackModule.SlackRequest(null);
     req.body = deepCopy(message);
@@ -205,14 +225,39 @@ describe("SlackMessage", function() {
     expect(response.attachments).to.equal(null);
   });
 
+  it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
+    var expectedResponse = deepCopy(goodResponse);
+    var response = slackMessage.generateTotalOrdersResponse([restaurants[0]]);
+
+    expect(response.response_type).to.equal(expectedResponse.response_type);
+    expect(response.text).to.equal("Found 1 restaurants");
+    expect(response.attachments).not.equal(null);
+    expect(response.attachments.length).to.equal(1);
+  });
+
+
     it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
     var expectedResponse = deepCopy(goodResponse);
     var response = slackMessage.generateTotalOrdersResponse(restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
-    expect(response.text).to.equal("Found 2 restaurants");
+    expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
-    expect(response.attachments.length).to.equal(2);
+    expect(response.attachments.length).to.equal(3);
+  });
+  it("generateTotalOrdersResponse() should return a valid message with restaurant list > Maximum", function() {
+
+    let bigAmountOfRestaurants = [];
+    bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
+    bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
+    bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
+    var response = slackMessage.generateTotalOrdersResponse(bigAmountOfRestaurants);
+
+    expect(response.response_type).to.equal(goodResponse.response_type);
+    expect(response.text).to.equal("Found " + bigAmountOfRestaurants.length + " restaurants");
+    expect(response.attachments).not.equal(null);
+    expect(response.attachments.length).to.equal(1);
+
   });
 
   it("generateRestaurantTotalCard() should return a valid card", function() {
@@ -238,4 +283,27 @@ describe("SlackMessage", function() {
     expect(response.title_link).to.equal(validTotalCard.title_link);
 
   });
+  it("constructor() should throw an exception if launched twice", function() {
+    //Already ran constructor for SlackMessageFormatter
+    let slackMessageFormatter = SlackMessageFormatter.getInstance();
+
+    expect(slackMessageFormatter).not.to.equal(null);
+    expect(SlackMessageFormatter.getInstance()).not.to.equal(null);
+    try {
+      let hcmf = new SlackMessageFormatter();
+    } catch (err) {
+      expect(err.toString()).to.equal("Error: " + SlackMessageFormatter.INSTANTIATION_ERROR);
+    }
+  });
+  it("getDefaultResponse() should return a default response", function() {
+    let slackMessageFormatter = SlackMessageFormatter.getInstance();
+
+    let response = slackMessageFormatter.getDefaultResponse() as SlackModule.SlackResponse;
+
+    expect(response.response_type).to.equal("ephemeral");
+    // tslint:disable-next-line:no-unused-expression
+    expect(response.attachments).to.be.null;
+    expect(response.text).to.equal(Constants.DEFAULT_RESPONSE);
+  });
+
 });

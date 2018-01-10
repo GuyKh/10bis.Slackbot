@@ -3,12 +3,15 @@
         "target": "es6",
         "module": "commonjs",
         "sourceMap": true,
-        "typeRoots": ["node_modules/@types"]
+        "typeRoots": ["node_modules/@types"],
+        "types": [ "node", "mocha", "chai" ],
+        "experimentalDecorators": true,
+        "lib": [ "es6", "dom"]
     },
     "compileOnSave": true,
     "include": [
         "src/**/*",
-        "tests/**/*",
+        "test/**/*",
         "*"
 
     ],

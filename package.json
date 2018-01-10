@@ -5,9 +5,9 @@
   "main": "index.js",
   "dependencies": {
     "@types/express": "^4.11.0",
+    "@types/node": "^8.5.8",
     "body-parser": "^1.18.2",
     "dateformat": "^3.0.2",
-    "debug": "^3.1.0",
     "ejs": "2.5.7",
     "express": "^4.16.2",
     "guid": "0.0.12",
@@ -16,22 +16,33 @@
     "request": "^2.83.0",
     "typescript": "^2.6.2",
     "uuid": "^3.1.0",
-    "@types/mocha": "^2.2.45",
-    "@types/node": "^8.5.2",
     "winston": "^2.4.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.0",
+    "@types/mocha": "^2.2.46",
     "chai": "^4.1.2",
+    "eslint": "^4.15.0",
+    "eslint-plugin-chai-expect": "^1.1.1",
+    "eslint-plugin-mocha": "^4.11.0",
     "mocha": "^4.1.0",
+    "mocha-typescript": "^1.1.12",
+    "nyc": "^11.4.1",
     "rewire": "^3.0.2",
+    "source-map-support": "^0.5.0",
     "ts-node": "^4.1.0",
-    "tslint": "^5.8.0"
+    "tslint": "^5.8.0",
+    "typescript-eslint-parser": "^11.0.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha tests/*.ts --reporter spec -r ts-node/register",
-    "eslint": "./node_modules/.bin/eslint -c .eslintrc.js src/*.js tests/*.js index.js",
+    "precommit": "./node_modules/.bin/tslint `git diff --name-only | grep .ts` --fix",
+    "eslint": "./node_modules/.bin/eslint -c .eslintrc.js src/*.js test/*.js index.js",
     "tslint": "./node_modules/.bin/tslint --project ./",
-    "start": "./node_modules/.bin/tsc --module commonjs --outDir build/ --sourceMap --target ES6 -p ./tsconfig.json && node index.js"
+    "start": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json && node index.js",
+    "pretest": "tsc",
+    "test": "./node_modules/.bin/nyc mocha",
+    "watch": "./node_modules/.bin/mocha-typescript-watch",
+    "prepare": "tsc"
   },
   "repository": {
     "type": "git",
