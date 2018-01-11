@@ -1,4 +1,4 @@
-export class Constants {    
+export class Constants {
 
     public static readonly INVALID_MESSAGE_STRING: string = "Invalid Message";
     public static readonly ERROR_STRING: string = "There was an error in your request";
