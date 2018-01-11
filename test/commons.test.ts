@@ -5,63 +5,12 @@ import { SlackMessageFormatter } from "../src/slackMessage";
 import { HipChatMessageFormatter } from "../src/hipChatMessage";
 import "mocha";
 import { expect } from "chai";
-import { restaurants } from "./testCommons";
+import { restaurants, validSlackMessage, validHipChatMessage, slackInvalidMessage, hipChatInvalidMessage } from "./testCommons";
 
 var rewire = require("rewire");
 var app = rewire("./../src/app.js");
 var slackMessageFormatter = SlackMessageFormatter.getInstance();
 var hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
-
-let validSlackMessage = new SlackModule.SlackMessage(
-    "ItoB7oEyZIbNmHPfxHQ2GrbC",
-    "T0001",
-    "example",
-    "C2147483705",
-    "test",
-    "U2147483697",
-    "Steve",
-    "/10bis",
-    "דיקסי"
-);
-
-let validHipChatMessage = new HipChatModule.HipChatReqBody(
-                            "room_message",
-                            new HipChatModule.HipChatReqItem(
-                                    new HipChatModule.HipChatReqItemMessage(
-                                        new Date("2015-01-20T22:45:06.662545+00:00"),
-                                        new HipChatModule.HipChatReqItemMessageFrom(1661743, "Blinky", "Blinky the Three Eyed Fish"),
-                                         "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
-                                         [],
-                                         "/10bis דיקסי",
-                                         "message"),
-                                         new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")),
-                            578829);
-
-
-let slackInvalidMessage = new SlackModule.SlackMessage(
-    "ItoB7oEyZIbNmHPfxHQ2GrbC",
-    "T0001",
-    "example",
-    "C2147483705",
-    "test",
-    "U2147483697",
-    "Steve",
-    null,
-    null
-);
-
-var hipChatInvalidMessage = new HipChatModule.HipChatReqBody(
-    "room_message",
-    new HipChatModule.HipChatReqItem(
-            new HipChatModule.HipChatReqItemMessage(
-                new Date("2015-01-20T22:45:06.662545+00:00"),
-                new HipChatModule.HipChatReqItemMessageFrom(1661743, "Blinky", "Blinky the Three Eyed Fish"),
-                 "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
-                 [],
-                 null,
-                 "message"),
-                 new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")),
-    578829);
 
 export class Req {
     body: string;

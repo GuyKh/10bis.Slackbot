@@ -63,9 +63,9 @@ it.ly/1TmKuKQ",
 */
 var uuid = require("uuid/v4");
 
-var commandOperator = "/10bis";
 
 export class HipChatMessageFormatter implements Commons.MessageFormatter {
+    public static COMMAND_OPERATOR : string = "/10bis";
 
     private static _instance: HipChatMessageFormatter = new HipChatMessageFormatter();
 
@@ -97,7 +97,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
         return new HipChatModule.HipChatResponse(
             "red",
-            "No Restaurants Found" + restaurantString,
+            Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString,
             false,
             "text");
     }
@@ -106,7 +106,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
             var message = req.body.item.message.message;
 
-            message = message.slice(commandOperator.length + 1); //get the value
+            message = message.slice(HipChatMessageFormatter.COMMAND_OPERATOR.length + 1); //get the value
 
             return message;
         }
@@ -163,7 +163,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
     isValidMessage(req: HipChatModule.HipChatReq): boolean {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
-            return req.body.item.message.message.startsWith(commandOperator);
+            return req.body.item.message.message.startsWith(HipChatMessageFormatter.COMMAND_OPERATOR);
         }
 
         return false;

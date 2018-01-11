@@ -44,7 +44,7 @@ validTotalCard.fields = [
   new SlackModule.SlackAttachmentField("מינימום הזמנה", "₪70.00", true)
 ];
 
-let errorResponse = new SlackModule.SlackResponse("ephemeral", "No Restaurants Found", null);
+let errorResponse = new SlackModule.SlackResponse("ephemeral", Constants.NO_RESTAURANTS_FOUND_STRING, null);
 
 describe("SlackMessage", function() {
   describe("Basic methods and module", function() {

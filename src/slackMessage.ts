@@ -73,7 +73,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
             restaurantString = " for: " + restaurantName;
         }
 
-        var response = new SlackModule.SlackResponse("ephemeral", "No Restaurants Found" + restaurantString, null);
+        var response = new SlackModule.SlackResponse("ephemeral", Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString, null);
 
         return response;
     }

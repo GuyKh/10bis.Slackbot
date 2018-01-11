@@ -1,4 +1,6 @@
 import { Commons } from "../src/commons";
+import { SlackModule } from "../src/slackModule";
+import { HipChatModule } from "../src/hipChatModule";
 
 export function deepCopy (o : Object) {
   return JSON.parse(JSON.stringify( o ));
@@ -9,6 +11,58 @@ export function compareKeys(objectA : any, objectB : any) : boolean {
   var bKeys = Object.keys(objectB).sort();
   return JSON.stringify(aKeys) === JSON.stringify(bKeys);
 }
+
+export let validSlackMessage = new SlackModule.SlackMessage(
+  "ItoB7oEyZIbNmHPfxHQ2GrbC",
+  "T0001",
+  "example",
+  "C2147483705",
+  "test",
+  "U2147483697",
+  "Steve",
+  "/10bis",
+  "דיקסי"
+);
+
+export let validHipChatMessage = new HipChatModule.HipChatReqBody(
+                          "room_message",
+                          new HipChatModule.HipChatReqItem(
+                                  new HipChatModule.HipChatReqItemMessage(
+                                      new Date("2015-01-20T22:45:06.662545+00:00"),
+                                      new HipChatModule.HipChatReqItemMessageFrom(1661743, "Blinky", "Blinky the Three Eyed Fish"),
+                                       "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
+                                       [],
+                                       "/10bis דיקסי",
+                                       "message"),
+                                       new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")),
+                          578829);
+
+
+export let slackInvalidMessage = new SlackModule.SlackMessage(
+  "ItoB7oEyZIbNmHPfxHQ2GrbC",
+  "T0001",
+  "example",
+  "C2147483705",
+  "test",
+  "U2147483697",
+  "Steve",
+  null,
+  null
+);
+
+export let hipChatInvalidMessage = new HipChatModule.HipChatReqBody(
+  "room_message",
+  new HipChatModule.HipChatReqItem(
+          new HipChatModule.HipChatReqItemMessage(
+              new Date("2015-01-20T22:45:06.662545+00:00"),
+              new HipChatModule.HipChatReqItemMessageFrom(1661743, "Blinky", "Blinky the Three Eyed Fish"),
+               "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
+               [],
+               null,
+               "message"),
+               new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")),
+  578829);
+
 
 export let restaurants : Commons.Restaurant[] = [
   new Commons.RestaurantBuilder()

@@ -36,7 +36,7 @@ let badMessage = new HipChatModule.HipChatReqBody("room_message",
 
 let goodResponse = new HipChatModule.HipChatResponse("green", "Found 0 Restaurants", false, "text");
 
-let errorResponse = new HipChatModule.HipChatResponse("red", "No Restaurants Found", false, "text");
+let errorResponse = new HipChatModule.HipChatResponse("red", Constants.NO_RESTAURANTS_FOUND_STRING, false, "text");
 
 let validCard = new HipChatModule.HipChatCard(
   "link",

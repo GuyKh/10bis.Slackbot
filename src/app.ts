@@ -13,39 +13,18 @@ export class App {
     public express;
 
     constructor () {
-      this.express = express();
-      this.mountRoutes();
-
-      this.express.use(bodyParser.json());
-      this.express.use(bodyParser.urlencoded({ extended: true }));
-
       winston.debug("Booting %s", Constants.APP_NAME);
     }
 
-    private mountRoutes (): void {
-        const router = express.Router();
-
-        router.get("/", function(req : Commons.Request, res : Commons.Response) {
-            res.send("Sanity passed!");
-        });
-
-        router.post("/post", function(req : Commons.Request, res : Commons.Response) {
-            this.process(req, res);
-        });
-
-        this.express.use("/", router);
-        this.express.use("/post", router);
-    }
-
-    process (req: Commons.Request, res: Commons.Response) {
+    process (req: Commons.Request, res: Commons.Response) : Commons.Response {
         const hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
         const slackMessageFormatter = SlackMessageFormatter.getInstance();
 
         var messageFormatter = Commons.verifyMessage(req, [hipChatMessageFormatter, slackMessageFormatter]);
         if (!messageFormatter) {
             res.status(400);
-            res.send("Invalid Message");
-            return;
+            res.send(Constants.INVALID_MESSAGE_STRING);
+            return res;
         }
 
 
@@ -54,7 +33,7 @@ export class App {
         if (!restaurantName) {
             const body = messageFormatter.getErrorMessage(null);
             res.send(body);
-            return;
+            return res;
         }
 
         restaurantName = restaurantName.trim();
@@ -64,6 +43,7 @@ export class App {
         } else {
             this.search(res, messageFormatter, restaurantName);
         }
+        return res;
     }
 
     search (res : Commons.Response, messageFormatter : Commons.MessageFormatter, restaurantName : string) : void {
@@ -75,7 +55,7 @@ export class App {
 
         var parsed_url = Commons.generateSearchRequest(restaurantName);
 
-        request(parsed_url, function(error : Error, response : Commons.Response, body : string) {
+        request.get(parsed_url, function(error : Error, response : Commons.Response, body : string) {
             if (!error && response.statusCode === 200) {
                 var data = JSON.parse(body);
 
@@ -85,11 +65,11 @@ export class App {
                     return;
                 }
 
-                const resBody = messageFormatter.generateSearchResponse(this.filterByRestaurantName(Commons.sortRestaurantsByDistance(data)));
+                const resBody = messageFormatter.generateSearchResponse(Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(data)));
                 res.send(resBody);
             } else {
                 res.status(400);
-                res.send("None shall pass");
+                res.send(Constants.ERROR_STRING);
             }
         });
     }
@@ -98,7 +78,7 @@ export class App {
             var parsed_url = Commons.generateGetTotalOrdersRequest();
             winston.debug("Total Orders Url: " + parsed_url);
 
-            request(parsed_url, function(error : Error, response : Commons.Response, body : string) {
+            request.get(parsed_url, function(error : Error, response : Commons.Response, body : string) {
                 if (!error && response.statusCode === 200) {
                     var data = JSON.parse(body);
 
@@ -114,10 +94,9 @@ export class App {
                     res.send(resBody);
                 } else {
                     res.status(400);
-                    res.send("None shall pass");
+                    res.send(Constants.ERROR_STRING);
                 }
             });
     }
-  }
-
-export default new App().express;
+}
+export default new App();
