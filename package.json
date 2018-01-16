@@ -46,7 +46,7 @@
     "tslint": "./node_modules/.bin/tslint --project ./",
     "start": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json && node ./bin/www",
     "pretest": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json",
-    "test": "./node_modules/.bin/mocha --recursive --timeout 15000 --require ts-node/register --bail",
+    "test": "./node_modules/.bin/nyc ./node_modules/.bin/mocha --recursive --timeout 15000 --require ts-node/register --bail",
     "cover": "./node_modules/.bin/nyc npm t",
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
     "watch": "./node_modules/.bin/mocha-typescript-watch",
