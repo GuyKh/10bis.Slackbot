@@ -1,6 +1,7 @@
 import { Commons } from "./commons";
 import { HipChatModule } from "./hipChatModule";
 import { Constants } from "./constants";
+import { v4 as uuid } from "uuid";
 
 // hipChatMessage.js
 
@@ -61,8 +62,6 @@ it.ly/1TmKuKQ",
     }
 }
 */
-var uuid = require("uuid/v4");
-
 
 export class HipChatMessageFormatter implements Commons.MessageFormatter {
     public static COMMAND_OPERATOR : string = "/10bis";
@@ -90,7 +89,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     }
 
     getErrorMessage(restaurantName: string): Commons.TenBisResponse {
-        var restaurantString = "";
+        let restaurantString : string = "";
         if (restaurantName) {
             restaurantString = " for: " + restaurantName;
         }
@@ -104,7 +103,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
     getRestaurantName(req: HipChatModule.HipChatReq): string {
         if (req && req.body && req.body.item && req.body.item.message && req.body.item.message.message) {
-            var message = req.body.item.message.message;
+            let message : string = req.body.item.message.message;
 
             message = message.slice(HipChatMessageFormatter.COMMAND_OPERATOR.length + 1); //get the value
 
@@ -115,14 +114,14 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     }
 
     generateSearchResponse(restaurants: Commons.Restaurant[]): Commons.TenBisResponse {
-        var title = "Found " + restaurants.length + " restaurants";
-        var restaurantText = "";
+        let title : string = "Found " + restaurants.length + " restaurants";
+        let restaurantText : string = "";
 
         if (restaurants.length > 0) {
             title += "\n";
             restaurants.forEach(function (restaurant : Commons.Restaurant, index: number) {
-                var suffix = "";
-                if (index < restaurants.length) {
+                let suffix : string = "";
+                if (index + 1 < restaurants.length) { //exclude the last line
                     suffix = "\n\n";
                 }
                 restaurantText += "[" + (index + 1) + "] " + restaurant.RestaurantName +
@@ -137,7 +136,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     }
 
     generateTotalOrdersResponse(restaurants: Commons.Restaurant[]): HipChatModule.HipChatResponse {
-        var restaurantsString = "";
+        let restaurantsString : string = "";
         if (restaurants.length > 0) {
 
             // Create a list
@@ -190,7 +189,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     }
 
     getSuccessMessage (text : string, restaurant : Commons.Restaurant) : HipChatModule.HipChatResponse {
-        var response = new HipChatModule.HipChatResponse("green", text, false, "text");
+        let response : HipChatModule.HipChatResponse = new HipChatModule.HipChatResponse("green", text, false, "text");
 
         if (restaurant) {
             response.card = this.generateRestaurantCard(restaurant);

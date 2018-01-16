@@ -1,9 +1,10 @@
 import * as bodyParser from "body-parser";
-import * as express from "express";
 import * as path from "path";
 import * as errorHandler from "errorhandler";
+import * as express from "express";
 import { Commons } from "./commons";
 import { App } from "./app";
+import { Request, Response, NextFunction } from "express";
 
 /**
  * The server.
@@ -93,11 +94,11 @@ export class Server {
     router = express.Router();
 
     let app = new App();
-    router.get("/", function(req : Commons.Request, res : Commons.Response) {
+    router.get("/", function(req : Commons.Request, res : Response) {
         res.send("Sanity passed!");
     });
 
-    router.post("/post", function(req : Commons.Request, res : Commons.Response) {
+    router.post("/post", function(req : Commons.Request, res : Response) {
         app.process(req, res);
     });
 

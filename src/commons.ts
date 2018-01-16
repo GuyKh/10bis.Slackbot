@@ -1,13 +1,35 @@
+import * as http from "http";
+import { Request as ExpressRequest } from "express";
 import * as moment from "moment-timezone";
 import { Constants } from "./constants";
 import * as url from "url";
+import * as request from "request";
+import { Send, Response } from "express";
 
 export module Commons {
     export function getFormatedDateTime() : string {
-        var date = moment.tz(Constants.TIMEZONE).format(Constants.DATE_FORMAT);
-        var time = moment.tz(Constants.TIMEZONE).format(Constants.TIME_FORMAT);
+        let date : string = moment.tz(Constants.TIMEZONE).format(Constants.DATE_FORMAT);
+        let time : string = moment.tz(Constants.TIMEZONE).format(Constants.TIME_FORMAT);
         return date + "+" + time;
-    }
+	}
+
+	export function RequestGetWrapper(url : string) : Promise<string> {
+		return new Promise(function (resolve : Function, reject : Function) {
+			request.get(url, function(error : Error, response : Response, body : string) {
+				if (!error && response.statusCode === 200) {
+					resolve (body);		// Succeess
+				} else {
+					reject(error); 		// Failure
+				}
+			});
+		});
+	}
+
+	export function ErrorPromiseWrapper(errorString : string) : Promise<void> {
+		return new Promise(function (resolve : Function, reject : Function) {
+			reject(errorString); // Failure
+		});
+	}
 
 	export class SearchRequestQuery {
 		deliveryMethod: string;
@@ -91,7 +113,7 @@ export module Commons {
         query.desiredDateAndTime = Commons.getFormatedDateTime();
         query.timestamp = new Date().getTime();
 
-        var parsedUrl = url.format({
+        let parsedUrl : string = url.format({
             pathname: "https://www.10bis.co.il/Restaurants/SearchRestaurants",
             query: query
         });
@@ -122,7 +144,7 @@ export module Commons {
         query.desiredDateAndTime = Commons.getFormatedDateTime();
         query.timestamp = new Date().getTime();
 
-        var parsedUrl = url.format({
+       let parsedUrl : string = url.format({
             pathname: "https://www.10bis.co.il/Restaurants/SearchRestaurants",
             query: query
         });
@@ -133,7 +155,7 @@ export module Commons {
 
 	export function filterByRestaurantName (restaurants : Commons.Restaurant[]) : Commons.Restaurant[] {
         let flags = {};
-        var filteredRestaurants = restaurants.filter(function(restarant : Commons.Restaurant) {
+        let filteredRestaurants : Commons.Restaurant[] = restaurants.filter(function(restarant : Commons.Restaurant) {
             if (flags[restarant.RestaurantName]) {
                 return false;
             }
@@ -1334,12 +1356,6 @@ export module Commons {
 
     export interface Request extends Express.Request {
         body: any;
-    }
-
-    export interface Response extends Express.Response {
-        statusCode: number;
-        status(num : number) : void;
-        send(body: Commons.TenBisResponse) : void;
     }
 
     export interface TenBisResponse {

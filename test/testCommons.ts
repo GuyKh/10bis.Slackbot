@@ -1,14 +1,17 @@
 import { Commons } from "../src/commons";
 import { SlackModule } from "../src/slackModule";
 import { HipChatModule } from "../src/hipChatModule";
+import { MockExpressResponse } from "mock-express-response";
+import { Response } from "express";
+
 
 export function deepCopy (o : Object) {
   return JSON.parse(JSON.stringify( o ));
 }
 
 export function compareKeys(objectA : any, objectB : any) : boolean {
-  var aKeys = Object.keys(objectA).sort();
-  var bKeys = Object.keys(objectB).sort();
+  let aKeys = Object.keys(objectA).sort();
+  let bKeys = Object.keys(objectB).sort();
   return JSON.stringify(aKeys) === JSON.stringify(bKeys);
 }
 

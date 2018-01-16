@@ -7,10 +7,8 @@ import "mocha";
 import { expect } from "chai";
 import { restaurants, validSlackMessage, validHipChatMessage, slackInvalidMessage, hipChatInvalidMessage } from "./testCommons";
 
-var rewire = require("rewire");
-var app = rewire("./../src/app.js");
-var slackMessageFormatter = SlackMessageFormatter.getInstance();
-var hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+let slackMessageFormatter : Commons.MessageFormatter = SlackMessageFormatter.getInstance();
+let hipChatMessageFormatter : Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
 
 export class Req {
     body: string;
@@ -50,14 +48,14 @@ describe("App", function () {
 
 
             it("generateSearchRequest() should return a valid request", function () {
-                var generatedRequest = Commons.generateSearchRequest("Rest");
+                let generatedRequest : string = Commons.generateSearchRequest("Rest");
 
                 expect(generatedRequest).not.to.equal(null);
                 expect(generatedRequest.includes("searchPhrase=Rest")).to.equal(true);
             });
 
             it("generateGetTotalOrdersRequest() should return a valid request", function () {
-                var generatedRequest = Commons.generateGetTotalOrdersRequest();
+                let generatedRequest : string = Commons.generateGetTotalOrdersRequest();
 
                 expect(generatedRequest).not.to.equal(null);
                 expect(generatedRequest.includes("deliveryMethod=Delivery")).to.equal(true);
@@ -68,24 +66,24 @@ describe("App", function () {
                 let restaurant2 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest2").setRestaurantId(2).build();
                 let restaurant3 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest1").setRestaurantId(3).build();
 
-                var result = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
+                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(null);
-                expect(result.length).to.equal(2);
-                expect(result.some(function(element : Commons.Restaurant) {
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(2);
+                expect(restaurants.some(function(element : Commons.Restaurant) {
                     return element.RestaurantName === restaurant1.RestaurantName;
                  })).to.equal(true);
-                expect(result.some(function(element : Commons.Restaurant) {
+                expect(restaurants.some(function(element : Commons.Restaurant) {
                     return element.RestaurantName === restaurant2.RestaurantName;
                  })).to.equal(true);
             });
 
                it("filterByRestaurantName() should be ok with an empty array", function () {
 
-                var result = Commons.filterByRestaurantName([]);
+                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([]);
 
-                expect(result).not.to.equal(null);
-                expect(result.length).to.equal(0);
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(0);
             });
 
             it("filterByRestaurantName() should filter restaurants with the same name", function () {
@@ -93,105 +91,105 @@ describe("App", function () {
                 let restaurant2 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest2").setRestaurantId(2).build();
                 let restaurant3 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest1").setRestaurantId(3).build();
 
-                var result = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
+                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(null);
-                expect(result.length).to.equal(2);
-                expect(result.some(function(element : Commons.Restaurant) {
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(2);
+                expect(restaurants.some(function(element : Commons.Restaurant) {
                     return element.RestaurantName === restaurant1.RestaurantName;
                 })).to.equal(true);
-                expect(result.some(function(element : Commons.Restaurant) {
+                expect(restaurants.some(function(element : Commons.Restaurant) {
                     return element.RestaurantName === restaurant2.RestaurantName;
                 })).to.equal(true);
             });
 
             it("sortRestaurantsByDistance() should sort restaurants by distance", function () {
-                var restaurant1 = new Commons.RestaurantBuilder()
+                let restaurant1 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest1")
                 .setRestaurantId(1)
                 .setDistanceFromUserInMeters(10)
                 .build();
 
-                var restaurant2 = new Commons.RestaurantBuilder()
+                let restaurant2 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest2")
                 .setRestaurantId(2)
                 .setDistanceFromUserInMeters(20)
                 .build();
 
-                var restaurant3 = new Commons.RestaurantBuilder()
+                let restaurant3 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest3")
                 .setRestaurantId(1)
                 .setDistanceFromUserInMeters(15)
                 .build();
 
-                var result = Commons.sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
+                let restaurants : Commons.Restaurant[] = Commons.sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(null);
-                expect(result.length).to.equal(3);
-                expect(result[0].RestaurantName).to.be.equal(restaurant1.RestaurantName);
-                expect(result[1].RestaurantName).to.be.equal(restaurant3.RestaurantName);
-                expect(result[2].RestaurantName).to.be.equal(restaurant2.RestaurantName);
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(3);
+                expect(restaurants[0].RestaurantName).to.be.equal(restaurant1.RestaurantName);
+                expect(restaurants[1].RestaurantName).to.be.equal(restaurant3.RestaurantName);
+                expect(restaurants[2].RestaurantName).to.be.equal(restaurant2.RestaurantName);
             });
 
             it("sortRestaurantsByDistance() should sort restaurants by distance even when there are bad distances", function () {
-                var restaurant4 = new Commons.RestaurantBuilder()
+                let restaurant4 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest4")
                 .setRestaurantId(4)
                 .setDistanceFromUserInMeters(25)
                 .build();
 
-                var restaurant1 = new Commons.RestaurantBuilder()
+                let restaurant1 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest1")
                 .setRestaurantId(1)
                 .build();
 
-                var restaurant2 = new Commons.RestaurantBuilder()
+                let restaurant2 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest2")
                 .setRestaurantId(2)
                 .setDistanceFromUserInMeters(15)
                 .build();
 
-                var restaurant3 = new Commons.RestaurantBuilder()
+                let restaurant3 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest3")
                 .setRestaurantId(1)
                 .build();
 
-                var result = Commons.sortRestaurantsByDistance([restaurant4, restaurant1, restaurant2, restaurant3]);
+                let restaurants : Commons.Restaurant[] = Commons.sortRestaurantsByDistance([restaurant4, restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(null);
-                expect(result.length).to.equal(4);
-                expect(result[0].RestaurantName).to.be.equal(restaurant2.RestaurantName);
-                expect(result[1].RestaurantName).to.be.equal(restaurant4.RestaurantName);
-                expect(result[2].RestaurantName).to.be.equal(restaurant1.RestaurantName);
-                expect(result[3].RestaurantName).to.be.equal(restaurant3.RestaurantName);
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(4);
+                expect(restaurants[0].RestaurantName).to.be.equal(restaurant2.RestaurantName);
+                expect(restaurants[1].RestaurantName).to.be.equal(restaurant4.RestaurantName);
+                expect(restaurants[2].RestaurantName).to.be.equal(restaurant1.RestaurantName);
+                expect(restaurants[3].RestaurantName).to.be.equal(restaurant3.RestaurantName);
             });
 
             it("sortRestaurantsByDistance() should do nothing when fields are equal", function () {
-                var restaurant1 = new Commons.RestaurantBuilder()
+                let restaurant1  : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest1")
                 .setRestaurantId(1)
                 .setDistanceFromUserInMeters(15)
                 .build();
 
-                var restaurant2 = new Commons.RestaurantBuilder()
+                let restaurant2 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest2")
                 .setRestaurantId(2)
                 .setDistanceFromUserInMeters(7)
                 .build();
 
-                var restaurant3 = new Commons.RestaurantBuilder()
+                let restaurant3 : Commons.Restaurant = new Commons.RestaurantBuilder()
                 .setRestaurantName("Rest3")
                 .setRestaurantId(3)
                 .setDistanceFromUserInMeters(7)
                 .build();
 
-                var result = Commons.sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
+                let restaurants : Commons.Restaurant[] = Commons.sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(null);
-                expect(result.length).to.equal(3);
-                expect(result[0].RestaurantName).to.be.equal(restaurant2.RestaurantName);
-                expect(result[1].RestaurantName).to.be.equal(restaurant3.RestaurantName);
-                expect(result[2].RestaurantName).to.be.equal(restaurant1.RestaurantName);
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(3);
+                expect(restaurants[0].RestaurantName).to.be.equal(restaurant2.RestaurantName);
+                expect(restaurants[1].RestaurantName).to.be.equal(restaurant3.RestaurantName);
+                expect(restaurants[2].RestaurantName).to.be.equal(restaurant1.RestaurantName);
             });
 
             it("sortRestaurantsByDistance() should do nothing when no field", function () {
@@ -200,17 +198,17 @@ describe("App", function () {
                 let restaurant3 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest3").setRestaurantId(3).build();
 
 
-                var result = Commons.sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
+                let restaurants = Commons.sortRestaurantsByDistance([restaurant1, restaurant2, restaurant3]);
 
-                expect(result).not.to.equal(null);
-                expect(result.length).to.equal(3);
-                expect(result[0].RestaurantName).to.be.equal(restaurant1.RestaurantName);
-                expect(result[1].RestaurantName).to.be.equal(restaurant2.RestaurantName);
-                expect(result[2].RestaurantName).to.be.equal(restaurant3.RestaurantName);
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(3);
+                expect(restaurants[0].RestaurantName).to.be.equal(restaurant1.RestaurantName);
+                expect(restaurants[1].RestaurantName).to.be.equal(restaurant2.RestaurantName);
+                expect(restaurants[2].RestaurantName).to.be.equal(restaurant3.RestaurantName);
             });
 
             it("filterTotalOrders() should filter the restaurants correctly", function () {
-                var filteredRestaurants = restaurants.filter(Commons.filterTotalOrders);
+                let filteredRestaurants : Commons.Restaurant[] = restaurants.filter(Commons.filterTotalOrders);
 
                 expect(filteredRestaurants).not.to.equal(null);
                 expect(filteredRestaurants.length).to.equal(2);

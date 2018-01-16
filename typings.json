@@ -1,9 +1,13 @@
 {
   "globalDependencies": {
+    "es6-promise": "registry:dt/es6-promise#0.0.0+20160726191732",
     "mocha": "registry:dt/mocha#2.2.5+20170311011848",
     "node": "registry:dt/node#7.0.0+20170322231424"
   },
   "dependencies": {
     "chai": "registry:npm/chai#3.5.0+20160723033700"
+  },
+  "globalDevDependencies": {
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160726072212"
   }
 }

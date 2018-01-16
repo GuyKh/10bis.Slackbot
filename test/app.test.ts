@@ -11,11 +11,10 @@ import { Constants } from "../src/constants";
 import * as sinon from "sinon";
 import * as request from "request";
 import { SinonStub } from "sinon";
+import { Request, Response, NextFunction } from "express";
 
 
-
-
-
+let MockExpressResponse = require("mock-express-response");
 let slackMessageFormatter : SlackMessageFormatter = SlackMessageFormatter.getInstance();
 let hipChatMessageFormatter : HipChatMessageFormatter = HipChatMessageFormatter.getInstance();
 let app : App = new App();
@@ -28,272 +27,449 @@ let badRestaurantName : string = "BlaBlaBla";
 class EmptyRequest implements Commons.Request {
     body: any;
 }
-
 let get : any;
-let post : any;
 
-describe("App", function () {
-    beforeEach(function() {
-		this.get = sinon.stub(request, "get");
-		this.post = sinon.stub(request, "post");
+describe("App", () => {
+    it("process() should return one restaurant if valid Slack message", () => {
+        let res = new MockExpressResponse();
+        return app.process(slackReq, res).then( (result) => {
+            expect(res.statusCode).to.equal(200);
+
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes.text).to.equal("Found 1 restaurants");
+            expect(slackRes.response_type).to.equal("in_channel");
+            expect(slackRes.attachments).not.to.equal(null);
+            expect(slackRes.attachments.length).to.equal(1);
+            expect(slackRes.attachments[0].title).to.equal(validSlackMessage.text);
+         }
+        );
     });
+    it("process() should return one restaurant if valid HipChat message", () => {
+        let res = new MockExpressResponse();
+        return app.process(hipChatReq, res).then( (result) => {
+            expect(res.statusCode).to.equal(200);
 
-    afterEach(function() {
-        (this.get as sinon.SinonStub).restore();
-        (this.post as sinon.SinonStub).restore();
-	});
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let hipChatRes : HipChatModule.HipChatResponse = body;
+            expect(hipChatRes).not.to.equal(null);
 
-    it("process() should return one restaurant if valid Slack message", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(SlackModule.SlackResponse);
+            expect(hipChatRes.message.replace(/^\s+|\s+$/g, "")).to.equal("Found 1 restaurants");
+            expect(hipChatRes.message_format).to.equal("text");
+            expect(hipChatRes.card).not.to.equal(null);
 
-                let slackRes : SlackModule.SlackResponse = body as SlackModule.SlackResponse;
-
-                expect(slackRes.text).to.equal("Found 1 restaurants");
-                expect(slackRes.response_type).to.equal("in_channel");
-                expect(slackRes.attachments).not.to.equal(null);
-                expect(slackRes.attachments.length).to.equal(1);
-                expect(slackRes.attachments[0].title).to.equal(validSlackMessage.text);
+            let message = validHipChatMessage.item.message.message;
+            if (message.indexOf(HipChatMessageFormatter.COMMAND_OPERATOR) === 0) {
+                message = message.slice(HipChatMessageFormatter.COMMAND_OPERATOR.length + 1);
             }
-        };
-        app.process(slackReq, res);
+            expect(hipChatRes.card.title).to.equal(message);
+         }
+        );
     });
-    it("process() should return one restaurant if valid HipChat message", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(HipChatModule.HipChatResponse);
+    it("process() should return default message if invalid Slack message", () => {
+        let res = new MockExpressResponse();
 
-                let hipChatRes : HipChatModule.HipChatResponse = body as HipChatModule.HipChatResponse;
+        return app.process(badSlackReq, res).catch( (result) => {
+            expect(res.statusCode).to.equal(400);
 
-                expect(hipChatRes.message.replace(/^\s+|\s+$/g, "")).to.equal("Found 1 restaurants");
-                expect(hipChatRes.message_format).to.equal("text");
-                expect(hipChatRes.card).not.to.equal(null);
+            let body = res._getString();
+            expect(body).not.to.equal(null);
+            expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
+            expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
+        });
+    });
+    it("process() should return default if invalid HipChat message", () => {
 
-                let message = validHipChatMessage.item.message.message;
-                if (message.indexOf(HipChatMessageFormatter.COMMAND_OPERATOR) === 0) {
-                    message = message.slice(HipChatMessageFormatter.COMMAND_OPERATOR.length + 1);
-                }
-                expect(hipChatRes.card.title).to.equal(message);
+        let res = new MockExpressResponse();
+
+        app.process(badHipChatReq, res).catch((result) => {
+            expect(res.statusCode).to.equal(400);
+
+            let body = res._getString();
+            expect(body).not.to.equal(null);
+            expect(body).not.to.be.an.instanceof(HipChatModule.HipChatResponse);
+            expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
+        });
+    });
+    it("process() should return default if invalid message", () => {
+
+        let res = new MockExpressResponse();
+
+        app.process(new EmptyRequest(), res).catch( (result) => {
+
+            expect(res.statusCode).to.equal(400);
+
+            let body = res._getString();
+
+            expect(body).not.to.equal(null);
+            expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
+        });
+    });
+    it("process() should return no restaurants if valid Slack message returns nothing", () => {
+        let slackEmptyReq : SlackModule.SlackRequest = deepCopy(slackReq);
+        slackEmptyReq.body.text = badRestaurantName;
+
+        let res = new MockExpressResponse();
+        return app.process(slackEmptyReq, res).then ((result) => {
+
+            expect(res.statusCode).to.be.equal(200);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+
+            expect(slackRes.text).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName);
+            expect(slackRes.response_type).to.equal("ephemeral");
+            expect(slackRes.attachments).to.equal(null);
+        });
+    });
+    it("process() should return no restaurants if valid HipChat message returns nothing", () => {
+        let hipChatEmptyReq : HipChatModule.HipChatReq = deepCopy(hipChatReq);
+        hipChatEmptyReq.body.item.message.message = HipChatMessageFormatter.COMMAND_OPERATOR + " " + badRestaurantName;
+        let res = new MockExpressResponse();
+
+        return app.process(hipChatEmptyReq, res).then((result) => {
+            expect(res.statusCode).to.be.equal(200);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let hipChatRes : HipChatModule.HipChatResponse = body;
+            expect(hipChatRes).not.to.equal(null);
+
+            expect(hipChatRes.message.replace(/^\s+|\s+$/g, "")).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName);
+            expect(hipChatRes.message_format).to.equal("text");
+            expect(hipChatRes.card).not.to.equal(null);
+
+            let message = validHipChatMessage.item.message.message;
+            if (message.indexOf(HipChatMessageFormatter.COMMAND_OPERATOR) === 0) {
+                message = message.slice(HipChatMessageFormatter.COMMAND_OPERATOR.length + 1);
             }
-        };
-        app.process(hipChatReq, res);
+        });
     });
-    it("process() should return default message if invalid Slack message", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(400);
-            },
-            send: function(body: Commons.TenBisResponse) {
+    it("process() should return valid response if command is total", () => {
+        let slackTotalReq : SlackModule.SlackRequest = deepCopy(slackReq);
+        slackTotalReq.body.text = Constants.TOTAL_KEYWORD;
+
+        let res = new MockExpressResponse();
+
+        app.process(slackTotalReq, res).then((result) => {
+            expect(res.statusCode).to.be.equal(200);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes.response_type).to.equal("ephemeral");
+        });
+    });
+    it("process() should return error if using empty restaurant name for slack", () => {
+        let slackTotalReq : SlackModule.SlackRequest = deepCopy(slackReq);
+        slackTotalReq.body.text = "";
+
+        let res = new MockExpressResponse();
+
+        app.process(slackTotalReq, res).catch((result) => {
+            expect(res.statusCode).to.be.equal(400);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes.response_type).to.equal("ephemeral");
+            expect(slackRes.text).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING);
+        });
+    });
+    it("process() should return error if using empty restaurant name for hipchat", () => {
+        let hipChatRequest : HipChatModule.HipChatReq = deepCopy(hipChatReq);
+        hipChatRequest.body.item.message.message = "/10bis ";
+
+        let res = new MockExpressResponse();
+
+        app.process(hipChatRequest, res).catch((result) => {
+            expect(res.statusCode).to.be.equal(400);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let hipChatResponse : HipChatModule.HipChatResponse = body;
+
+            expect(hipChatResponse).not.to.equal(null);
+            expect(hipChatResponse.message_format).to.equal("text");
+            expect(hipChatResponse.message).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING);
+        });
+    });
+    it("process() should return no restaurants if valid HipChat message returns nothing", () => {
+        let hipChatTotalReq : HipChatModule.HipChatReq = deepCopy(hipChatReq);
+        hipChatTotalReq.body.item.message.message = HipChatMessageFormatter.COMMAND_OPERATOR + " " + Constants.TOTAL_KEYWORD;
+        let res = new MockExpressResponse();
+
+        return app.process(hipChatTotalReq, res).then((result) => {
+            expect(res.statusCode).to.be.equal(200);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let hipChatRes : HipChatModule.HipChatResponse = body;
+            expect(hipChatRes).not.to.equal(null);
+            expect(hipChatRes.message_format).to.equal("text");
+        });
+    });
+    it("getTotalOrders() should return valid response if command is total", () => {
+        let res = new MockExpressResponse();
+
+        return app.getTotalOrders(res, SlackMessageFormatter.getInstance()).then((result) => {
+            expect(res.statusCode).to.be.equal(200);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes.response_type).to.equal("ephemeral");
+        });
+    });
+    it("getTotalOrders() should return valid response if command is total", () => {
+        let res = new MockExpressResponse();
+
+        return app.getTotalOrders(res, HipChatMessageFormatter.getInstance()).then((result) => {
+            expect(res.statusCode).to.be.equal(200);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let hipChatRes : HipChatModule.HipChatResponse = body;
+            expect(hipChatRes).not.to.equal(null);
+            expect(hipChatRes.message_format).to.equal("text");
+        });
+    });
+    it("search() with null restaurant name - Slack", () => {
+        let res = new MockExpressResponse();
+
+        return app.search(res, SlackMessageFormatter.getInstance(), null).catch((result) => {
+            expect(res.statusCode).to.be.equal(400);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes.response_type).to.equal("ephemeral");
+            expect(slackRes.text).to.equal(Constants.DEFAULT_RESPONSE);
+        });
+    });
+    it("search() with null restaurant name - HipChat", () => {
+        let res = new MockExpressResponse();
+
+        return app.search(res, HipChatMessageFormatter.getInstance(), null).catch((result) => {
+            expect(res.statusCode).to.be.equal(400);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let hipChatResponse : HipChatModule.HipChatResponse = body;
+
+            expect(hipChatResponse).not.to.equal(null);
+            expect(hipChatResponse.message_format).to.equal("text");
+            expect(hipChatResponse.message).to.equal(Constants.DEFAULT_RESPONSE);
+        });
+    });
+    it("search() with empty restaurant name - Slack", () => {
+        let res = new MockExpressResponse();
+
+        return app.search(res, SlackMessageFormatter.getInstance(), "").catch((result) => {
+            expect(res.statusCode).to.be.equal(400);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes.response_type).to.equal("ephemeral");
+            expect(slackRes.text).to.equal(Constants.DEFAULT_RESPONSE);
+        });
+    });
+    it("search() with empty restaurant name - HipChat", () => {
+        let res = new MockExpressResponse();
+
+        return app.search(res, HipChatMessageFormatter.getInstance(), "").catch((result) => {
+            expect(res.statusCode).to.be.equal(400);
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let hipChatResponse : HipChatModule.HipChatResponse = body;
+
+            expect(hipChatResponse).not.to.equal(null);
+            expect(hipChatResponse.message_format).to.equal("text");
+            expect(hipChatResponse.message).to.equal(Constants.DEFAULT_RESPONSE);
+        });
+    });
+    describe("ResponseCode from 10bis != 200", () => {
+        beforeEach(function() {
+            this.get = sinon.stub(request, "get");
+            let res = new MockExpressResponse();
+            res.statusCode = 201;
+
+            this.get.yields(null, res , null);
+        });
+
+        afterEach(function() {
+            (this.get as sinon.SinonStub).restore();
+        });
+
+        it("process() with other response than 200", () => {
+            let res = new MockExpressResponse();
+
+            return app.process(slackReq, res).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(400);
+                let body = res._getString();
+
                 expect(body).not.to.equal(null);
                 expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
-                expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
-            }
-        };
-        app.process(badSlackReq, res);
-    });
-    it("process() should return default if invalid HipChat message", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(400);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).not.to.be.an.instanceof(HipChatModule.HipChatResponse);
-                expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
-            }
-        };
-        app.process(badHipChatReq, res);
-    });
-    it("process() should return default if invalid message", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(400);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
-            }
-        };
-        app.process(new EmptyRequest(), res);
-    });
-    it("process() should return no restaurants if valid Slack message returns nothing", function () {
-        let slackEmptyReq : SlackModule.SlackRequest = deepCopy(slackReq);
-        slackEmptyReq.body.text = "BlaBlaBla";
+                expect(body).to.be.equal(Constants.ERROR_STRING);
+            });
+        });
+        it("search() with response code = 201", () => {
+            let res = new MockExpressResponse();
 
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(SlackModule.SlackResponse);
+            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(400);
+                let body = res._getString();
 
-                let slackRes : SlackModule.SlackResponse = body as SlackModule.SlackResponse;
+                expect(body).not.to.equal(null);
+                expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
+                expect(body).to.be.equal(Constants.ERROR_STRING);
+            });
+        });
+        it("getTotalOrders() with error = 201", () => {
+            let res = new MockExpressResponse();
+            return app.getTotalOrders(res, SlackMessageFormatter.getInstance()).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(400);
+                let body = res._getString();
+
+                expect(body).not.to.equal(null);
+                expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
+                expect(body).to.be.equal(Constants.ERROR_STRING);
+            });
+        });
+    });
+
+    describe("ResponseCode from 10bis == 200 with empty response", () => {
+        beforeEach(function() {
+            this.get = sinon.stub(request, "get");
+            let res = new MockExpressResponse();
+            res.body = "";
+            this.get.yields(null, res , null);
+        });
+
+        afterEach(function() {
+            (this.get as sinon.SinonStub).restore();
+        });
+
+        it("process() with response == 200 with empty content", () => {
+            let res = new MockExpressResponse();
+
+            return app.process(slackReq, res).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(200);
+                let body = res._getJSON();
+                expect(body).not.to.equal(null);
+                let slackRes : SlackModule.SlackResponse = body;
+
+                expect(slackRes).not.to.equal(null);
+
+                expect(slackRes.text).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + "דיקסי");
+                expect(slackRes.response_type).to.equal("ephemeral");
+                expect(slackRes.attachments).to.equal(null);
+            });
+        });
+        it("search() with response == 200 with empty content", () => {
+            let res = new MockExpressResponse();
+
+            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(200);
+                let body = res._getJSON();
+                expect(body).not.to.equal(null);
+                let slackRes : SlackModule.SlackResponse = body;
+
+                expect(slackRes).not.to.equal(null);
 
                 expect(slackRes.text).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName);
                 expect(slackRes.response_type).to.equal("ephemeral");
                 expect(slackRes.attachments).to.equal(null);
-            }
-        };
-        app.process(slackEmptyReq, res);
-    });
-    it("process() should return no restaurants if valid HipChat message returns nothing", function () {
-        let hipChatEmptyReq : HipChatModule.HipChatReq = deepCopy(hipChatReq);
-        hipChatEmptyReq.body.item.message.message = HipChatMessageFormatter.COMMAND_OPERATOR + " " + badRestaurantName;
+            });
+        });
+        it("getTotalOrders() with response == 200 with empty content", () => {
+            let res = new MockExpressResponse();
+            return app.getTotalOrders(res, SlackMessageFormatter.getInstance()).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
 
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
+                expect(res.statusCode).to.be.equal(200);
+                let body = res._getJSON();
                 expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(HipChatModule.HipChatResponse);
+                let slackRes : SlackModule.SlackResponse = body;
 
-                let hipChatRes : HipChatModule.HipChatResponse = body as HipChatModule.HipChatResponse;
+                expect(slackRes).not.to.equal(null);
 
-                expect(hipChatRes.message.replace(/^\s+|\s+$/g, "")).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName);
-                expect(hipChatRes.message_format).to.equal("text");
-                expect(hipChatRes.card).not.to.equal(null);
-
-                let message = validHipChatMessage.item.message.message;
-                if (message.indexOf(HipChatMessageFormatter.COMMAND_OPERATOR) === 0) {
-                    message = message.slice(HipChatMessageFormatter.COMMAND_OPERATOR.length + 1);
-                }
-            }
-        };
-        app.process(hipChatEmptyReq, res);
-    });
-    it("process() should return valid response if command is total", function () {
-        let slackTotalReq : SlackModule.SlackRequest = deepCopy(slackReq);
-        slackTotalReq.body.text = Constants.TOTAL_KEYWORD;
-
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(SlackModule.SlackResponse);
-
-                let slackRes : SlackModule.SlackResponse = body as SlackModule.SlackResponse;
+                expect(slackRes.text).to.equal(Constants.NO_RESTAURANTS_FOUND_STRING);
                 expect(slackRes.response_type).to.equal("ephemeral");
-            }
-        };
-        app.process(slackTotalReq, res);
+                expect(slackRes.attachments).to.equal(null);
+            });
+        });
     });
-    it("process() should return no restaurants if valid HipChat message returns nothing", function () {
-        let hipChatTotalReq : HipChatModule.HipChatReq = deepCopy(hipChatReq);
-        hipChatTotalReq.body.item.message.message = HipChatMessageFormatter.COMMAND_OPERATOR + " " + Constants.TOTAL_KEYWORD;
 
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(HipChatModule.HipChatResponse);
+    describe("Response from 10bis is error (400)", () => {
+        beforeEach(function() {
+            this.get = sinon.stub(request, "get");
+            this.get.yields("error", null , null);
+        });
 
-                let hipChatRes : HipChatModule.HipChatResponse = body as HipChatModule.HipChatResponse;
+        afterEach(function() {
+            (this.get as sinon.SinonStub).restore();
+        });
 
-                expect(hipChatRes.message_format).to.equal("text");
-            }
-        };
-        app.process(hipChatTotalReq, res);
-    });
-    it("getTotalOrders() should return valid response if command is total", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(SlackModule.SlackResponse);
+        it("process() with error (400)", () => {
+            let res = new MockExpressResponse();
 
-                let slackRes : SlackModule.SlackResponse = body as SlackModule.SlackResponse;
-                expect(slackRes.response_type).to.equal("ephemeral");
-            }
-        };
-        app.getTotalOrders(res, SlackMessageFormatter.getInstance());
-    });
-    it("getTotalOrders() should return valid response if command is total", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(200);
-            },
-            send: function(body: Commons.TenBisResponse) {
-                expect(body).not.to.equal(null);
-                expect(body).to.be.an.instanceof(HipChatModule.HipChatResponse);
+            return app.process(slackReq, res).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(400);
+                let body = res._getString();
 
-                let hipChatRes : HipChatModule.HipChatResponse = body as HipChatModule.HipChatResponse;
-
-                expect(hipChatRes.message_format).to.equal("text");
-            }
-        };
-        app.getTotalOrders(res, HipChatMessageFormatter.getInstance());
-    });
-    it("process() with error", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(400);
-            },
-            send: function(body: Commons.TenBisResponse) {
                 expect(body).not.to.equal(null);
                 expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
                 expect(body).to.be.equal(Constants.ERROR_STRING);
-            }
-        };
-        this.get.yields("error", null , null);
-        app.process(slackReq, res);
-    });
-    it("search() with error", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(400);
-            },
-            send: function(body: Commons.TenBisResponse) {
+            });
+        });
+        it("search() with error (400)", () => {
+            let res = new MockExpressResponse();
+
+            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(400);
+                let body = res._getString();
+
                 expect(body).not.to.equal(null);
                 expect(body).not.to.be.an.instanceof(HipChatModule.HipChatResponse);
                 expect(body).to.be.equal(Constants.ERROR_STRING);
-            }
-        };
-        this.get.yields("error", null , null);
-        app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName);
-    });
-    it("getTotalOrders() with error", function () {
-        let res : Commons.Response = {
-            statusCode: 200,
-            status: function(num : number) {
-                expect(num).to.equal(400);
-            },
-            send: function(body: Commons.TenBisResponse) {
+            });
+        });
+        it("getTotalOrders() with error (400)", () => {
+            let res = new MockExpressResponse();
+
+            return app.getTotalOrders(res, SlackMessageFormatter.getInstance()).then((result) => {
+                throw new Error("I shouldn't be here");
+            }).catch((result) => {
+                expect(res.statusCode).to.be.equal(400);
+                let body = res._getString();
+
                 expect(body).not.to.equal(null);
                 expect(body).not.to.be.an.instanceof(HipChatModule.HipChatResponse);
                 expect(body).to.be.equal(Constants.ERROR_STRING);
-            }
-        };
-        this.get.yields("error", null , null);
-        app.getTotalOrders(res, SlackMessageFormatter.getInstance());
+            });
+        });
     });
 });

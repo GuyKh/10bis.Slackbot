@@ -12,3 +12,6 @@ script:
 - tsc -p ./tsconfig.json
 - npm run tslint
 - npm test
+after_success:
+- npm run coverage
+

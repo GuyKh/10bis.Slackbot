@@ -1,6 +1,5 @@
 import * as bodyParser from "body-parser";
-import * as express from "express";
-import * as request from "request";
+import { Request, Response, NextFunction } from "express";
 import * as winston from "winston";
 import { Commons } from "./commons";
 import { Constants } from "./constants";
@@ -11,20 +10,17 @@ winston.level = process.env.LOG_LEVEL;
 
 export class App {
     public express;
-
-    constructor () {
+    private messageFormatters : Commons.MessageFormatter[];
+    constructor (formatter? : Commons.MessageFormatter) {
       winston.debug("Booting %s", Constants.APP_NAME);
+      this.messageFormatters = [HipChatMessageFormatter.getInstance(), SlackMessageFormatter.getInstance()];
     }
 
-    process (req: Commons.Request, res: Commons.Response) : Commons.Response {
-        const hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
-        const slackMessageFormatter = SlackMessageFormatter.getInstance();
-
-        var messageFormatter = Commons.verifyMessage(req, [hipChatMessageFormatter, slackMessageFormatter]);
+    process (req: Commons.Request, res: Response) : Promise<void> {
+        let messageFormatter = Commons.verifyMessage(req, this.messageFormatters);
         if (!messageFormatter) {
-            res.status(400);
-            res.send(Constants.INVALID_MESSAGE_STRING);
-            return res;
+            res.status(400).send(Constants.INVALID_MESSAGE_STRING);
+            return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
         }
 
 
@@ -32,70 +28,76 @@ export class App {
 
         if (!restaurantName) {
             const body = messageFormatter.getErrorMessage(null);
-            res.send(body);
-            return res;
+            res.status(400).send(body);
+            return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
         }
 
         restaurantName = restaurantName.trim();
 
         if (restaurantName.toLowerCase() === Constants.TOTAL_KEYWORD.toLowerCase()) {
-            this.getTotalOrders(res, messageFormatter);
+            return this.getTotalOrders(res, messageFormatter);
         } else {
-            this.search(res, messageFormatter, restaurantName);
+            return this.search(res, messageFormatter, restaurantName);
         }
-        return res;
     }
 
-    search (res : Commons.Response, messageFormatter : Commons.MessageFormatter, restaurantName : string) : void {
-        if (restaurantName.length === 0) { // Behavior for empty command ("/10bis" with no content)
-            var body = messageFormatter.getDefaultResponse();
-            res.send(body);
-            return;
+    search (res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string) : Promise<void> {
+        if (!restaurantName || restaurantName.length === 0) { // Behavior for empty command ("/10bis" with no content)
+            let body : Commons.TenBisResponse = messageFormatter.getDefaultResponse();
+            res.status(400).send(body);
+            return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
         }
 
-        var parsed_url = Commons.generateSearchRequest(restaurantName);
+        let parsed_url : string = Commons.generateSearchRequest(restaurantName);
 
-        request.get(parsed_url, function(error : Error, response : Commons.Response, body : string) {
-            if (!error && response.statusCode === 200) {
-                var data = JSON.parse(body);
+        return Commons.RequestGetWrapper(parsed_url)
+            .then((body) => {
+                let data = JSON.parse(body);
 
                 if (!data || !data.length || data.length < 1) {
                     const badResBody = messageFormatter.getErrorMessage(restaurantName);
-                    res.send(badResBody);
+                    res.json(badResBody);
                     return;
                 }
 
                 const resBody = messageFormatter.generateSearchResponse(Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(data)));
-                res.send(resBody);
-            } else {
-                res.status(400);
-                res.send(Constants.ERROR_STRING);
-            }
-        });
+                res.json(resBody);
+            }).catch((err) => {
+                if (err) {
+                    winston.debug("Error in Search: " + err);
+                } else {
+                    winston.debug("Error in Search");
+                }
+                res.status(400).send(Constants.ERROR_STRING);
+            });
     }
 
-    getTotalOrders (res : Commons.Response, messageFormatter : Commons.MessageFormatter) : void {
-            var parsed_url = Commons.generateGetTotalOrdersRequest();
+    getTotalOrders (res : Response, messageFormatter : Commons.MessageFormatter) : Promise<void> {
+            let parsed_url : string = Commons.generateGetTotalOrdersRequest();
             winston.debug("Total Orders Url: " + parsed_url);
 
-            request.get(parsed_url, function(error : Error, response : Commons.Response, body : string) {
-                if (!error && response.statusCode === 200) {
-                    var data = JSON.parse(body);
+            let requestPromise : Promise<string> = Commons.RequestGetWrapper(parsed_url);
+            return requestPromise.then((body) => {
+                let data : Commons.Restaurant[] = JSON.parse(body);
 
-                    if (!data || !data.length || data.length < 1) {
-                        const resBody = messageFormatter.getErrorMessage(null);
-                        res.send(resBody);
-                        return;
-                    }
-
-                    var restaurants = data.filter(Commons.filterTotalOrders);
-
-                    const resBody = messageFormatter.generateTotalOrdersResponse(this.filterByRestaurantName(restaurants));
-                    res.send(resBody);
-                } else {
-                    res.status(400);
-                    res.send(Constants.ERROR_STRING);
+                if (!data || !data.length || data.length < 1) {
+                    const resBody = messageFormatter.getErrorMessage(null);
+                    res.json(resBody);
+                    return;
                 }
+
+                let restaurants : Commons.Restaurant[] = data.filter(Commons.filterTotalOrders);
+
+                const resBody = messageFormatter.generateTotalOrdersResponse(Commons.filterByRestaurantName(restaurants));
+                res.json(resBody);
+
+            }).catch( (err) => {
+                if (err) {
+                    winston.debug("Error in Get Total Orders: " + err);
+                } else {
+                    winston.debug("Error in Get Total Orders");
+                }
+                res.status(400).send(Constants.ERROR_STRING);
             });
     }
 }

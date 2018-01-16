@@ -46,8 +46,8 @@ Response:
         ]
 }
 */
-var commandOperator = "/10bis";
-var MAX_RESTAURANT_CARDS = 5;
+let commandOperator : string = "/10bis";
+let MAX_RESTAURANT_CARDS : number = 5;
 
 export class SlackMessageFormatter implements Commons.MessageFormatter {
 
@@ -67,18 +67,19 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
     getDefaultResponse(): Commons.TenBisResponse {
         return new SlackModule.SlackResponse("ephemeral", Constants.DEFAULT_RESPONSE, null);
     }
-    getErrorMessage(restaurantName: string): Commons.TenBisResponse {
-        var restaurantString = "";
+    getErrorMessage(restaurantName: string) : Commons.TenBisResponse {
+        let restaurantString : string = "";
         if (restaurantName) {
             restaurantString = " for: " + restaurantName;
         }
 
-        var response = new SlackModule.SlackResponse("ephemeral", Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString, null);
+        let response : Commons.TenBisResponse =
+            new SlackModule.SlackResponse("ephemeral", Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString, null);
 
         return response;
     }
 
-    getRestaurantName(req: Commons.Request): string {
+    getRestaurantName(req: Commons.Request) : string {
         if (req && req.body) {
             return req.body.text;
         }
@@ -86,14 +87,13 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         return null;
     }
     generateSearchResponse(restaurants: Commons.Restaurant[]): SlackModule.SlackResponse {
-        var title = "Found " + restaurants.length + " restaurants";
+        let title : string = "Found " + restaurants.length + " restaurants";
 
-        var attachments = [];
+        let attachments : SlackModule.SlackAttachment[] = [];
         if (restaurants.length > 0) {
 
             if (restaurants.length < MAX_RESTAURANT_CARDS) {
-                var generateRestaurantCard = this.generateRestaurantCard;
-
+                let generateRestaurantCard : Function = this.generateRestaurantCard;
                 // For up to 5 restaurants, create a card
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
                     attachments.push(generateRestaurantCard(restaurant));
@@ -107,9 +107,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
                      " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + "\n";
                 });
 
-                attachments.push({
-                    text: restaurantsString
-                });
+                attachments.push(new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null));
             }
         }
 
@@ -126,17 +124,17 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         return response;
     }
     generateTotalOrdersResponse(restaurants: Commons.Restaurant[]): SlackModule.SlackResponse {
-        var title = "Found " + restaurants.length + " restaurants";
+        let title : string = "Found " + restaurants.length + " restaurants";
 
-        var attachments = [];
+        let attachments : SlackModule.SlackAttachment[] = [];
         if (restaurants.length > 0) {
 
             if (restaurants.length < MAX_RESTAURANT_CARDS) {
-                var generateRestaurantTotalCard = this.generateRestaurantTotalCard;
+                let generateRestaurantCard : Function = this.generateRestaurantCard;
 
                 // For up to 5 restaurants, create a card
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    attachments.push(generateRestaurantTotalCard(restaurant));
+                    attachments.push(generateRestaurantCard(restaurant));
                 });
             } else {
 
@@ -173,8 +171,8 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         return false;
     }
 
-    generateRestaurantCard (restaurant : Commons.Restaurant) {
-        var restaurantName = restaurant.RestaurantName;
+    generateRestaurantCard (restaurant : Commons.Restaurant) : SlackModule.SlackAttachment {
+        let restaurantName : string = restaurant.RestaurantName;
 
         let slackAttachment = new SlackModule.SlackAttachment(
             restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
@@ -201,8 +199,8 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         return slackAttachment;
     }
 
-    generateRestaurantTotalCard (restaurant : Commons.Restaurant) {
-        var restaurantName = restaurant.RestaurantName;
+    generateRestaurantTotalCard (restaurant : Commons.Restaurant) : SlackModule.SlackAttachment {
+        let restaurantName : string = restaurant.RestaurantName;
 
         let slackAttachment = new SlackModule.SlackAttachment(
             restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
