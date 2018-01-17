@@ -4,7 +4,7 @@
         "module": "commonjs",
         "sourceMap": true,
         "typeRoots": ["node_modules/@types"],
-        "types": [ "node", "mocha", "chai" ],
+        "types": [ "node" ],
         "experimentalDecorators": true,
         "lib": [ "es6", "dom"]
     },
