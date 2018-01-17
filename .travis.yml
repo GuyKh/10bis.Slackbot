@@ -1,10 +1,11 @@
 language: node_js
 env:
-  - COVERALLS_REPO_TOKEN=Gmv3hA2vMKiEAAdXIqRtZLJGRDF4Yno6a 
+  global:
+  - secure: z0NRm6kBOjr1lwBSEtLHzrkIwXqC264tqpdTIP4UDqH6Q+t/PNOUiYk7PFN62vCq/zdcN3fLTJKd1tC0/3cg51paeTgz48xwrNVOa89zsZuIck84XbUBnXyllXE8ja6HMgWOj6pyxA9vyjgP9heprjTFQwrRAIBRiUMBNZ3xX6oGG9n9mCrNKp5aGzjZAu3VLhWUK0RtI5K3vDQeFCmq+rxq3xK86kT6KnoWVPRJGDbJDcvGha+MozhEAOnqvFFzhnUR9z5TCrJsWHtRazrqFd1SSnCGY/479jkz9aMVgEAm9YiVWS8bgM5h4Z1UtwnJQRhLbcJODE95qtIy6Yes8C3mrzqHNULUnkT2IZrHZ6oVoBCZFkVZPDeIGBLadEyq8ntQjgpQSHWS16rnta8uQDhT4pV4/U2IpxBiQmPvXDBwCBBLtDf4CXFbes4DRghGWQxyw9x1OG6DDtSbGPuqsQOoGWZwTwPvJW+mWE1xuospjS392bnY0w4727sZQdnH7ZypFm7snAyqaWnhcjZCtjTjW8xSW7O5sWXcX04dhk/iA0ICcwp3s/PkBVWozct2KhgWhHO5JdVLkc9ybeXcarIJa7QIHQvCA0O3M+BIT43s2y0pcKmq28znFFyFpXLjcfDt2lHM5cBmuHn++GskXvefoTGzDYmt6eUpGVSSWiI=
 node_js:
-- "8"
-- "7"
-- "node"
+- '8'
+- '7'
+- node
 install:
 - npm install --dev
 - npm install typescript -g
@@ -15,4 +16,3 @@ script:
 - npm test
 after_success:
 - npm run coveralls
-
