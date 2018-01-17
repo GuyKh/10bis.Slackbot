@@ -163,7 +163,7 @@ describe("App", () => {
             let slackRes : SlackModule.SlackResponse = body;
 
             expect(slackRes).not.to.equal(null);
-            expect(slackRes.response_type).to.equal("ephemeral");
+            expect(slackRes.response_type).to.equal("in_channel");
         });
     });
     it("process() should return error if using empty restaurant name for slack", () => {
@@ -214,7 +214,10 @@ describe("App", () => {
             expect(hipChatRes.message_format).to.equal("text");
         });
     });
-    it("getTotalOrders() should return valid response if command is total", () => {
+    it("getTotalOrders() should return valid response if command is total (slack)", () => {
+        let date : Date = new Date();
+        let current_hour : number = date.getHours();
+
         let res = new MockExpressResponse();
 
         return app.getTotalOrders(res, SlackMessageFormatter.getInstance()).then((result) => {
@@ -224,10 +227,10 @@ describe("App", () => {
             let slackRes : SlackModule.SlackResponse = body;
 
             expect(slackRes).not.to.equal(null);
-            expect(slackRes.response_type).to.equal("ephemeral");
+            expect(slackRes.response_type).to.equal("in_channel");
         });
     });
-    it("getTotalOrders() should return valid response if command is total", () => {
+    it("getTotalOrders() should return valid response if command is total (HipChat)", () => {
         let res = new MockExpressResponse();
 
         return app.getTotalOrders(res, HipChatMessageFormatter.getInstance()).then((result) => {

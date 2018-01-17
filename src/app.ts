@@ -80,7 +80,7 @@ export class App {
             return requestPromise.then((body) => {
                 let data : Commons.Restaurant[] = JSON.parse(body);
 
-                if (!data || !data.length || data.length < 1) {
+                if (!data || !(data instanceof Array)) {
                     const resBody = messageFormatter.getErrorMessage(null);
                     res.json(resBody);
                     return;
