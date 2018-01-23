@@ -5,8 +5,11 @@ import { Commons } from "./commons";
 import { Constants } from "./constants";
 import { HipChatMessageFormatter } from "./hipChatMessage";
 import { SlackMessageFormatter } from "./slackMessage";
+import { Cache, ExpirationStrategy, MemoryStorage } from "node-ts-cache";
 
 winston.level = process.env.LOG_LEVEL;
+const myCache  = new ExpirationStrategy(new MemoryStorage());
+const cacheTTL : number = 60 * 60 * 24;
 
 export class App {
     public express;
@@ -37,17 +40,36 @@ export class App {
         if (restaurantName.toLowerCase() === Constants.TOTAL_KEYWORD.toLowerCase()) {
             return this.getTotalOrders(res, messageFormatter);
         } else {
-            return this.search(res, messageFormatter, restaurantName);
+            return this.search(res, messageFormatter, restaurantName, true);
         }
     }
 
-    search (res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string) : Promise<void> {
+    //@Cache(myCache, { ttl: 60 * 60 * 24 }) //ttl = 24 hr
+    search (res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string, useCache? : boolean) : Promise<void> {
         if (!restaurantName || restaurantName.length === 0) { // Behavior for empty command ("/10bis" with no content)
             let body : Commons.TenBisResponse = messageFormatter.getDefaultResponse();
             res.status(400).send(body);
             return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
         }
 
+        if (useCache) {
+            return myCache.getItem<Commons.Restaurant[]>(restaurantName).then( (cachedData) => {
+                if (cachedData) {
+                    const resBody = messageFormatter.generateSearchResponse(
+                        Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(cachedData)));
+                    res.json(resBody);
+                    return;
+                } else {
+                    return this.runSearch(res, messageFormatter, restaurantName);
+                }
+            });
+        }
+
+        return this.runSearch(res, messageFormatter, restaurantName);
+    }
+
+
+    private runSearch(res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string) : Promise<void> {
         let parsed_url : string = Commons.generateSearchRequest(restaurantName);
 
         return Commons.RequestGetWrapper(parsed_url)
@@ -60,8 +82,10 @@ export class App {
                     return;
                 }
 
-                const resBody = messageFormatter.generateSearchResponse(Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(data)));
-                res.json(resBody);
+                return myCache.setItem(restaurantName, data, {  ttl: cacheTTL }).then( () => {
+                    const resBody = messageFormatter.generateSearchResponse(Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(data)));
+                    res.json(resBody);
+                });
             }).catch((err) => {
                 if (err) {
                     winston.debug("Error in Search: " + err);
@@ -71,6 +95,7 @@ export class App {
                 res.status(400).send(Constants.ERROR_STRING);
             });
     }
+
 
     getTotalOrders (res : Response, messageFormatter : Commons.MessageFormatter) : Promise<void> {
             let parsed_url : string = Commons.generateGetTotalOrdersRequest();
