@@ -62,3 +62,4 @@ typings/
 # Ignores compiled TypeScript files
 **/*.map
 **/*.js
+.vscode/settings.json

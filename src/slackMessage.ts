@@ -130,11 +130,11 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         if (restaurants.length > 0) {
 
             if (restaurants.length < MAX_RESTAURANT_CARDS) {
-                let generateRestaurantCard : Function = this.generateRestaurantCard;
+                let generateRestaurantTotalCard : Function = this.generateRestaurantTotalCard;
 
                 // For up to 5 restaurants, create a card
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    attachments.push(generateRestaurantCard(restaurant));
+                    attachments.push(generateRestaurantTotalCard(restaurant));
                 });
             } else {
 
