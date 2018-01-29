@@ -127,6 +127,17 @@ describe("SlackMessage", function() {
     expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(3);
+
+    let i : number = 0;
+    response.attachments.forEach(attachment => {
+      expect(attachment.fields).not.equal(null);
+      expect(attachment.fields.length).to.equal(2);
+      expect(attachment.fields[0].title).to.equal("מינימום הזמנה");
+      expect(attachment.fields[0].value).to.equal(restaurants[i].MinimumOrder);
+      expect(attachment.fields[1].title).to.equal("דמי משלוח");
+      expect(attachment.fields[1].value).to.equal(restaurants[i].DeliveryPrice);
+      i++;
+    });
   });
 
   it("generateSearchResponse() should return a valid message with restaurant list > Maximum Size", function() {
@@ -232,6 +243,12 @@ describe("SlackMessage", function() {
     expect(response.text).to.equal("Found 1 restaurants");
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(1);
+    expect(response.attachments[0].fields).not.equal(null);
+    expect(response.attachments[0].fields.length).to.equal(2);
+    expect(response.attachments[0].fields[0].title).to.equal("הוזמן עד כה");
+    expect(response.attachments[0].fields[0].value).to.equal(restaurants[0].PoolSum);
+    expect(response.attachments[0].fields[1].title).to.equal("מינימום הזמנה");
+    expect(response.attachments[0].fields[1].value).to.equal(restaurants[0].MinimumOrder);
   });
 
 
@@ -243,6 +260,17 @@ describe("SlackMessage", function() {
     expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(3);
+
+    let i : number = 0;
+    response.attachments.forEach(attachment => {
+      expect(attachment.fields).not.equal(null);
+      expect(attachment.fields.length).to.equal(2);
+      expect(attachment.fields[0].title).to.equal("הוזמן עד כה");
+      expect(attachment.fields[0].value).to.equal(restaurants[i].PoolSum);
+      expect(attachment.fields[1].title).to.equal("מינימום הזמנה");
+      expect(attachment.fields[1].value).to.equal(restaurants[i].MinimumOrder);
+      i++;
+    });
   });
   it("generateTotalOrdersResponse() should return a valid message with restaurant list > Maximum", function() {
 
