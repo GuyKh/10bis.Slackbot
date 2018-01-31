@@ -50,6 +50,8 @@ let commandOperator : string = "/10bis";
 let MAX_RESTAURANT_CARDS : number = 5;
 
 export class SlackMessageFormatter implements Commons.MessageFormatter {
+    public static GREEN_COLOR : string = "#36a64f";
+    public static RED_COLOR : string = "#a53c2e";
 
     private static _instance: SlackMessageFormatter = new SlackMessageFormatter();
     public static INSTANTIATION_ERROR : string = "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
@@ -205,7 +207,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         let slackAttachment = new SlackModule.SlackAttachment(
             restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
             restaurantName,
-            "#36a64f",
+            restaurant.IsOverPoolMin ? SlackMessageFormatter.GREEN_COLOR : SlackMessageFormatter.RED_COLOR,
             "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
             restaurant.RestaurantCuisineList,
             restaurant.RestaurantLogoUrl,

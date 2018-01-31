@@ -16,7 +16,7 @@ goodResponse.attachments.push(new SlackModule.SlackAttachment(null, null, null, 
 let validCard = new SlackModule.SlackAttachment(
   "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "דיקסי",
-  "#36a64f",
+  SlackMessageFormatter.GREEN_COLOR,
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
   "http://image.jpg",
@@ -31,7 +31,7 @@ validCard.fields = [
 let validTotalCard = new SlackModule.SlackAttachment(
   "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "דיקסי",
-  "#36a64f",
+  SlackMessageFormatter.GREEN_COLOR,
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
   "http://image.jpg",
@@ -251,8 +251,7 @@ describe("SlackMessage", function() {
     expect(response.attachments[0].fields[1].value).to.equal(restaurants[0].MinimumOrder);
   });
 
-
-    it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
+  it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
     let expectedResponse : SlackModule.SlackResponse = deepCopy(goodResponse);
     let response : SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(restaurants);
 
@@ -272,6 +271,31 @@ describe("SlackMessage", function() {
       i++;
     });
   });
+
+  it("generateTotalOrdersResponse() should paint the cards in Red and Green according to wether the minimum order sum is fulfilled", function() {
+    let response : SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(restaurants);
+
+    expect(response.text).to.equal("Found 3 restaurants");
+    expect(response.attachments).not.equal(null);
+    expect(response.attachments.length).to.equal(3);
+
+    let i : number = 0;
+    response.attachments.forEach(attachment => {
+      if (restaurants[i].IsOverPoolMin) {
+        expect(attachment.color).to.equal(SlackMessageFormatter.GREEN_COLOR);
+      } else {
+        expect(attachment.color).to.equal(SlackMessageFormatter.RED_COLOR);
+      }
+
+      if (restaurants[i].MinimumPriceForOrder <= restaurants[i].PoolSumNumber) {
+        expect(attachment.color).to.equal(SlackMessageFormatter.GREEN_COLOR);
+      } else {
+        expect(attachment.color).to.equal(SlackMessageFormatter.RED_COLOR);
+      }
+      i++;
+    });
+  });
+
   it("generateTotalOrdersResponse() should return a valid message with restaurant list > Maximum", function() {
 
     let bigAmountOfRestaurants = [];
@@ -293,6 +317,7 @@ describe("SlackMessage", function() {
       .setRestaurantId(123)
       .setMinimumOrder("₪70.00")
       .setPoolSum("₪ 90.00")
+      .setIsOverPoolMin(true)
       .setRestaurantCuisineList("מסעדה אמריקאית")
       .setRestaurantLogoUrl("http://image.jpg")
       .build();

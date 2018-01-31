@@ -214,7 +214,7 @@ describe("App", function () {
                 expect(filteredRestaurants.length).to.equal(2);
                 filteredRestaurants.forEach(function(restaurant : Commons.Restaurant) {
                     expect(restaurant.PoolSumNumber > 0).to.be.equal(true);
-                    expect(restaurant.IsOverPoolMin).to.be.equal(true);
+                    expect(restaurant.IsOverPoolMin).to.be.equal(restaurant.PoolSumNumber >= restaurant.MinimumPriceForOrder);
                 });
             });
 
