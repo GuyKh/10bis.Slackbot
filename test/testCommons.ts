@@ -1,7 +1,6 @@
 import { Commons } from "../src/commons";
 import { SlackModule } from "../src/slackModule";
 import { HipChatModule } from "../src/hipChatModule";
-import { MockExpressResponse } from "mock-express-response";
 import { Response } from "express";
 
 
@@ -168,8 +167,8 @@ export let restaurants : Commons.Restaurant[] = [
       .setIsPromotionActive(false)
       .setCompanyFlag(false)
       .setIsOverPoolMin(true)
-      .setPoolSum("₪ 95.00")
-      .setPoolSumNumber(95)
+      .setPoolSum("₪ 150.00")
+      .setPoolSumNumber(150)
       .setDeliveryEndTime("16:00")
       .setIsTerminalActive(true)
       .setIsActiveForDelivery(true)
@@ -228,7 +227,7 @@ export let restaurants : Commons.Restaurant[] = [
       .setIsHappyHourActive(false)
       .setIsPromotionActive(false)
       .setCompanyFlag(false)
-      .setIsOverPoolMin(true)
+      .setIsOverPoolMin(false)
       .setPoolSum("₪ 95.00")
       .setPoolSumNumber(95)
       .setDeliveryEndTime("16:00")
