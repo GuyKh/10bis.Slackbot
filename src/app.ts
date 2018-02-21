@@ -40,12 +40,22 @@ export class App {
         if (restaurantName.toLowerCase() === Constants.TOTAL_KEYWORD.toLowerCase()) {
             return this.getTotalOrders(res, messageFormatter);
         } else {
-            return this.search(res, messageFormatter, restaurantName, true);
+            let exactMatch : boolean;
+
+            if (/^".*"$/.test(restaurantName)) {
+                exactMatch = true;
+
+                // Cleanup restaurant name from quotes
+                restaurantName = restaurantName.replace(/["]+/g, "");
+            }
+
+            return this.search(res, messageFormatter, restaurantName, exactMatch, true);
         }
     }
 
     //@Cache(myCache, { ttl: 60 * 60 * 24 }) //ttl = 24 hr
-    search (res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string, useCache? : boolean) : Promise<void> {
+    search (res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string,
+        findExact: boolean, useCache? : boolean) : Promise<void> {
         if (!restaurantName || restaurantName.length === 0) { // Behavior for empty command ("/10bis" with no content)
             let body : Commons.TenBisResponse = messageFormatter.getDefaultResponse();
             res.status(400).send(body);
@@ -56,20 +66,20 @@ export class App {
             return myCache.getItem<Commons.Restaurant[]>(restaurantName).then( (cachedData) => {
                 if (cachedData) {
                     const resBody = messageFormatter.generateSearchResponse(
-                        Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(cachedData)));
+                        Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(cachedData), findExact, restaurantName));
                     res.json(resBody);
                     return;
                 } else {
-                    return this.runSearch(res, messageFormatter, restaurantName);
+                    return this.runSearch(res, messageFormatter, restaurantName, findExact);
                 }
             });
         }
 
-        return this.runSearch(res, messageFormatter, restaurantName);
+        return this.runSearch(res, messageFormatter, restaurantName, findExact);
     }
 
 
-    private runSearch(res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string) : Promise<void> {
+    private runSearch(res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string, findExact: boolean) : Promise<void> {
         let parsed_url : string = Commons.generateSearchRequest(restaurantName);
 
         return Commons.RequestGetWrapper(parsed_url)
@@ -83,7 +93,9 @@ export class App {
                 }
 
                 return myCache.setItem(restaurantName, data, {  ttl: cacheTTL }).then( () => {
-                    const resBody = messageFormatter.generateSearchResponse(Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(data)));
+                    const resBody = messageFormatter.generateSearchResponse(
+                        Commons.filterByRestaurantName(
+                            Commons.sortRestaurantsByDistance(data), findExact, restaurantName));
                     res.json(resBody);
                 });
             }).catch((err) => {
@@ -113,7 +125,7 @@ export class App {
 
                 let restaurants : Commons.Restaurant[] = data.filter(Commons.filterTotalOrders);
 
-                const resBody = messageFormatter.generateTotalOrdersResponse(Commons.filterByRestaurantName(restaurants));
+                const resBody = messageFormatter.generateTotalOrdersResponse(Commons.filterByRestaurantName(restaurants, false, null));
                 res.json(resBody);
 
             }).catch( (err) => {

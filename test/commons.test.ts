@@ -66,7 +66,7 @@ describe("App", function () {
                 let restaurant2 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest2").setRestaurantId(2).build();
                 let restaurant3 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest1").setRestaurantId(3).build();
 
-                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
+                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3], false, null);
 
                 expect(restaurants).not.to.equal(null);
                 expect(restaurants.length).to.equal(2);
@@ -80,7 +80,7 @@ describe("App", function () {
 
                it("filterByRestaurantName() should be ok with an empty array", function () {
 
-                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([]);
+                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([], false, null);
 
                 expect(restaurants).not.to.equal(null);
                 expect(restaurants.length).to.equal(0);
@@ -91,7 +91,7 @@ describe("App", function () {
                 let restaurant2 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest2").setRestaurantId(2).build();
                 let restaurant3 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest1").setRestaurantId(3).build();
 
-                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3]);
+                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3], false, null);
 
                 expect(restaurants).not.to.equal(null);
                 expect(restaurants.length).to.equal(2);
@@ -100,6 +100,20 @@ describe("App", function () {
                 })).to.equal(true);
                 expect(restaurants.some(function(element : Commons.Restaurant) {
                     return element.RestaurantName === restaurant2.RestaurantName;
+                })).to.equal(true);
+            });
+
+            it("filterByRestaurantName() should filter restaurants by the same name", function () {
+                let restaurant1 : Commons.Restaurant = new Commons.RestaurantBuilder().setRestaurantName("Rest1").setRestaurantId(1).build();
+                let restaurant2 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest2").setRestaurantId(2).build();
+                let restaurant3 : Commons.Restaurant  = new Commons.RestaurantBuilder().setRestaurantName("Rest1").setRestaurantId(3).build();
+
+                let restaurants : Commons.Restaurant[] = Commons.filterByRestaurantName([restaurant1, restaurant2, restaurant3], true, "Rest1");
+
+                expect(restaurants).not.to.equal(null);
+                expect(restaurants.length).to.equal(1);
+                expect(restaurants.some(function(element : Commons.Restaurant) {
+                    return element.RestaurantName === restaurant1.RestaurantName;
                 })).to.equal(true);
             });
 

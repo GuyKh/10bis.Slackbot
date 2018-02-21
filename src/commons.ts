@@ -153,7 +153,7 @@ export module Commons {
         return parsedUrl;
 	}
 
-	export function filterByRestaurantName (restaurants : Commons.Restaurant[]) : Commons.Restaurant[] {
+	export function filterByRestaurantName (restaurants : Commons.Restaurant[], findExact: boolean, restarantName : string) : Commons.Restaurant[] {
         let flags = {};
         let filteredRestaurants : Commons.Restaurant[] = restaurants.filter(function(restarant : Commons.Restaurant) {
             if (flags[restarant.RestaurantName]) {
@@ -164,7 +164,13 @@ export module Commons {
             return true;
         });
 
-        return filteredRestaurants;
+		if (!findExact) {
+			return filteredRestaurants;
+		} else {
+        return filteredRestaurants.filter(function(restarant: Commons.Restaurant) {
+			return restarant.RestaurantName === restarantName;
+			});
+		}
     }
 
     export class Restaurant {
