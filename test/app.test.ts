@@ -73,10 +73,50 @@ describe("App", () => {
          }
         );
     });
-    it("process() should return one restaurant if valid Slack message with quotes", () => {
+    it("process() should return one restaurant if valid Slack message with quotes (\") ", () => {
         let res = new MockExpressResponse();
         let req : SlackModule.SlackRequest = deepCopy(slackReq);
         req.body.text = "\"ליב\""; // "ליב"
+
+        return app.process(req, res).then( (result) => {
+            expect(res.statusCode).to.equal(200);
+
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes).not.to.be.undefined;
+            expect(slackRes.text).to.equal("Found 1 restaurants"); // Exactly one
+            expect(slackRes.response_type).to.equal("in_channel");
+            expect(slackRes.attachments.length).to.equal(1);
+         }
+        );
+    });
+    it("process() should return one restaurant if valid Slack message with quotes (\') ", () => {
+        let res = new MockExpressResponse();
+        let req : SlackModule.SlackRequest = deepCopy(slackReq);
+        req.body.text = "\'ליב\'"; // "ליב"
+
+        return app.process(req, res).then( (result) => {
+            expect(res.statusCode).to.equal(200);
+
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes).not.to.be.undefined;
+            expect(slackRes.text).to.equal("Found 1 restaurants"); // Exactly one
+            expect(slackRes.response_type).to.equal("in_channel");
+            expect(slackRes.attachments.length).to.equal(1);
+         }
+        );
+    });
+    it("process() should return one restaurant if valid Slack message with quotes (\״) ", () => {
+        let res = new MockExpressResponse();
+        let req : SlackModule.SlackRequest = deepCopy(slackReq);
+        req.body.text = "\״ליב\״"; // "ליב"
 
         return app.process(req, res).then( (result) => {
             expect(res.statusCode).to.equal(200);

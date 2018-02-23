@@ -28,7 +28,6 @@ export class App {
 
 
         let restaurantName = messageFormatter.getRestaurantName(req);
-
         if (!restaurantName) {
             const body = messageFormatter.getErrorMessage(null);
             res.status(400).send(body);
@@ -47,6 +46,16 @@ export class App {
 
                 // Cleanup restaurant name from quotes
                 restaurantName = restaurantName.replace(/["]+/g, "");
+            } else if (/^״.*״$/.test(restaurantName)) {
+                exactMatch = true;
+
+                // Cleanup restaurant name from quotes
+                restaurantName = restaurantName.replace(/[״]+/g, "");
+            } else if (/^'.*'$/.test(restaurantName)) {
+                exactMatch = true;
+
+                // Cleanup restaurant name from quotes
+                restaurantName = restaurantName.replace(/[']+/g, "");
             }
 
             return this.search(res, messageFormatter, restaurantName, exactMatch, true);
