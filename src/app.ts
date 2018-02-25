@@ -51,18 +51,19 @@ export class App {
             return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
         }
 
+        let cleanRestaurantName : string = restaurantName;
         let useExactRestaurantName : boolean = false;
         let exactRestaurantName : string = this.getExactRestaurantName(restaurantName);
         if (exactRestaurantName) {
-            restaurantName = exactRestaurantName;
+            cleanRestaurantName = exactRestaurantName;
             useExactRestaurantName = true;
         }
 
         if (useCache) {
-            return myCache.getItem<Commons.Restaurant[]>(restaurantName).then( (cachedData) => {
+            return myCache.getItem<Commons.Restaurant[]>(cleanRestaurantName).then( (cachedData) => {
                 if (cachedData) {
                     const resBody = messageFormatter.generateSearchResponse(
-                        Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(cachedData), useExactRestaurantName, restaurantName));
+                        Commons.filterByRestaurantName(Commons.sortRestaurantsByDistance(cachedData), useExactRestaurantName, cleanRestaurantName));
                     res.json(resBody);
                     return;
                 } else {
@@ -76,14 +77,14 @@ export class App {
 
 
     private runSearch(res : Response, messageFormatter : Commons.MessageFormatter, restaurantName : string, useCache : boolean) : Promise<void> {
-        let parsed_url : string = Commons.generateSearchRequest(restaurantName);
-
         let useExactRestaurantName : boolean = false;
         let exactRestaurantName : string = this.getExactRestaurantName(restaurantName);
         if (exactRestaurantName) {
             restaurantName = exactRestaurantName;
             useExactRestaurantName = true;
         }
+
+        let parsed_url : string = Commons.generateSearchRequest(restaurantName);
 
         return Commons.RequestGetWrapper(parsed_url)
             .then((body) => {
