@@ -133,6 +133,78 @@ describe("App", () => {
          }
         );
     });
+    it("process() should return one restaurant if valid Slack message with quotes (\״) and then cache return all ", () => {
+        let res = new MockExpressResponse();
+        let newRes = new MockExpressResponse();
+        let req : SlackModule.SlackRequest = deepCopy(slackReq);
+        req.body.text = "\״ליב\״"; // "ליב"
+
+        return app.process(req, res).then( (result) => {
+            expect(res.statusCode).to.equal(200);
+
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes).not.to.be.undefined;
+            expect(slackRes.text).to.equal("Found 1 restaurants"); // Exactly one
+            expect(slackRes.response_type).to.equal("in_channel");
+            expect(slackRes.attachments.length).to.equal(1);
+         }
+        ).then( () => {
+            let newReq : SlackModule.SlackRequest = deepCopy(slackReq);
+            newReq.body.text = "ליב"; // "ליב"
+
+            return app.process(newReq, newRes);
+        }).then( (result) => {
+            expect(newRes.statusCode).to.equal(200);
+
+            let body = newRes._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes).not.to.be.undefined;
+            expect(slackRes.text).not.to.equal("Found 1 restaurants"); // Not one;
+        });
+    });
+    it("process() should return all restaurants cache and then return one restaurant if valid Slack message with quotes (\״) from cache", () => {
+        let res = new MockExpressResponse();
+        let newRes = new MockExpressResponse();
+        let req : SlackModule.SlackRequest = deepCopy(slackReq);
+        req.body.text = "ליב"; // "ליב"
+
+        return app.process(req, res).then( (result) => {
+            expect(res.statusCode).to.equal(200);
+
+            let body = res._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes).not.to.be.undefined;
+            expect(slackRes.text).not.to.equal("Found 1 restaurants"); // Exactly one
+         }
+        ).then( () => {
+            let newReq : SlackModule.SlackRequest = deepCopy(slackReq);
+            newReq.body.text = "\״ליב\״"; // "ליב"
+
+            return app.process(newReq, newRes);
+        }).then( (result) => {
+            expect(newRes.statusCode).to.equal(200);
+
+            let body = newRes._getJSON();
+            expect(body).not.to.equal(null);
+            let slackRes : SlackModule.SlackResponse = body;
+
+            expect(slackRes).not.to.equal(null);
+            expect(slackRes).not.to.be.undefined;
+            expect(slackRes.text).to.equal("Found 1 restaurants"); // Not one;
+            expect(slackRes.response_type).to.equal("in_channel");
+            expect(slackRes.attachments.length).to.equal(1);
+        });
+    });
     it("process() should return one restaurant if valid HipChat message", () => {
         let res = new MockExpressResponse();
         return app.process(hipChatReq, res).then( (result) => {
@@ -338,7 +410,7 @@ describe("App", () => {
     it("search() with null restaurant name - Slack", () => {
         let res = new MockExpressResponse();
 
-        return app.search(res, SlackMessageFormatter.getInstance(), null, false, false).catch((result) => {
+        return app.search(res, SlackMessageFormatter.getInstance(), null, false).catch((result) => {
             expect(res.statusCode).to.be.equal(400);
             let body = res._getJSON();
             expect(body).not.to.equal(null);
@@ -353,7 +425,7 @@ describe("App", () => {
     it("search() with null restaurant name - HipChat", () => {
         let res = new MockExpressResponse();
 
-        return app.search(res, HipChatMessageFormatter.getInstance(), null, false, false).catch((result) => {
+        return app.search(res, HipChatMessageFormatter.getInstance(), null, false).catch((result) => {
             expect(res.statusCode).to.be.equal(400);
             let body = res._getJSON();
             expect(body).not.to.equal(null);
@@ -367,7 +439,7 @@ describe("App", () => {
     it("search() with empty restaurant name - Slack", () => {
         let res = new MockExpressResponse();
 
-        return app.search(res, SlackMessageFormatter.getInstance(), "", false, false).catch((result) => {
+        return app.search(res, SlackMessageFormatter.getInstance(), "", false).catch((result) => {
             expect(res.statusCode).to.be.equal(400);
             let body = res._getJSON();
             expect(body).not.to.equal(null);
@@ -382,7 +454,7 @@ describe("App", () => {
     it("search() with empty restaurant name - HipChat", () => {
         let res = new MockExpressResponse();
 
-        return app.search(res, HipChatMessageFormatter.getInstance(), "", false, false).catch((result) => {
+        return app.search(res, HipChatMessageFormatter.getInstance(), "", false).catch((result) => {
             expect(res.statusCode).to.be.equal(400);
             let body = res._getJSON();
             expect(body).not.to.equal(null);
@@ -436,14 +508,14 @@ describe("App", () => {
         it("search() should use cache instead of calling individual calls every time", () => {
             let res = new MockExpressResponse();
             let restName : string = "שף סלט";
-            return app.search(res, SlackMessageFormatter.getInstance(), restName, false, true).then(() => {
+            return app.search(res, SlackMessageFormatter.getInstance(), restName, true).then(() => {
                 expect(res.statusCode).to.be.equal(200);
                 let body = res._getJSON();
                 expect(body).not.to.equal(null);
                 let slackRes : SlackModule.SlackResponse = body;
                 expect(slackRes).not.to.equal(null);
                 res = new MockExpressResponse();
-                return app.search(res, SlackMessageFormatter.getInstance(), restName, false, true).then(() => {
+                return app.search(res, SlackMessageFormatter.getInstance(), restName, true).then(() => {
                     expect(res.statusCode).to.equal(200);
 
                     let body = res._getJSON();
@@ -458,7 +530,7 @@ describe("App", () => {
         it("search() should not use cache if flag is off", () => {
             let res = new MockExpressResponse();
             let restName : string = "שף סלט";
-            return app.search(res, SlackMessageFormatter.getInstance(), restName, false, false).then(() => {
+            return app.search(res, SlackMessageFormatter.getInstance(), restName, false).then(() => {
                 expect(res.statusCode).to.be.equal(200);
                 let body = res._getJSON();
                 expect(body).not.to.equal(null);
@@ -466,7 +538,7 @@ describe("App", () => {
                 expect(slackRes).not.to.equal(null);
 
                 res = new MockExpressResponse();
-                return app.search(res, SlackMessageFormatter.getInstance(), restName, false, false).then(() => {
+                return app.search(res, SlackMessageFormatter.getInstance(), restName, false).then(() => {
                     expect(res.statusCode).to.equal(200);
 
                     let body = res._getJSON();
@@ -481,7 +553,7 @@ describe("App", () => {
         it("search() should not cache restaurants which are not found", () => {
             let res = new MockExpressResponse();
             let restName : string = "מממ";
-            return app.search(res, SlackMessageFormatter.getInstance(), restName, false, true).then(() => {
+            return app.search(res, SlackMessageFormatter.getInstance(), restName, true).then(() => {
                 expect(res.statusCode).to.be.equal(200);
                 let body = res._getJSON();
                 expect(body).not.to.equal(null);
@@ -489,7 +561,7 @@ describe("App", () => {
                 expect(slackRes).not.to.equal(null);
 
                 res = new MockExpressResponse();
-                return app.search(res, SlackMessageFormatter.getInstance(), restName, false, true).then(() => {
+                return app.search(res, SlackMessageFormatter.getInstance(), restName, true).then(() => {
                     expect(res.statusCode).to.equal(200);
 
                     let body = res._getJSON();
@@ -536,7 +608,7 @@ describe("App", () => {
         it("search() with response code = 201", () => {
             let res = new MockExpressResponse();
 
-            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName, false, false).then((result) => {
+            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName, false).then((result) => {
                 throw new Error("I shouldn't be here");
             }).catch((result) => {
                 expect(res.statusCode).to.be.equal(400);
@@ -599,7 +671,7 @@ describe("App", () => {
         it("search() with response == 200 with empty content", () => {
             let res = new MockExpressResponse();
 
-            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName, false, false).then((result) => {
+            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName, false).then((result) => {
                 throw new Error("I shouldn't be here");
             }).catch((result) => {
                 expect(res.statusCode).to.be.equal(200);
@@ -665,7 +737,7 @@ describe("App", () => {
         it("search() with error (400)", () => {
             let res = new MockExpressResponse();
 
-            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName, false, false).then((result) => {
+            return app.search(res, SlackMessageFormatter.getInstance(), badRestaurantName, false).then((result) => {
                 throw new Error("I shouldn't be here");
             }).catch((result) => {
                 expect(res.statusCode).to.be.equal(400);
