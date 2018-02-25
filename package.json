@@ -39,7 +39,7 @@
     "source-map-support": "^0.5.3",
     "ts-node": "^5.0.0",
     "tslint": "^5.9.1",
-    "typescript-eslint-parser": "^13.0.0"
+    "typescript-eslint-parser": "^14.0.0"
   },
   "scripts": {
     "precommit": "./node_modules/.bin/tslint `git diff --name-only | grep .ts` --fix",
