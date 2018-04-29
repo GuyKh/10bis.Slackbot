@@ -40,7 +40,7 @@ let errorResponse = new HipChatModule.HipChatResponse("red", Constants.NO_RESTAU
 
 let validCard = new HipChatModule.HipChatCard(
   "link",
-  "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + 123,
+  Constants.RESTAURANT_BASE_URL + 123,
   "ce399a28-a35a-4561-9262-ca28ccebbd6b",
   "דיקסי",
   "מסעדה אמריקאית\nמינימום הזמנה: 26 שח",
