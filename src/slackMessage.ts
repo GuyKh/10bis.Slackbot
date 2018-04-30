@@ -107,7 +107,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
                     restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
                      " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId  +
-                     (index !== restaurants.length - 1) ? "\n" : "";
+                     ((index < restaurants.length - 1) ? "\n" : "");
                 });
 
                 attachments.push(new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null));
@@ -157,7 +157,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
                     restaurant.RestaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId +
                     "\tTotal Sum Ordered: " + restaurant.PoolSum +
                     "\tMinimum Order Sum: " + restaurant.MinimumOrder +
-                    (index !== restaurants.length - 1) ? "\n" : "";
+                    ((index < restaurants.length - 1) ? "\n" : "");
                 });
 
                 attachments.push(
