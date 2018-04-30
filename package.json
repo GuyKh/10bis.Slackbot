@@ -54,6 +54,9 @@
     "watch": "./node_modules/.bin/mocha-typescript-watch",
     "prepare": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json"
   },
+  "engines": {
+    "npm": "6.0.x"
+  },
   "nyc": {
     "include": [
       "src/*",
