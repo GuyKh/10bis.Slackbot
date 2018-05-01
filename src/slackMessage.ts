@@ -155,7 +155,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
 
                     restaurantsString += "[" + (index + 1) + "] " +
                     restaurant.RestaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId +
-                    "\tTotal Sum Ordered: " + restaurant.PoolSum +
+                    "\nTotal Sum Ordered: " + restaurant.PoolSum +
                     "\tMinimum Order Sum: " + restaurant.MinimumOrder +
                     ((index < restaurants.length - 1) ? "\n" : "");
                 });
