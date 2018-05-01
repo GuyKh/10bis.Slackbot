@@ -106,7 +106,8 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
                 // Create a list
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
                     restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
-                     " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + "\n";
+                     " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId  +
+                     ((index < restaurants.length - 1) ? "\n" : "");
                 });
 
                 attachments.push(new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null));
@@ -141,11 +142,22 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
             } else {
 
                 let restaurantsString : string = "";
+                let wasFirstUnderLimitRestaurantDone : boolean = false;
 
                 // Create a list
                 restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
-                    " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + "\n";
+
+                    if ((!restaurant.IsOverPoolMin || restaurant.PoolSumNumber < restaurant.MinimumPriceForOrder)
+                        && !wasFirstUnderLimitRestaurantDone) {
+                        wasFirstUnderLimitRestaurantDone = true;
+                        restaurantsString += "-------------------------- UNDER THE MINIMUM SUM --------------------------\n";
+                    }
+
+                    restaurantsString += "[" + (index + 1) + "] " +
+                    restaurant.RestaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId +
+                    "\nTotal Sum Ordered: " + restaurant.PoolSum +
+                    "\tMinimum Order Sum: " + restaurant.MinimumOrder +
+                    ((index < restaurants.length - 1) ? "\n" : "");
                 });
 
                 attachments.push(
@@ -177,10 +189,10 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         let restaurantName : string = restaurant.RestaurantName;
 
         let slackAttachment = new SlackModule.SlackAttachment(
-            restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            restaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
             restaurantName,
             "#36a64f",
-            "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
             restaurant.RestaurantCuisineList,
             restaurant.RestaurantLogoUrl,
             (Math.floor(Date.now() / 1000)));
@@ -205,10 +217,10 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         let restaurantName : string = restaurant.RestaurantName;
 
         let slackAttachment = new SlackModule.SlackAttachment(
-            restaurantName + " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            restaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
             restaurantName,
             restaurant.IsOverPoolMin ? SlackMessageFormatter.GREEN_COLOR : SlackMessageFormatter.RED_COLOR,
-            "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
             restaurant.RestaurantCuisineList,
             restaurant.RestaurantLogoUrl,
             (Math.floor(Date.now() / 1000))

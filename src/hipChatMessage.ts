@@ -125,7 +125,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
                     suffix = "\n\n";
                 }
                 restaurantText += "[" + (index + 1) + "] " + restaurant.RestaurantName +
-                " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId + suffix;
+                " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId + suffix;
             });
         }
 
@@ -142,7 +142,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
             // Create a list
             restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
                 restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
-                " : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId;
+                " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId;
                 restaurantsString += "\n";
                 restaurantsString += "מינימום הזמנה: " + restaurant.MinimumOrder + "\t הוזמן עד כה: " + restaurant.PoolSum;
             });
@@ -178,7 +178,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     generateRestaurantCard (restaurant : Commons.Restaurant) : HipChatModule.HipChatCard {
         return new HipChatModule.HipChatCard(
             "link",
-            "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=" + restaurant.RestaurantId,
+            Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
             uuid(),
             restaurant.RestaurantName,
             this.generateDescription(restaurant),
