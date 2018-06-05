@@ -7,6 +7,7 @@ node_js:
 - '7'
 - node
 install:
+- npm i -g npm@6.1.0
 - npm ci
 - npm install --only=dev
 - npm install typescript -g
