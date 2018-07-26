@@ -8,6 +8,7 @@ export class Constants {
     public static readonly DATE_FORMAT : string = "DD/MM/YYYY";
     public static readonly TIME_FORMAT : string = "HH:mm:ss";
     public static readonly TIMEZONE : string = "Asia/Jerusalem";
+    public static readonly RESTAURANT_BASE_URL : string = "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=";
 
     public static readonly DEFAULT_RESPONSE : string = "Hi, I'm a 10bis bot, searching for restaurants\n" +
                         "To use me - enter /10bis Restaurant, e.g. '/10bis דיקסי'";
