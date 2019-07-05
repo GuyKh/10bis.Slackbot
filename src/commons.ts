@@ -140,11 +140,7 @@ export module Commons {
         query.desiredDateAndTime = Commons.getFormatedDateTime();
         query.timestamp = new Date().getTime();
 
-       let parsedUrl : string = url.format({
-            pathname: "https://www.10bis.co.il/Restaurants/SearchRestaurants",
-            query: query
-        });
-
+        let parsedUrl : string = url.format(new URL("https://www.10bis.co.il/Restaurants/SearchRestaurants"));
         parsedUrl = parsedUrl.replace("%2B", "+");
         return parsedUrl;
 	}
