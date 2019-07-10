@@ -10,8 +10,9 @@
     "express": "^4.17.1",
     "moment-timezone": "^0.5.26",
     "node-ts-cache": "^2.0.0",
+    "redis": "^2.8.0",
     "request": "^2.88.0",
-    "typescript": "^3.5.2",
+    "typescript": "^3.5.3",
     "uuid": "^3.3.2",
     "winston": "^3.2.1"
   },
