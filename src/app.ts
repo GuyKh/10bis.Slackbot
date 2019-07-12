@@ -7,9 +7,14 @@ import { HipChatMessageFormatter } from "./hipChatMessage";
 import { SlackMessageFormatter } from "./slackMessage";
 import { Cache, ExpirationStrategy, MemoryStorage } from "node-ts-cache";
 
-winston.level = process.env.LOG_LEVEL;
 const myCache  = new ExpirationStrategy(new MemoryStorage());
 const cacheTTL : number = 60 * 60 * 24;
+winston.configure({
+    level: process.env.LOG_LEVEL,
+    transports: [
+        new winston.transports.Console()
+    ]
+});
 
 export class App {
     public express;

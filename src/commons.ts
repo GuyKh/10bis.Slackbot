@@ -6,6 +6,8 @@ import * as url from "url";
 import * as request from "request";
 import { Send, Response } from "express";
 
+const querystring = require("querystring");
+
 export module Commons {
     export function getFormatedDateTime() : string {
         let date : string = moment.tz(Constants.TIMEZONE).format(Constants.DATE_FORMAT);
@@ -29,27 +31,6 @@ export module Commons {
 		return new Promise(function (resolve : Function, reject : Function) {
 			reject(errorString); // Failure
 		});
-	}
-
-	export class SearchRequestQuery {
-		deliveryMethod: string;
-		ShowOnlyOpenForDelivery: boolean;
-		id: number;
-		pageNum: number;
-		pageSize: number;
-		OrderBy: string;
-		cuisineType: string;
-		CityId: number;
-		StreetId: number;
-		FilterByKosher: boolean;
-		FilterByBookmark: boolean;
-		FilterByCoupon: boolean;
-		searchPhrase: string;
-		Latitude: number;
-		Longitude: number;
-		HouseNumber: number;
-		desiredDateAndTime: string;
-		timestamp: number;
 	}
 
 	export function sortRestaurantsByDistance (restaurants : Commons.Restaurant[]) : Commons.Restaurant[] {
@@ -93,62 +74,56 @@ export module Commons {
 	}
 
 	export function generateSearchRequest(restaurantName: string) : string {
-        let query : Commons.SearchRequestQuery = new Commons.SearchRequestQuery();
-        query.deliveryMethod = "Delivery";
-        query.ShowOnlyOpenForDelivery = false;
-        query.id = Number.parseInt(process.env.USER_ID);
-        query.pageNum = 0;
-        query.pageSize = 50;
-        query.OrderBy = "Default";
-        query.cuisineType = "";
-        query.CityId = Number.parseInt(process.env.CITY_ID);
-        query.StreetId = Number.parseInt(process.env.STREET_ID);
-        query.FilterByKosher = false;
-        query.FilterByBookmark = false;
-        query.FilterByCoupon = false;
-        query.searchPhrase = restaurantName;
-        query.Latitude = Number.parseInt(process.env.LAT);
-        query.Longitude = Number.parseInt(process.env.LONG);
-        query.HouseNumber = Number.parseInt(process.env.HOUSE_NUMBER);
-        query.desiredDateAndTime = Commons.getFormatedDateTime();
-        query.timestamp = new Date().getTime();
+        let queryParams = {
+			deliveryMethod: "Delivery",
+			ShowOnlyOpenForDelivery: false,
+			id: Number.parseInt(process.env.USER_ID),
+			pageNum: 0,
+			pageSize: 50,
+			OrderBy: "Default",
+			cuisineType: "",
+			CityId: Number.parseInt(process.env.CITY_ID),
+			StreetId: Number.parseInt(process.env.STREET_ID),
+			FilterByKosher: false,
+			FilterByBookmark: false,
+			FilterByCoupon: false,
+			searchPhrase: restaurantName,
+			Latitude: Number.parseInt(process.env.LAT),
+			Longitude: Number.parseInt(process.env.LONG),
+			HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
+			desiredDateAndTime: Commons.getFormatedDateTime(),
+			timestamp: new Date().getTime()
+		};
 
-        let parsedUrl : string = url.format({
-            pathname: "https://www.10bis.co.il/Restaurants/SearchRestaurants",
-            query: query
-        });
-
+        let parsedUrl : string = url.format(new URL("https://www.10bis.co.il/Restaurants/SearchRestaurants?" + querystring.stringify(queryParams)));
         parsedUrl = parsedUrl.replace("%2B", "+");
 
         return parsedUrl;
     }
 
     export function generateGetTotalOrdersRequest() : string {
-        let query : Commons.SearchRequestQuery = new Commons.SearchRequestQuery();
-        query.deliveryMethod = "Delivery";
-        query.ShowOnlyOpenForDelivery = false;
-        query.id = Number.parseInt(process.env.USER_ID);
-        query.pageNum = 0;
-        query.pageSize = 50;
-        query.OrderBy = "pool_sum";
-        query.cuisineType = "";
-        query.CityId = Number.parseInt(process.env.CITY_ID);
-        query.StreetId = Number.parseInt(process.env.STREET_ID);
-        query.FilterByKosher = false;
-        query.FilterByBookmark = false;
-        query.FilterByCoupon = false;
-        query.searchPhrase = "";
-        query.Latitude = Number.parseInt(process.env.LAT);
-        query.Longitude = Number.parseInt(process.env.LONG);
-        query.HouseNumber = Number.parseInt(process.env.HOUSE_NUMBER);
-        query.desiredDateAndTime = Commons.getFormatedDateTime();
-        query.timestamp = new Date().getTime();
+        let queryParams = {
+			deliveryMethod: "Delivery",
+			ShowOnlyOpenForDelivery: false,
+			id: Number.parseInt(process.env.USER_ID),
+			pageNum: 0,
+			pageSize: 50,
+			OrderBy: "pool_sum",
+			cuisineType: "",
+			CityId: Number.parseInt(process.env.CITY_ID),
+			StreetId: Number.parseInt(process.env.STREET_ID),
+			FilterByKosher: false,
+			FilterByBookmark: false,
+			FilterByCoupon: false,
+			searchPhrase: "",
+			Latitude: Number.parseInt(process.env.LAT),
+			Longitude: Number.parseInt(process.env.LONG),
+			HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
+			desiredDateAndTime: Commons.getFormatedDateTime(),
+			timestamp: new Date().getTime()
+		};
 
-       let parsedUrl : string = url.format({
-            pathname: "https://www.10bis.co.il/Restaurants/SearchRestaurants",
-            query: query
-        });
-
+        let parsedUrl : string = url.format(new URL("https://www.10bis.co.il/Restaurants/SearchRestaurants?" + querystring.stringify(queryParams)));
         parsedUrl = parsedUrl.replace("%2B", "+");
         return parsedUrl;
 	}
