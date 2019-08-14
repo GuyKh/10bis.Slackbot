@@ -14,7 +14,8 @@
     "request": "^2.88.0",
     "typescript": "^3.5.3",
     "uuid": "^3.3.2",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "snyk": "^1.216.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -42,7 +43,8 @@
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls",
     "coveralls": "./node_modules/.bin/nyc report --reporter=lcovonly && cat ./coverage/lcov.info | coveralls",
     "watch": "./node_modules/.bin/mocha-typescript-watch",
-    "prepare": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json"
+    "prepare": "npm run snyk-protect && ./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json",
+    "snyk-protect": "snyk protect"
   },
   "engines": {
     "npm": "6.0.x"
@@ -75,5 +77,6 @@
   "bugs": {
     "url": "https://github.com/guykh/10bis.Slackbot/issues"
   },
-  "homepage": "https://github.com/guykh/10bis.Slackbot#readme"
+  "homepage": "https://github.com/guykh/10bis.Slackbot#readme",
+  "snyk": true
 }
