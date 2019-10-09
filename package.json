@@ -15,7 +15,7 @@
     "typescript": "^3.6.3",
     "uuid": "^3.3.3",
     "winston": "^3.2.1",
-    "snyk": "^1.231.0"
+    "snyk": "^1.233.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.3",
@@ -43,7 +43,7 @@
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls",
     "coveralls": "./node_modules/.bin/nyc report --reporter=lcovonly && cat ./coverage/lcov.info | coveralls",
     "watch": "./node_modules/.bin/mocha-typescript-watch",
-    "prepare": "npm run snyk-protect && ./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json",
+    "prepare": "npm run snyk-protect ; ./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json",
     "snyk-protect": "snyk protect"
   },
   "engines": {
