@@ -47,7 +47,7 @@
     "snyk-protect": "snyk protect"
   },
   "engines": {
-    "npm": "6.0.x"
+    "npm": "6.13.x"
   },
   "nyc": {
     "include": [
