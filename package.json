@@ -23,7 +23,7 @@
     "coveralls": "3.0.7",
     "eslint": "6.5.1",
     "eslint-plugin-chai-expect": "2.0.1",
-    "eslint-plugin-mocha": "6.2.0",
+    "eslint-plugin-mocha": "6.2.1",
     "mocha": "6.2.2",
     "mocha-typescript": "1.1.17",
     "mock-express-response": "0.2.2",
