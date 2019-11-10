@@ -9,10 +9,10 @@
     "errorhandler": "1.5.1",
     "express": "4.17.1",
     "moment-timezone": "0.5.27",
-    "node-ts-cache": "3.1.0",
+    "node-ts-cache": "3.2.0",
     "redis": "2.8.0",
     "request": "2.88.0",
-    "typescript": "3.6.4",
+    "typescript": "3.7.2",
     "uuid": "3.3.3",
     "winston": "3.2.1",
     "snyk": "1.237.1"
@@ -23,14 +23,14 @@
     "coveralls": "3.0.7",
     "eslint": "6.6.0",
     "eslint-plugin-chai-expect": "2.0.1",
-    "eslint-plugin-mocha": "6.2.0",
+    "eslint-plugin-mocha": "6.2.1",
     "mocha": "6.2.2",
     "mocha-typescript": "1.1.17",
     "mock-express-response": "0.2.2",
     "nyc": "14.1.1",
     "sinon": "7.5.0",
     "ts-node": "8.4.1",
-    "tslint": "5.20.0"
+    "tslint": "5.20.1"
   },
   "scripts": {
     "precommit": "./node_modules/.bin/tslint `git diff --name-only | grep .ts` --fix",
