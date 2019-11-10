@@ -1,4 +1,4 @@
-# 10Bis Slackbot [![Build Status](https://secure.travis-ci.org/GuyKh/10bis.Slackbot.svg?branch=master)](https://travis-ci.org/GuyKh/10bis.Slackbot) [![Coverage Status](https://coveralls.io/repos/github/GuyKh/10bis.Slackbot/badge.svg?branch=master)](https://coveralls.io/github/GuyKh/10bis.Slackbot?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/GuyKh/10bis.Slackbot.svg)](https://greenkeeper.io/) #
+# 10Bis Slackbot [![Build Status](https://secure.travis-ci.org/GuyKh/10bis.Slackbot.svg?branch=master)](https://travis-ci.org/GuyKh/10bis.Slackbot) [![Coverage Status](https://coveralls.io/repos/github/GuyKh/10bis.Slackbot/badge.svg?branch=master)](https://coveralls.io/github/GuyKh/10bis.Slackbot?branch=master) #
 
 _A Slackbot that searches 10bis_.
 
