@@ -22,3 +22,4 @@ In Slack, send slash commands to /10bis:
     /10bis מקס אנד קו
 
 And you'll get the top links to the restaurants from 10bis site
+aaa
