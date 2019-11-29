@@ -29,7 +29,7 @@
     "mock-express-response": "0.2.2",
     "nyc": "14.1.1",
     "sinon": "7.5.0",
-    "ts-node": "8.5.2",
+    "ts-node": "8.5.4",
     "tslint": "5.20.1"
   },
   "scripts": {
