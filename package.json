@@ -18,7 +18,7 @@
     "snyk": "1.251.0"
   },
   "devDependencies": {
-    "@types/chai": "4.2.6",
+    "@types/chai": "4.2.7",
     "chai": "4.2.0",
     "coveralls": "3.0.9",
     "eslint": "6.7.2",
