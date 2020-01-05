@@ -24,7 +24,7 @@
     "eslint": "6.8.0",
     "eslint-plugin-chai-expect": "2.1.0",
     "eslint-plugin-mocha": "6.2.2",
-    "mocha": "6.2.2",
+    "mocha": "7.0.0",
     "mocha-typescript": "1.1.17",
     "mock-express-response": "0.2.2",
     "nyc": "15.0.0",
