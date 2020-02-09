@@ -10,7 +10,7 @@
     "express": "4.17.1",
     "moment-timezone": "0.5.27",
     "node-ts-cache": "3.2.0",
-    "redis": "2.8.0",
+    "redis": "3.0.0",
     "request": "2.88.0",
     "typescript": "3.7.5",
     "uuid": "3.4.0",
