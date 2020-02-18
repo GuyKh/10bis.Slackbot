@@ -1,0 +1,12 @@
+{
+    "diff": true,
+    "extension": ["ts"],
+    "opts": false,
+    "package": "./package.json",
+    "require": ["ts-node/register"],
+    "reporter": "spec",
+    "slow": 75,
+    "timeout": 2000,
+    "ui": "mocha-typescript",
+    "watch-files": ["test/**/*.ts"]
+  }

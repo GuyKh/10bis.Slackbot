@@ -1,5 +1,4 @@
 import * as bodyParser from "body-parser";
-import * as path from "path";
 import * as errorHandler from "errorhandler";
 import * as express from "express";
 import { Commons } from "./commons";
@@ -12,7 +11,6 @@ import { Request, Response, NextFunction } from "express";
  * @class Server
  */
 export class Server {
-
   public app: express.Application;
 
   /**
@@ -68,14 +66,21 @@ export class Server {
     this.app.use(bodyParser.json());
 
     //mount query string parser
-    this.app.use(bodyParser.urlencoded({
-      extended: true
-    }));
+    this.app.use(
+      bodyParser.urlencoded({
+        extended: true
+      })
+    );
 
     // catch 404 and forward to error handler
-    this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-        err.status = 404;
-        next(err);
+    this.app.use(function(
+      err: any,
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ) {
+      err.status = 404;
+      next(err);
     });
 
     //error handling
@@ -94,12 +99,12 @@ export class Server {
     router = express.Router();
 
     let app = new App();
-    router.get("/", function(req : Commons.Request, res : Response) {
-        res.send("Sanity passed!");
+    router.get("/", function(req: Commons.Request, res: Response) {
+      res.send("Sanity passed!");
     });
 
-    router.post("/post", function(req : Commons.Request, res : Response) {
-        app.process(req, res);
+    router.post("/post", function(req: Commons.Request, res: Response) {
+      app.process(req, res);
     });
 
     this.app.use("/", router);
@@ -108,5 +113,4 @@ export class Server {
     //use router middleware
     this.app.use(router);
   }
-
 }

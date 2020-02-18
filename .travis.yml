@@ -9,10 +9,10 @@ install:
 - npm ci
 - npm install --only=dev
 - npm install typescript -g
-- npm install tslint -g
+- npm install eslint -g
 script:
 - tsc -p ./tsconfig.json
-- npm run tslint
+- npm run eslint
 - npm test
 after_success:
 - npm run coveralls

@@ -1,4 +1,4 @@
-import {Constants} from "../src/constants";
+import { Constants } from "../src/constants";
 import { SlackModule } from "../src/slackModule";
 import { deepCopy, restaurants } from "./testCommons";
 import { SlackMessageFormatter } from "../src/slackMessage";
@@ -7,11 +7,26 @@ import { expect } from "chai";
 
 let slackMessage = SlackMessageFormatter.getInstance();
 
-let message = new SlackModule.SlackMessage("ItoB7oEyZIbNmHPfxHQ2GrbC", "T0001", "example",
-                "C2147483705", "test", "U2147483697", "Steve", "/10bis", "דיקסי");
+let message = new SlackModule.SlackMessage(
+  "ItoB7oEyZIbNmHPfxHQ2GrbC",
+  "T0001",
+  "example",
+  "C2147483705",
+  "test",
+  "U2147483697",
+  "Steve",
+  "/10bis",
+  "דיקסי"
+);
 
-let goodResponse = new SlackModule.SlackResponse("in_channel", "Found 0 restaurants", []);
-goodResponse.attachments.push(new SlackModule.SlackAttachment(null, null, null, null, "List", null, null));
+let goodResponse = new SlackModule.SlackResponse(
+  "in_channel",
+  "Found 0 restaurants",
+  []
+);
+goodResponse.attachments.push(
+  new SlackModule.SlackAttachment(null, null, null, null, "List", null, null)
+);
 
 let validCard = new SlackModule.SlackAttachment(
   "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
@@ -20,13 +35,12 @@ let validCard = new SlackModule.SlackAttachment(
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
   "http://image.jpg",
-  (Math.floor(Date.now() / 1000))
-  );
+  Math.floor(Date.now() / 1000)
+);
 validCard.fields = [
   new SlackModule.SlackAttachmentField("מינימום הזמנה", "26 שח", true),
   new SlackModule.SlackAttachmentField("דמי משלוח", "10 שח", true)
 ];
-
 
 let validTotalCard = new SlackModule.SlackAttachment(
   "דיקסי : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
@@ -35,7 +49,7 @@ let validTotalCard = new SlackModule.SlackAttachment(
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
   "http://image.jpg",
-  (Math.floor(Date.now() / 1000))
+  Math.floor(Date.now() / 1000)
 );
 
 validTotalCard.fields = [
@@ -43,39 +57,47 @@ validTotalCard.fields = [
   new SlackModule.SlackAttachmentField("מינימום הזמנה", "₪70.00", true)
 ];
 
-let errorResponse = new SlackModule.SlackResponse("ephemeral", Constants.NO_RESTAURANTS_FOUND_STRING, null);
+let errorResponse = new SlackModule.SlackResponse(
+  "ephemeral",
+  Constants.NO_RESTAURANTS_FOUND_STRING,
+  null
+);
 
 describe("SlackMessage", function() {
   describe("Basic methods and module", function() {
-  it("should have a generateSearchResponse Method", function() {
-    expect(typeof slackMessage).to.equal("object");
-    expect(typeof slackMessage.generateSearchResponse).to.equal("function");
+    it("should have a generateSearchResponse Method", function() {
+      expect(typeof slackMessage).to.equal("object");
+      expect(typeof slackMessage.generateSearchResponse).to.equal("function");
+    });
+    it("should have a generateTotalOrdersResponse Method", function() {
+      expect(typeof slackMessage).to.equal("object");
+      expect(typeof slackMessage.generateTotalOrdersResponse).to.equal(
+        "function"
+      );
+    });
+    it("should have a generateRestaurantCard Method", function() {
+      expect(typeof slackMessage).to.equal("object");
+      expect(typeof slackMessage.generateRestaurantCard).to.equal("function");
+    });
+    it("should have a generateRestaurantTotalCard Method", function() {
+      expect(typeof slackMessage).to.equal("object");
+      expect(typeof slackMessage.generateRestaurantTotalCard).to.equal(
+        "function"
+      );
+    });
+    it("should have a getErrorMessage Method", function() {
+      expect(typeof slackMessage).to.equal("object");
+      expect(typeof slackMessage.getErrorMessage).to.equal("function");
+    });
+    it("should have a getRestaurantName Method", function() {
+      expect(typeof slackMessage).to.equal("object");
+      expect(typeof slackMessage.getRestaurantName).to.equal("function");
+    });
+    it("should have a isValidMessage Method", function() {
+      expect(typeof slackMessage).to.equal("object");
+      expect(typeof slackMessage.isValidMessage).to.equal("function");
+    });
   });
-  it("should have a generateTotalOrdersResponse Method", function() {
-    expect(typeof slackMessage).to.equal("object");
-    expect(typeof slackMessage.generateTotalOrdersResponse).to.equal("function");
-  });
-  it("should have a generateRestaurantCard Method", function() {
-    expect(typeof slackMessage).to.equal("object");
-    expect(typeof slackMessage.generateRestaurantCard).to.equal("function");
-  });
-  it("should have a generateRestaurantTotalCard Method", function() {
-    expect(typeof slackMessage).to.equal("object");
-    expect(typeof slackMessage.generateRestaurantTotalCard).to.equal("function");
-  });
-  it("should have a getErrorMessage Method", function() {
-    expect(typeof slackMessage).to.equal("object");
-    expect(typeof slackMessage.getErrorMessage).to.equal("function");
-  });
-  it("should have a getRestaurantName Method", function() {
-    expect(typeof slackMessage).to.equal("object");
-    expect(typeof slackMessage.getRestaurantName).to.equal("function");
-  });
-  it("should have a isValidMessage Method", function() {
-    expect(typeof slackMessage).to.equal("object");
-    expect(typeof slackMessage.isValidMessage).to.equal("function");
-  });
-});
   it("isValidMessage() should return true if default format message is sent", function() {
     let req = new SlackModule.SlackRequest(deepCopy(message));
     expect(slackMessage.isValidMessage(req)).to.equal(true);
@@ -86,17 +108,17 @@ describe("SlackMessage", function() {
   });
 
   it("isValidMessage() should return false if message body is missing", function() {
-    let req = new  SlackModule.SlackRequest(null);
+    let req = new SlackModule.SlackRequest(null);
     expect(slackMessage.isValidMessage(req)).to.equal(false);
   });
 
   it("isValidMessage() should return false if request body is missing", function() {
-    let req : SlackModule.SlackRequest = null;
+    let req: SlackModule.SlackRequest = null;
     expect(slackMessage.isValidMessage(req)).to.equal(false);
   });
 
   it("isValidMessage() should return true if message body is only the command", function() {
-    let req : SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
+    let req: SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
     req.body = deepCopy(message);
     req.body.command = "/10bis";
     req.body.text = "";
@@ -104,31 +126,35 @@ describe("SlackMessage", function() {
   });
 
   it("isValidMessage() should return true if message body doesn't start with the command", function() {
-    let req : SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
+    let req: SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
     req.body = deepCopy(message);
     req.body.command = "/test";
     expect(slackMessage.isValidMessage(req)).to.equal(false);
   });
 
   it("generateSearchResponse() should return a valid message without restaurant list", function() {
-    let expectedResponse : SlackModule.SlackResponse = deepCopy(goodResponse);
-    let response : SlackModule.SlackResponse = slackMessage.generateSearchResponse([]);
+    let expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
+    let response: SlackModule.SlackResponse = slackMessage.generateSearchResponse(
+      []
+    );
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text);
     expect(response.attachments).to.equal(null);
   });
 
-    it("generateSearchResponse() should return a valid message with restaurant list", function() {
-    let expectedResponse : SlackModule.SlackResponse = deepCopy(goodResponse);
-    let response : SlackModule.SlackResponse = slackMessage.generateSearchResponse(restaurants);
+  it("generateSearchResponse() should return a valid message with restaurant list", function() {
+    let expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
+    let response: SlackModule.SlackResponse = slackMessage.generateSearchResponse(
+      restaurants
+    );
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(3);
 
-    let i : number = 0;
+    let i: number = 0;
     response.attachments.forEach(attachment => {
       expect(attachment.fields).not.equal(null);
       expect(attachment.fields.length).to.equal(2);
@@ -146,65 +172,76 @@ describe("SlackMessage", function() {
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
 
-    let response : SlackModule.SlackResponse = slackMessage.generateSearchResponse(bigAmountOfRestaurants);
+    let response: SlackModule.SlackResponse = slackMessage.generateSearchResponse(
+      bigAmountOfRestaurants
+    );
 
     expect(response.response_type).to.equal(goodResponse.response_type);
-    expect(response.text).to.equal("Found " + bigAmountOfRestaurants.length + " restaurants");
+    expect(response.text).to.equal(
+      "Found " + bigAmountOfRestaurants.length + " restaurants"
+    );
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(1);
   });
 
   it("getRestaurantName() should return right restaruant name from request", function() {
-    let req : SlackModule.SlackRequest = new SlackModule.SlackRequest(deepCopy(message));
-    let restaurantName : string = slackMessage.getRestaurantName(req);
+    let req: SlackModule.SlackRequest = new SlackModule.SlackRequest(
+      deepCopy(message)
+    );
+    let restaurantName: string = slackMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal("דיקסי");
   });
   it("getRestaurantName() should return null if no body exists", function() {
-    let req : SlackModule.SlackRequest = new SlackModule.SlackRequest(deepCopy(message));
+    let req: SlackModule.SlackRequest = new SlackModule.SlackRequest(
+      deepCopy(message)
+    );
     req.body = null;
-    let restaurantName : string = slackMessage.getRestaurantName(req);
+    let restaurantName: string = slackMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal(null);
   });
   it("getRestaurantName() should return an empty restaruant name from request with only command", function() {
-    let req : SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
+    let req: SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
     req.body = deepCopy(message);
     req.body.text = "";
-    let restaurantName : string = slackMessage.getRestaurantName(req);
+    let restaurantName: string = slackMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal("");
   });
 
   it("getRestaurantName() should return null with bad field", function() {
-    let req : SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
+    let req: SlackModule.SlackRequest = new SlackModule.SlackRequest(null);
     req.body = deepCopy(message);
     req.body.text = null;
-    let restaurantName : string = slackMessage.getRestaurantName(req);
+    let restaurantName: string = slackMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal(null);
   });
 
   it("getErrorMessage() should return a valid error message without restaurants name", function() {
-    let expectedResponse : SlackModule.SlackResponse = deepCopy(errorResponse);
-    let response : SlackModule.SlackResponse = <SlackModule.SlackResponse> slackMessage.getErrorMessage(null);
+    let expectedResponse: SlackModule.SlackResponse = deepCopy(errorResponse);
+    let response: SlackModule.SlackResponse = <SlackModule.SlackResponse>(
+      slackMessage.getErrorMessage(null)
+    );
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text);
   });
 
   it("getErrorMessage() should return a valid error message with passed restaurants name", function() {
-    let expectedResponse : SlackModule.SlackResponse = deepCopy(errorResponse);
-    let response : SlackModule.SlackResponse = <SlackModule.SlackResponse> slackMessage.getErrorMessage("גוטה");
+    let expectedResponse: SlackModule.SlackResponse = deepCopy(errorResponse);
+    let response: SlackModule.SlackResponse = <SlackModule.SlackResponse>(
+      slackMessage.getErrorMessage("גוטה")
+    );
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text + " for: גוטה");
   });
 
   it("generateRestaurantCard() should return a valid card", function() {
-
     let restaruant = new Commons.RestaurantBuilder()
-      .setRestaurantName( "דיקסי")
+      .setRestaurantName("דיקסי")
       .setRestaurantId(123)
       .setMinimumOrder("26 שח")
       .setDeliveryPrice("10 שח")
@@ -212,7 +249,9 @@ describe("SlackMessage", function() {
       .setRestaurantLogoUrl("http://image.jpg")
       .build();
 
-    let attachment : SlackModule.SlackAttachment = slackMessage.generateRestaurantCard(restaruant);
+    let attachment: SlackModule.SlackAttachment = slackMessage.generateRestaurantCard(
+      restaruant
+    );
 
     // Can"t do the following due to on the spot generation of guid and time
     // expect(response).to.deep.equal(validCard);
@@ -223,12 +262,13 @@ describe("SlackMessage", function() {
     expect(attachment.text).to.equal(validCard.text);
     expect(attachment.title).to.equal(validCard.title);
     expect(attachment.title_link).to.equal(validCard.title_link);
-
   });
 
   it("generateTotalOrdersResponse() should return a valid message without restaurant list", function() {
-    let expectedResponse : SlackModule.SlackResponse = deepCopy(goodResponse);
-    let response : SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse([]);
+    let expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
+    let response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
+      []
+    );
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("No pool order restaurants found");
@@ -236,8 +276,10 @@ describe("SlackMessage", function() {
   });
 
   it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
-    let expectedResponse : SlackModule.SlackResponse = deepCopy(goodResponse);
-    let response : SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse([restaurants[0]]);
+    let expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
+    let response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
+      [restaurants[0]]
+    );
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 1 restaurants");
@@ -246,21 +288,27 @@ describe("SlackMessage", function() {
     expect(response.attachments[0].fields).not.equal(null);
     expect(response.attachments[0].fields.length).to.equal(2);
     expect(response.attachments[0].fields[0].title).to.equal("הוזמן עד כה");
-    expect(response.attachments[0].fields[0].value).to.equal(restaurants[0].PoolSum);
+    expect(response.attachments[0].fields[0].value).to.equal(
+      restaurants[0].PoolSum
+    );
     expect(response.attachments[0].fields[1].title).to.equal("מינימום הזמנה");
-    expect(response.attachments[0].fields[1].value).to.equal(restaurants[0].MinimumOrder);
+    expect(response.attachments[0].fields[1].value).to.equal(
+      restaurants[0].MinimumOrder
+    );
   });
 
   it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
-    let expectedResponse : SlackModule.SlackResponse = deepCopy(goodResponse);
-    let response : SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(restaurants);
+    let expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
+    let response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
+      restaurants
+    );
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(3);
 
-    let i : number = 0;
+    let i: number = 0;
     response.attachments.forEach(attachment => {
       expect(attachment.fields).not.equal(null);
       expect(attachment.fields.length).to.equal(2);
@@ -273,13 +321,15 @@ describe("SlackMessage", function() {
   });
 
   it("generateTotalOrdersResponse() should paint the cards in Red and Green according to wether the minimum order sum is fulfilled", function() {
-    let response : SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(restaurants);
+    let response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
+      restaurants
+    );
 
     expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(3);
 
-    let i : number = 0;
+    let i: number = 0;
     response.attachments.forEach(attachment => {
       if (restaurants[i].IsOverPoolMin) {
         expect(attachment.color).to.equal(SlackMessageFormatter.GREEN_COLOR);
@@ -297,18 +347,20 @@ describe("SlackMessage", function() {
   });
 
   it("generateTotalOrdersResponse() should return a valid message with restaurant list > Maximum", function() {
-
     let bigAmountOfRestaurants = [];
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
-    let response : SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(bigAmountOfRestaurants);
+    let response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
+      bigAmountOfRestaurants
+    );
 
     expect(response.response_type).to.equal(goodResponse.response_type);
-    expect(response.text).to.equal("Found " + bigAmountOfRestaurants.length + " restaurants");
+    expect(response.text).to.equal(
+      "Found " + bigAmountOfRestaurants.length + " restaurants"
+    );
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(1);
-
   });
 
   it("generateRestaurantTotalCard() should return a valid card", function() {
@@ -322,7 +374,9 @@ describe("SlackMessage", function() {
       .setRestaurantLogoUrl("http://image.jpg")
       .build();
 
-    let attachment : SlackModule.SlackAttachment = slackMessage.generateRestaurantTotalCard(restaruant);
+    let attachment: SlackModule.SlackAttachment = slackMessage.generateRestaurantTotalCard(
+      restaruant
+    );
 
     // Can"t do the following due to on the spot generation of guid and time
     // expect(response).to.deep.equal(validCard);
@@ -333,7 +387,6 @@ describe("SlackMessage", function() {
     expect(attachment.text).to.equal(validTotalCard.text);
     expect(attachment.title).to.equal(validTotalCard.title);
     expect(attachment.title_link).to.equal(validTotalCard.title_link);
-
   });
   it("constructor() should throw an exception if launched twice", function() {
     //Already ran constructor for SlackMessageFormatter
@@ -342,9 +395,11 @@ describe("SlackMessage", function() {
     expect(slackMessageFormatter).not.to.equal(null);
     expect(SlackMessageFormatter.getInstance()).not.to.equal(null);
     try {
-      let hcmf = new SlackMessageFormatter();
+      new SlackMessageFormatter();
     } catch (err) {
-      expect(err.toString()).to.equal("Error: " + SlackMessageFormatter.INSTANTIATION_ERROR);
+      expect(err.toString()).to.equal(
+        "Error: " + SlackMessageFormatter.INSTANTIATION_ERROR
+      );
     }
   });
   it("getDefaultResponse() should return a default response", function() {
@@ -357,5 +412,4 @@ describe("SlackMessage", function() {
     expect(response.attachments).to.be.null;
     expect(response.text).to.equal(Constants.DEFAULT_RESPONSE);
   });
-
 });

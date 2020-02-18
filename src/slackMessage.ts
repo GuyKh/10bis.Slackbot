@@ -1,7 +1,6 @@
-import {SlackModule} from "../src/slackModule";
+import { SlackModule } from "../src/slackModule";
 import { Commons } from "./commons";
 import { Constants } from "./constants";
-
 
 /*
 Request:
@@ -46,199 +45,275 @@ Response:
         ]
 }
 */
-let commandOperator : string = "/10bis";
-let MAX_RESTAURANT_CARDS : number = 5;
+let commandOperator: string = "/10bis";
+let MAX_RESTAURANT_CARDS: number = 5;
 
 export class SlackMessageFormatter implements Commons.MessageFormatter {
-    public static GREEN_COLOR : string = "#36a64f";
-    public static RED_COLOR : string = "#a53c2e";
+  public static GREEN_COLOR: string = "#36a64f";
+  public static RED_COLOR: string = "#a53c2e";
 
-    private static _instance: SlackMessageFormatter = new SlackMessageFormatter();
-    public static INSTANTIATION_ERROR : string = "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
-    constructor() {
-        if (SlackMessageFormatter._instance) {
-            throw new Error(SlackMessageFormatter.INSTANTIATION_ERROR);
-        }
-        SlackMessageFormatter._instance = this;
+  private static _instance: SlackMessageFormatter = new SlackMessageFormatter();
+  public static INSTANTIATION_ERROR: string =
+    "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
+  constructor() {
+    if (SlackMessageFormatter._instance) {
+      throw new Error(SlackMessageFormatter.INSTANTIATION_ERROR);
+    }
+    SlackMessageFormatter._instance = this;
+  }
+
+  public static getInstance(): SlackMessageFormatter {
+    return SlackMessageFormatter._instance;
+  }
+
+  getDefaultResponse(): Commons.TenBisResponse {
+    return new SlackModule.SlackResponse(
+      "ephemeral",
+      Constants.DEFAULT_RESPONSE,
+      null
+    );
+  }
+  getErrorMessage(restaurantName: string): Commons.TenBisResponse {
+    let restaurantString: string = "";
+    if (restaurantName) {
+      restaurantString = " for: " + restaurantName;
     }
 
-    public static getInstance(): SlackMessageFormatter {
-        return SlackMessageFormatter._instance;
+    let response: Commons.TenBisResponse = new SlackModule.SlackResponse(
+      "ephemeral",
+      Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString,
+      null
+    );
+
+    return response;
+  }
+
+  getRestaurantName(req: Commons.Request): string {
+    if (req && req.body) {
+      return req.body.text;
     }
 
-    getDefaultResponse(): Commons.TenBisResponse {
-        return new SlackModule.SlackResponse("ephemeral", Constants.DEFAULT_RESPONSE, null);
-    }
-    getErrorMessage(restaurantName: string) : Commons.TenBisResponse {
-        let restaurantString : string = "";
-        if (restaurantName) {
-            restaurantString = " for: " + restaurantName;
-        }
+    return null;
+  }
+  generateSearchResponse(
+    restaurants: Commons.Restaurant[]
+  ): SlackModule.SlackResponse {
+    let title: string = "Found " + restaurants.length + " restaurants";
 
-        let response : Commons.TenBisResponse =
-            new SlackModule.SlackResponse("ephemeral", Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString, null);
+    let attachments: SlackModule.SlackAttachment[] = [];
+    if (restaurants.length > 0) {
+      if (restaurants.length < MAX_RESTAURANT_CARDS) {
+        let generateRestaurantCard: Function = this.generateRestaurantCard;
+        // For up to 5 restaurants, create a card
+        restaurants.forEach(function(restaurant: Commons.Restaurant) {
+          attachments.push(generateRestaurantCard(restaurant));
+        });
+      } else {
+        let restaurantsString: string = "";
+        // Create a list
+        restaurants.forEach(function(
+          restaurant: Commons.Restaurant,
+          index: number
+        ) {
+          restaurantsString +=
+            "[" +
+            (index + 1) +
+            "] " +
+            restaurant.RestaurantName +
+            " : " +
+            Constants.RESTAURANT_BASE_URL +
+            restaurant.RestaurantId +
+            (index < restaurants.length - 1 ? "\n" : "");
+        });
 
-        return response;
-    }
-
-    getRestaurantName(req: Commons.Request) : string {
-        if (req && req.body) {
-            return req.body.text;
-        }
-
-        return null;
-    }
-    generateSearchResponse(restaurants: Commons.Restaurant[]): SlackModule.SlackResponse {
-        let title : string = "Found " + restaurants.length + " restaurants";
-
-        let attachments : SlackModule.SlackAttachment[] = [];
-        if (restaurants.length > 0) {
-
-            if (restaurants.length < MAX_RESTAURANT_CARDS) {
-                let generateRestaurantCard : Function = this.generateRestaurantCard;
-                // For up to 5 restaurants, create a card
-                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    attachments.push(generateRestaurantCard(restaurant));
-                });
-            } else {
-
-                let restaurantsString : string = "";
-                // Create a list
-                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    restaurantsString += "[" + (index + 1) + "] " + restaurant.RestaurantName +
-                     " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId  +
-                     ((index < restaurants.length - 1) ? "\n" : "");
-                });
-
-                attachments.push(new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null));
-            }
-        }
-
-        let response = new SlackModule.SlackResponse(
-            "in_channel",
-            title,
+        attachments.push(
+          new SlackModule.SlackAttachment(
+            null,
+            null,
+            null,
+            null,
+            restaurantsString,
+            null,
             null
+          )
         );
-
-        if (attachments.length > 0) {
-            response.attachments = attachments;
-        }
-
-        return response;
-    }
-    generateTotalOrdersResponse(restaurants: Commons.Restaurant[]): SlackModule.SlackResponse {
-        let title : string = "Found " + restaurants.length + " restaurants";
-
-        let attachments : SlackModule.SlackAttachment[] = [];
-        if (restaurants.length > 0) {
-
-            if (restaurants.length < MAX_RESTAURANT_CARDS) {
-                let generateRestaurantTotalCard : Function = this.generateRestaurantTotalCard;
-
-                // For up to 5 restaurants, create a card
-                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-                    attachments.push(generateRestaurantTotalCard(restaurant));
-                });
-            } else {
-
-                let restaurantsString : string = "";
-                let wasFirstUnderLimitRestaurantDone : boolean = false;
-
-                // Create a list
-                restaurants.forEach(function (restaurant : Commons.Restaurant, index : number) {
-
-                    if ((!restaurant.IsOverPoolMin || restaurant.PoolSumNumber < restaurant.MinimumPriceForOrder)
-                        && !wasFirstUnderLimitRestaurantDone) {
-                        wasFirstUnderLimitRestaurantDone = true;
-                        restaurantsString += "-------------------------- UNDER THE MINIMUM SUM --------------------------\n";
-                    }
-
-                    restaurantsString += "[" + (index + 1) + "] " +
-                    restaurant.RestaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId +
-                    "\nTotal Sum Ordered: " + restaurant.PoolSum +
-                    "\tMinimum Order Sum: " + restaurant.MinimumOrder +
-                    ((index < restaurants.length - 1) ? "\n" : "");
-                });
-
-                attachments.push(
-                    new SlackModule.SlackAttachment(null, null, null, null, restaurantsString, null, null)
-                 );
-            }
-        } else {
-            title = "No pool order restaurants found";
-        }
-
-        let slackResponse = new SlackModule.SlackResponse("in_channel", title, null);
-
-        if (attachments.length > 0) {
-            slackResponse.attachments = attachments;
-        }
-
-        return slackResponse;
+      }
     }
 
-    isValidMessage(req: SlackModule.SlackRequest): boolean {
-        if (req && req.body && req.body.command && req.body.command === commandOperator) {
-            return true;
-        }
+    let response = new SlackModule.SlackResponse("in_channel", title, null);
 
-        return false;
+    if (attachments.length > 0) {
+      response.attachments = attachments;
     }
 
-    generateRestaurantCard (restaurant : Commons.Restaurant) : SlackModule.SlackAttachment {
-        let restaurantName : string = restaurant.RestaurantName;
+    return response;
+  }
+  generateTotalOrdersResponse(
+    restaurants: Commons.Restaurant[]
+  ): SlackModule.SlackResponse {
+    let title: string = "Found " + restaurants.length + " restaurants";
 
-        let slackAttachment = new SlackModule.SlackAttachment(
-            restaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-            restaurantName,
-            "#36a64f",
-            Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-            restaurant.RestaurantCuisineList,
-            restaurant.RestaurantLogoUrl,
-            (Math.floor(Date.now() / 1000)));
+    let attachments: SlackModule.SlackAttachment[] = [];
+    if (restaurants.length > 0) {
+      if (restaurants.length < MAX_RESTAURANT_CARDS) {
+        let generateRestaurantTotalCard: Function = this
+          .generateRestaurantTotalCard;
 
-        slackAttachment.fields = [];
-        slackAttachment.fields.push(new SlackModule.SlackAttachmentField(
-            "מינימום הזמנה",
-            restaurant.MinimumOrder,
-            true
-        ));
+        // For up to 5 restaurants, create a card
+        restaurants.forEach(function(restaurant: Commons.Restaurant) {
+          attachments.push(generateRestaurantTotalCard(restaurant));
+        });
+      } else {
+        let restaurantsString: string = "";
+        let wasFirstUnderLimitRestaurantDone: boolean = false;
 
-        slackAttachment.fields.push(new SlackModule.SlackAttachmentField(
-            "דמי משלוח",
-            restaurant.DeliveryPrice,
-            true
-        ));
+        // Create a list
+        restaurants.forEach(function(
+          restaurant: Commons.Restaurant,
+          index: number
+        ) {
+          if (
+            (!restaurant.IsOverPoolMin ||
+              restaurant.PoolSumNumber < restaurant.MinimumPriceForOrder) &&
+            !wasFirstUnderLimitRestaurantDone
+          ) {
+            wasFirstUnderLimitRestaurantDone = true;
+            restaurantsString +=
+              "-------------------------- UNDER THE MINIMUM SUM --------------------------\n";
+          }
 
-        return slackAttachment;
-    }
+          restaurantsString +=
+            "[" +
+            (index + 1) +
+            "] " +
+            restaurant.RestaurantName +
+            " : " +
+            Constants.RESTAURANT_BASE_URL +
+            restaurant.RestaurantId +
+            "\nTotal Sum Ordered: " +
+            restaurant.PoolSum +
+            "\tMinimum Order Sum: " +
+            restaurant.MinimumOrder +
+            (index < restaurants.length - 1 ? "\n" : "");
+        });
 
-    generateRestaurantTotalCard (restaurant : Commons.Restaurant) : SlackModule.SlackAttachment {
-        let restaurantName : string = restaurant.RestaurantName;
-
-        let slackAttachment = new SlackModule.SlackAttachment(
-            restaurantName + " : " + Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-            restaurantName,
-            restaurant.IsOverPoolMin ? SlackMessageFormatter.GREEN_COLOR : SlackMessageFormatter.RED_COLOR,
-            Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-            restaurant.RestaurantCuisineList,
-            restaurant.RestaurantLogoUrl,
-            (Math.floor(Date.now() / 1000))
+        attachments.push(
+          new SlackModule.SlackAttachment(
+            null,
+            null,
+            null,
+            null,
+            restaurantsString,
+            null,
+            null
+          )
         );
-
-        slackAttachment.fields = [];
-        slackAttachment.fields.push(new SlackModule.SlackAttachmentField(
-            "הוזמן עד כה",
-            restaurant.PoolSum,
-            true
-        ));
-
-        slackAttachment.fields.push(new SlackModule.SlackAttachmentField(
-            "מינימום הזמנה",
-            restaurant.MinimumOrder,
-            true
-        ));
-
-        return slackAttachment;
+      }
+    } else {
+      title = "No pool order restaurants found";
     }
+
+    let slackResponse = new SlackModule.SlackResponse(
+      "in_channel",
+      title,
+      null
+    );
+
+    if (attachments.length > 0) {
+      slackResponse.attachments = attachments;
+    }
+
+    return slackResponse;
+  }
+
+  isValidMessage(req: SlackModule.SlackRequest): boolean {
+    if (
+      req &&
+      req.body &&
+      req.body.command &&
+      req.body.command === commandOperator
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  generateRestaurantCard(
+    restaurant: Commons.Restaurant
+  ): SlackModule.SlackAttachment {
+    let restaurantName: string = restaurant.RestaurantName;
+
+    let slackAttachment = new SlackModule.SlackAttachment(
+      restaurantName +
+        " : " +
+        Constants.RESTAURANT_BASE_URL +
+        restaurant.RestaurantId,
+      restaurantName,
+      "#36a64f",
+      Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
+      restaurant.RestaurantCuisineList,
+      restaurant.RestaurantLogoUrl,
+      Math.floor(Date.now() / 1000)
+    );
+
+    slackAttachment.fields = [];
+    slackAttachment.fields.push(
+      new SlackModule.SlackAttachmentField(
+        "מינימום הזמנה",
+        restaurant.MinimumOrder,
+        true
+      )
+    );
+
+    slackAttachment.fields.push(
+      new SlackModule.SlackAttachmentField(
+        "דמי משלוח",
+        restaurant.DeliveryPrice,
+        true
+      )
+    );
+
+    return slackAttachment;
+  }
+
+  generateRestaurantTotalCard(
+    restaurant: Commons.Restaurant
+  ): SlackModule.SlackAttachment {
+    let restaurantName: string = restaurant.RestaurantName;
+
+    let slackAttachment = new SlackModule.SlackAttachment(
+      restaurantName +
+        " : " +
+        Constants.RESTAURANT_BASE_URL +
+        restaurant.RestaurantId,
+      restaurantName,
+      restaurant.IsOverPoolMin
+        ? SlackMessageFormatter.GREEN_COLOR
+        : SlackMessageFormatter.RED_COLOR,
+      Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
+      restaurant.RestaurantCuisineList,
+      restaurant.RestaurantLogoUrl,
+      Math.floor(Date.now() / 1000)
+    );
+
+    slackAttachment.fields = [];
+    slackAttachment.fields.push(
+      new SlackModule.SlackAttachmentField(
+        "הוזמן עד כה",
+        restaurant.PoolSum,
+        true
+      )
+    );
+
+    slackAttachment.fields.push(
+      new SlackModule.SlackAttachmentField(
+        "מינימום הזמנה",
+        restaurant.MinimumOrder,
+        true
+      )
+    );
+
+    return slackAttachment;
+  }
 }

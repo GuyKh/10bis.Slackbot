@@ -1,4 +1,4 @@
-module.exports = {
+{
    "env": {
       "node": true,
       "mocha": true,
@@ -20,19 +20,9 @@ module.exports = {
       "sourceType": "module"
    },
    "plugins": [
-      "mocha",
-      "chai-expect",
       "@typescript-eslint"
    ],
    "rules": {
 
-   },
-   "overrides": [
-      {
-        "files": ['*.ts', '*.tsx'],
-        "rules": {
-          '@typescript-eslint/no-unused-vars': [2, { args: 'none' }]
-        }
-      }
-    ]
-};
+   }
+}
