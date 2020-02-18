@@ -6,187 +6,175 @@ import { Response } from "express";
 
 const querystring = require("querystring");
 
-export module Commons {
-  export function getFormatedDateTime(): string {
-    let date: string = moment
-      .tz(Constants.TIMEZONE)
-      .format(Constants.DATE_FORMAT);
-    let time: string = moment
-      .tz(Constants.TIMEZONE)
-      .format(Constants.TIME_FORMAT);
-    return date + "+" + time;
-  }
+export function GetFormatedDateTime(): string {
+  let date: string = moment
+    .tz(Constants.TIMEZONE)
+    .format(Constants.DATE_FORMAT);
+  let time: string = moment
+    .tz(Constants.TIMEZONE)
+    .format(Constants.TIME_FORMAT);
+  return date + "+" + time;
+}
 
-  export function RequestGetWrapper(url: string): Promise<string> {
-    return new Promise(function(resolve: Function, reject: Function) {
-      request.get(url, function(
-        error: Error,
-        response: Response,
-        body: string
-      ) {
-        if (!error && response.statusCode === 200) {
-          resolve(body); // Succeess
-        } else {
-          reject(error); // Failure
-        }
-      });
+export function RequestGetWrapper(url: string): Promise<string> {
+  return new Promise(function(resolve: Function, reject: Function) {
+    request.get(url, function(error: Error, response: Response, body: string) {
+      if (!error && response.statusCode === 200) {
+        resolve(body); // Succeess
+      } else {
+        reject(error); // Failure
+      }
     });
-  }
+  });
+}
 
-  export function ErrorPromiseWrapper(errorString: string): Promise<void> {
-    return new Promise(function(resolve: Function, reject: Function) {
-      reject(errorString); // Failure
-    });
-  }
+export function ErrorPromiseWrapper(errorString: string): Promise<void> {
+  return new Promise(function(resolve: Function, reject: Function) {
+    reject(errorString); // Failure
+  });
+}
 
-  export function sortRestaurantsByDistance(
-    restaurants: Commons.Restaurant[]
-  ): Commons.Restaurant[] {
-    return restaurants.sort(function(
-      objectA: Commons.Restaurant,
-      objectB: Commons.Restaurant
+export function SortRestaurantsByDistance(
+  restaurants: Commons.Restaurant[]
+): Commons.Restaurant[] {
+  return restaurants.sort(function(
+    objectA: Commons.Restaurant,
+    objectB: Commons.Restaurant
+  ) {
+    if (!objectA.DistanceFromUserInMeters && objectB.DistanceFromUserInMeters) {
+      return 1;
+    }
+    if (objectA.DistanceFromUserInMeters && !objectB.DistanceFromUserInMeters) {
+      return -1;
+    }
+    if (
+      !objectA.DistanceFromUserInMeters &&
+      !objectB.DistanceFromUserInMeters
     ) {
-      if (
-        !objectA.DistanceFromUserInMeters &&
-        objectB.DistanceFromUserInMeters
-      ) {
-        return 1;
-      }
-      if (
-        objectA.DistanceFromUserInMeters &&
-        !objectB.DistanceFromUserInMeters
-      ) {
-        return -1;
-      }
-      if (
-        !objectA.DistanceFromUserInMeters &&
-        !objectB.DistanceFromUserInMeters
-      ) {
-        return 0;
-      }
-
-      if (objectA.DistanceFromUserInMeters > objectB.DistanceFromUserInMeters) {
-        return 1;
-      }
-      if (objectB.DistanceFromUserInMeters > objectA.DistanceFromUserInMeters) {
-        return -1;
-      }
-
       return 0;
-    });
-  }
-
-  export function filterTotalOrders(restarant: Commons.Restaurant): boolean {
-    // Filter all restaurants will positive pool value
-    return restarant.PoolSumNumber > 0;
-  }
-
-  export function verifyMessage(
-    req: Commons.Request,
-    formatters: Commons.MessageFormatter[]
-  ): Commons.MessageFormatter {
-    if (!req || !formatters || formatters.constructor !== Array) {
-      return null;
     }
 
-    return formatters.find(function(formatter: Commons.MessageFormatter) {
-      return formatter.isValidMessage(req);
-    });
-  }
-
-  export function generateSearchRequest(restaurantName: string): string {
-    let queryParams = {
-      deliveryMethod: "Delivery",
-      ShowOnlyOpenForDelivery: false,
-      id: Number.parseInt(process.env.USER_ID),
-      pageNum: 0,
-      pageSize: 50,
-      OrderBy: "Default",
-      cuisineType: "",
-      CityId: Number.parseInt(process.env.CITY_ID),
-      StreetId: Number.parseInt(process.env.STREET_ID),
-      FilterByKosher: false,
-      FilterByBookmark: false,
-      FilterByCoupon: false,
-      searchPhrase: restaurantName,
-      Latitude: Number.parseInt(process.env.LAT),
-      Longitude: Number.parseInt(process.env.LONG),
-      HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
-      desiredDateAndTime: Commons.getFormatedDateTime(),
-      timestamp: new Date().getTime()
-    };
-
-    let parsedUrl: string = url.format(
-      new URL(
-        "https://www.10bis.co.il/Restaurants/SearchRestaurants?" +
-          querystring.stringify(queryParams)
-      )
-    );
-    parsedUrl = parsedUrl.replace("%2B", "+");
-
-    return parsedUrl;
-  }
-
-  export function generateGetTotalOrdersRequest(): string {
-    let queryParams = {
-      deliveryMethod: "Delivery",
-      ShowOnlyOpenForDelivery: false,
-      id: Number.parseInt(process.env.USER_ID),
-      pageNum: 0,
-      pageSize: 50,
-      OrderBy: "pool_sum",
-      cuisineType: "",
-      CityId: Number.parseInt(process.env.CITY_ID),
-      StreetId: Number.parseInt(process.env.STREET_ID),
-      FilterByKosher: false,
-      FilterByBookmark: false,
-      FilterByCoupon: false,
-      searchPhrase: "",
-      Latitude: Number.parseInt(process.env.LAT),
-      Longitude: Number.parseInt(process.env.LONG),
-      HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
-      desiredDateAndTime: Commons.getFormatedDateTime(),
-      timestamp: new Date().getTime()
-    };
-
-    let parsedUrl: string = url.format(
-      new URL(
-        "https://www.10bis.co.il/Restaurants/SearchRestaurants?" +
-          querystring.stringify(queryParams)
-      )
-    );
-    parsedUrl = parsedUrl.replace("%2B", "+");
-    return parsedUrl;
-  }
-
-  export function filterByRestaurantName(
-    restaurants: Commons.Restaurant[],
-    findExact: boolean,
-    restarantName: string
-  ): Commons.Restaurant[] {
-    let flags = {};
-    let filteredRestaurants: Commons.Restaurant[] = restaurants.filter(function(
-      restarant: Commons.Restaurant
-    ) {
-      if (flags[restarant.RestaurantName]) {
-        return false;
-      }
-
-      flags[restarant.RestaurantName] = true;
-      return true;
-    });
-
-    if (!findExact) {
-      return filteredRestaurants;
-    } else {
-      return filteredRestaurants.filter(function(
-        restarant: Commons.Restaurant
-      ) {
-        return restarant.RestaurantName === restarantName;
-      });
+    if (objectA.DistanceFromUserInMeters > objectB.DistanceFromUserInMeters) {
+      return 1;
     }
+    if (objectB.DistanceFromUserInMeters > objectA.DistanceFromUserInMeters) {
+      return -1;
+    }
+
+    return 0;
+  });
+}
+
+export function FilterTotalOrders(restarant: Commons.Restaurant): boolean {
+  // Filter all restaurants will positive pool value
+  return restarant.PoolSumNumber > 0;
+}
+
+export function VerifyMessage(
+  req: Commons.Request,
+  formatters: Commons.MessageFormatter[]
+): Commons.MessageFormatter {
+  if (!req || !formatters || formatters.constructor !== Array) {
+    return null;
   }
 
+  return formatters.find(function(formatter: Commons.MessageFormatter) {
+    return formatter.isValidMessage(req);
+  });
+}
+
+export function GenerateSearchRequest(restaurantName: string): string {
+  let queryParams = {
+    deliveryMethod: "Delivery",
+    ShowOnlyOpenForDelivery: false,
+    id: Number.parseInt(process.env.USER_ID),
+    pageNum: 0,
+    pageSize: 50,
+    OrderBy: "Default",
+    cuisineType: "",
+    CityId: Number.parseInt(process.env.CITY_ID),
+    StreetId: Number.parseInt(process.env.STREET_ID),
+    FilterByKosher: false,
+    FilterByBookmark: false,
+    FilterByCoupon: false,
+    searchPhrase: restaurantName,
+    Latitude: Number.parseInt(process.env.LAT),
+    Longitude: Number.parseInt(process.env.LONG),
+    HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
+    desiredDateAndTime: GetFormatedDateTime(),
+    timestamp: new Date().getTime()
+  };
+
+  let parsedUrl: string = url.format(
+    new URL(
+      "https://www.10bis.co.il/Restaurants/SearchRestaurants?" +
+        querystring.stringify(queryParams)
+    )
+  );
+  parsedUrl = parsedUrl.replace("%2B", "+");
+
+  return parsedUrl;
+}
+
+export function GenerateGetTotalOrdersRequest(): string {
+  let queryParams = {
+    deliveryMethod: "Delivery",
+    ShowOnlyOpenForDelivery: false,
+    id: Number.parseInt(process.env.USER_ID),
+    pageNum: 0,
+    pageSize: 50,
+    OrderBy: "pool_sum",
+    cuisineType: "",
+    CityId: Number.parseInt(process.env.CITY_ID),
+    StreetId: Number.parseInt(process.env.STREET_ID),
+    FilterByKosher: false,
+    FilterByBookmark: false,
+    FilterByCoupon: false,
+    searchPhrase: "",
+    Latitude: Number.parseInt(process.env.LAT),
+    Longitude: Number.parseInt(process.env.LONG),
+    HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
+    desiredDateAndTime: GetFormatedDateTime(),
+    timestamp: new Date().getTime()
+  };
+
+  let parsedUrl: string = url.format(
+    new URL(
+      "https://www.10bis.co.il/Restaurants/SearchRestaurants?" +
+        querystring.stringify(queryParams)
+    )
+  );
+  parsedUrl = parsedUrl.replace("%2B", "+");
+  return parsedUrl;
+}
+
+export function FilterByRestaurantName(
+  restaurants: Commons.Restaurant[],
+  findExact: boolean,
+  restarantName: string
+): Commons.Restaurant[] {
+  let flags = {};
+  let filteredRestaurants: Commons.Restaurant[] = restaurants.filter(function(
+    restarant: Commons.Restaurant
+  ) {
+    if (flags[restarant.RestaurantName]) {
+      return false;
+    }
+
+    flags[restarant.RestaurantName] = true;
+    return true;
+  });
+
+  if (!findExact) {
+    return filteredRestaurants;
+  } else {
+    return filteredRestaurants.filter(function(restarant: Commons.Restaurant) {
+      return restarant.RestaurantName === restarantName;
+    });
+  }
+}
+
+export module Commons {
   export class Restaurant {
     private _restaurantId: number;
     private _restaurantName: string;

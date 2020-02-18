@@ -1,4 +1,12 @@
-import { Commons } from "../src/commons";
+import {
+  Commons,
+  GenerateSearchRequest,
+  GenerateGetTotalOrdersRequest,
+  VerifyMessage,
+  FilterByRestaurantName,
+  FilterTotalOrders,
+  SortRestaurantsByDistance
+} from "../src/commons";
 import { HipChatModule } from "../src/hipChatModule";
 import { SlackModule } from "../src/slackModule";
 import { SlackMessageFormatter } from "../src/slackMessage";
@@ -29,63 +37,48 @@ describe("App", function() {
     let req = new SlackModule.SlackRequest(validSlackMessage);
 
     expect(
-      Commons.verifyMessage(null, [
-        slackMessageFormatter,
-        hipChatMessageFormatter
-      ])
+      VerifyMessage(null, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(null);
-    expect(Commons.verifyMessage(req, null)).to.equal(null);
+    expect(VerifyMessage(req, null)).to.equal(null);
   });
 
   it("verifyMessage() should return slackMessageFormatter if valid slack message is passed", function() {
     let req = new SlackModule.SlackRequest(validSlackMessage);
     expect(
-      Commons.verifyMessage(req, [
-        slackMessageFormatter,
-        hipChatMessageFormatter
-      ])
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(slackMessageFormatter);
   });
 
   it("verifyMessage() should return hipChatMessage if valid HipChat message is passed", function() {
     let req = new HipChatModule.HipChatReq(validHipChatMessage);
     expect(
-      Commons.verifyMessage(req, [
-        slackMessageFormatter,
-        hipChatMessageFormatter
-      ])
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(hipChatMessageFormatter);
   });
 
   it("verifyMessage() should return null if invalid Slack message is passed", function() {
     let req = new SlackModule.SlackRequest(slackInvalidMessage);
     expect(
-      Commons.verifyMessage(req, [
-        slackMessageFormatter,
-        hipChatMessageFormatter
-      ])
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.be.an("undefined");
   });
 
   it("verifyMessage() should return null if invalid HipChat message is passed", function() {
     let req = new HipChatModule.HipChatReq(hipChatInvalidMessage);
     expect(
-      Commons.verifyMessage(req, [
-        slackMessageFormatter,
-        hipChatMessageFormatter
-      ])
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.be.an("undefined");
   });
 
   it("generateSearchRequest() should return a valid request", function() {
-    let generatedRequest: string = Commons.generateSearchRequest("Rest");
+    let generatedRequest: string = GenerateSearchRequest("Rest");
 
     expect(generatedRequest).not.to.equal(null);
     expect(generatedRequest.includes("searchPhrase=Rest")).to.equal(true);
   });
 
   it("generateGetTotalOrdersRequest() should return a valid request", function() {
-    let generatedRequest: string = Commons.generateGetTotalOrdersRequest();
+    let generatedRequest: string = GenerateGetTotalOrdersRequest();
 
     expect(generatedRequest).not.to.equal(null);
     expect(generatedRequest.includes("deliveryMethod=Delivery")).to.equal(true);
@@ -105,7 +98,7 @@ describe("App", function() {
       .setRestaurantId(3)
       .build();
 
-    let restaurants: Commons.Restaurant[] = Commons.filterByRestaurantName(
+    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       false,
       null
@@ -126,7 +119,7 @@ describe("App", function() {
   });
 
   it("filterByRestaurantName() should be ok with an empty array", function() {
-    let restaurants: Commons.Restaurant[] = Commons.filterByRestaurantName(
+    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [],
       false,
       null
@@ -150,7 +143,7 @@ describe("App", function() {
       .setRestaurantId(3)
       .build();
 
-    let restaurants: Commons.Restaurant[] = Commons.filterByRestaurantName(
+    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       false,
       null
@@ -184,7 +177,7 @@ describe("App", function() {
       .setRestaurantId(3)
       .build();
 
-    let restaurants: Commons.Restaurant[] = Commons.filterByRestaurantName(
+    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       true,
       "Rest1"
@@ -218,7 +211,7 @@ describe("App", function() {
       .setDistanceFromUserInMeters(15)
       .build();
 
-    let restaurants: Commons.Restaurant[] = Commons.sortRestaurantsByDistance([
+    let restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
       restaurant1,
       restaurant2,
       restaurant3
@@ -260,7 +253,7 @@ describe("App", function() {
       .setRestaurantId(1)
       .build();
 
-    let restaurants: Commons.Restaurant[] = Commons.sortRestaurantsByDistance([
+    let restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
       restaurant4,
       restaurant1,
       restaurant2,
@@ -302,7 +295,7 @@ describe("App", function() {
       .setDistanceFromUserInMeters(7)
       .build();
 
-    let restaurants: Commons.Restaurant[] = Commons.sortRestaurantsByDistance([
+    let restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
       restaurant1,
       restaurant2,
       restaurant3
@@ -335,7 +328,7 @@ describe("App", function() {
       .setRestaurantId(3)
       .build();
 
-    let restaurants = Commons.sortRestaurantsByDistance([
+    let restaurants = SortRestaurantsByDistance([
       restaurant1,
       restaurant2,
       restaurant3
@@ -356,7 +349,7 @@ describe("App", function() {
 
   it("filterTotalOrders() should filter the restaurants correctly", function() {
     let filteredRestaurants: Commons.Restaurant[] = restaurants.filter(
-      Commons.filterTotalOrders
+      FilterTotalOrders
     );
 
     expect(filteredRestaurants).not.to.equal(null);

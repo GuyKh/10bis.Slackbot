@@ -1,6 +1,16 @@
 import { Response } from "express";
 import * as winston from "winston";
-import { Commons } from "./commons";
+import {
+  Commons,
+  FilterByRestaurantName,
+  SortRestaurantsByDistance,
+  GenerateSearchRequest,
+  VerifyMessage,
+  ErrorPromiseWrapper,
+  GenerateGetTotalOrdersRequest,
+  RequestGetWrapper,
+  FilterTotalOrders
+} from "./commons";
 import { Constants } from "./constants";
 import { HipChatMessageFormatter } from "./hipChatMessage";
 import { SlackMessageFormatter } from "./slackMessage";
@@ -25,17 +35,17 @@ export class App {
   }
 
   process(req: Commons.Request, res: Response): Promise<void> {
-    let messageFormatter = Commons.verifyMessage(req, this.messageFormatters);
+    let messageFormatter = VerifyMessage(req, this.messageFormatters);
     if (!messageFormatter) {
       res.status(400).send(Constants.INVALID_MESSAGE_STRING);
-      return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
+      return ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
     }
 
     let restaurantName = messageFormatter.getRestaurantName(req);
     if (!restaurantName) {
       const body = messageFormatter.getErrorMessage(null);
       res.status(400).send(body);
-      return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
+      return ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
     }
 
     restaurantName = restaurantName.trim();
@@ -60,7 +70,7 @@ export class App {
       // Behavior for empty command ("/10bis" with no content)
       let body: Commons.TenBisResponse = messageFormatter.getDefaultResponse();
       res.status(400).send(body);
-      return Commons.ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
+      return ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
     }
 
     let cleanRestaurantName: string = restaurantName;
@@ -79,8 +89,8 @@ export class App {
         .then(cachedData => {
           if (cachedData) {
             const resBody = messageFormatter.generateSearchResponse(
-              Commons.filterByRestaurantName(
-                Commons.sortRestaurantsByDistance(cachedData),
+              FilterByRestaurantName(
+                SortRestaurantsByDistance(cachedData),
                 useExactRestaurantName,
                 cleanRestaurantName
               )
@@ -116,9 +126,9 @@ export class App {
       useExactRestaurantName = true;
     }
 
-    let parsed_url: string = Commons.generateSearchRequest(restaurantName);
+    let parsed_url: string = GenerateSearchRequest(restaurantName);
 
-    return Commons.RequestGetWrapper(parsed_url)
+    return RequestGetWrapper(parsed_url)
       .then(body => {
         let data = JSON.parse(body);
 
@@ -133,8 +143,8 @@ export class App {
             .setItem(restaurantName, data, { ttl: cacheTTL })
             .then(() => {
               const resBody = messageFormatter.generateSearchResponse(
-                Commons.filterByRestaurantName(
-                  Commons.sortRestaurantsByDistance(data),
+                FilterByRestaurantName(
+                  SortRestaurantsByDistance(data),
                   useExactRestaurantName,
                   restaurantName
                 )
@@ -143,8 +153,8 @@ export class App {
             });
         } else {
           const resBody = messageFormatter.generateSearchResponse(
-            Commons.filterByRestaurantName(
-              Commons.sortRestaurantsByDistance(data),
+            FilterByRestaurantName(
+              SortRestaurantsByDistance(data),
               useExactRestaurantName,
               restaurantName
             )
@@ -166,10 +176,10 @@ export class App {
     res: Response,
     messageFormatter: Commons.MessageFormatter
   ): Promise<void> {
-    let parsed_url: string = Commons.generateGetTotalOrdersRequest();
+    let parsed_url: string = GenerateGetTotalOrdersRequest();
     winston.debug("Total Orders Url: " + parsed_url);
 
-    let requestPromise: Promise<string> = Commons.RequestGetWrapper(parsed_url);
+    let requestPromise: Promise<string> = RequestGetWrapper(parsed_url);
     return requestPromise
       .then(body => {
         let data: Commons.Restaurant[] = JSON.parse(body);
@@ -180,12 +190,10 @@ export class App {
           return;
         }
 
-        let restaurants: Commons.Restaurant[] = data.filter(
-          Commons.filterTotalOrders
-        );
+        let restaurants: Commons.Restaurant[] = data.filter(FilterTotalOrders);
 
         const resBody = messageFormatter.generateTotalOrdersResponse(
-          Commons.filterByRestaurantName(restaurants, false, null)
+          FilterByRestaurantName(restaurants, false, null)
         );
         res.json(resBody);
       })
