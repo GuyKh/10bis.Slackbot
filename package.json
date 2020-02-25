@@ -52,7 +52,7 @@
     "snyk-protect": "snyk protect"
   },
   "engines": {
-    "npm": "6.13.x",
+    "npm": "6.14.x",
     "node": "12.x"
   },
   "nyc": {
