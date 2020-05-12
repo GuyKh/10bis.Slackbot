@@ -16,7 +16,7 @@
     "request": "2.88.2",
     "snyk": "1.320.2",
     "typescript": "3.9.2",
-    "uuid": "7.0.3",
+    "uuid": "8.0.0",
     "winston": "3.2.1"
   },
   "devDependencies": {
