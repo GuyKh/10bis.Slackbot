@@ -36,7 +36,7 @@
     "nyc": "15.0.1",
     "prettier": "2.0.5",
     "sinon": "9.0.2",
-    "ts-node": "8.8.1"
+    "ts-node": "8.10.1"
   },
   "scripts": {
     "precommit": "./node_modules/.bin/eslint `git diff --name-only | grep .ts` --fix",
