@@ -95,10 +95,9 @@ export class Server {
    * @return void
    */
   private routes() {
-    let router: express.Router;
-    router = express.Router();
+    const router: express.Router = express.Router();
 
-    let app = new App();
+    const app = new App();
     router.get("/", function(req: Commons.Request, res: Response) {
       res.send("Sanity passed!");
     });
