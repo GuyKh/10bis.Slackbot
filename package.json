@@ -14,7 +14,7 @@
     "node-ts-cache": "3.2.0",
     "redis": "3.0.2",
     "request": "2.88.2",
-    "snyk": "1.335.0",
+    "snyk": "1.336.0",
     "typescript": "3.9.3",
     "uuid": "8.1.0",
     "winston": "3.2.1"
