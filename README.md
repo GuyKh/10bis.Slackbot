@@ -4,8 +4,6 @@ _A Slackbot that searches 10bis_.
 
 This Slackbot that receives input through a [slash command](https://api.slack.com/slash-commands) and sends a request to an API.
 
-(based on Slack Genius https://goo.gl/wDyayI)
-
 ## Installation
 
 Clone the repo and then install dependencies:
