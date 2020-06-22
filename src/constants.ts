@@ -1,14 +1,22 @@
 export class Constants {
   public static readonly INVALID_MESSAGE_STRING: string = "Invalid Command";
+
   public static readonly ERROR_STRING: string =
     "There was an error in your request";
+
   public static readonly NO_RESTAURANTS_FOUND_STRING: string =
     "No Restaurants Found";
+
   public static readonly APP_NAME: string = "10bis.slackbot";
+
   public static readonly TOTAL_KEYWORD: string = "total";
+
   public static readonly DATE_FORMAT: string = "DD/MM/YYYY";
+
   public static readonly TIME_FORMAT: string = "HH:mm:ss";
+
   public static readonly TIMEZONE: string = "Asia/Jerusalem";
+
   public static readonly RESTAURANT_BASE_URL: string =
     "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=";
 

@@ -70,6 +70,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
   public static INITIALIZATION_EXCEPTION_STRING: string =
     "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
+
   constructor() {
     if (HipChatMessageFormatter._instance) {
       throw new Error(HipChatMessageFormatter.INITIALIZATION_EXCEPTION_STRING);
@@ -116,7 +117,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
       message = message.slice(
         HipChatMessageFormatter.COMMAND_OPERATOR.length + 1
-      ); //get the value
+      ); // get the value
 
       return message;
     }
@@ -132,13 +133,13 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
 
     if (restaurants.length > 0) {
       title += "\n";
-      restaurants.forEach(function(
+      restaurants.forEach(function (
         restaurant: Commons.Restaurant,
         index: number
       ) {
         let suffix: string = "";
         if (index + 1 < restaurants.length) {
-          //exclude the last line
+          // exclude the last line
           suffix = "\n\n";
         }
         restaurantText +=
@@ -165,7 +166,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     let restaurantsString: string = "";
     if (restaurants.length > 0) {
       // Create a list
-      restaurants.forEach(function(
+      restaurants.forEach(function (
         restaurant: Commons.Restaurant,
         index: number
       ) {
@@ -188,7 +189,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       restaurantsString = "No pool order restaurants found";
     }
 
-    let response = new HipChatModule.HipChatResponse(
+    const response = new HipChatModule.HipChatResponse(
       "green",
       restaurantsString,
       false,
@@ -240,7 +241,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     text: string,
     restaurant: Commons.Restaurant
   ): HipChatModule.HipChatResponse {
-    let response: HipChatModule.HipChatResponse = new HipChatModule.HipChatResponse(
+    const response: HipChatModule.HipChatResponse = new HipChatModule.HipChatResponse(
       "green",
       text,
       false,

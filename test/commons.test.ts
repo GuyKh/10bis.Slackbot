@@ -1,3 +1,6 @@
+/* eslint-env node, mocha */
+/* eslint camelcase: "off" */
+
 import {
   Commons,
   GenerateSearchRequest,
@@ -5,7 +8,7 @@ import {
   VerifyMessage,
   FilterByRestaurantName,
   FilterTotalOrders,
-  SortRestaurantsByDistance
+  SortRestaurantsByDistance,
 } from "../src/commons";
 import { HipChatModule } from "../src/hipChatModule";
 import { SlackModule } from "../src/slackModule";
@@ -18,11 +21,11 @@ import {
   validSlackMessage,
   validHipChatMessage,
   slackInvalidMessage,
-  hipChatInvalidMessage
+  hipChatInvalidMessage,
 } from "./testCommons";
 
-let slackMessageFormatter: Commons.MessageFormatter = SlackMessageFormatter.getInstance();
-let hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
+const slackMessageFormatter: Commons.MessageFormatter = SlackMessageFormatter.getInstance();
+const hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
 
 export class Req {
   body: string;
@@ -32,9 +35,9 @@ export class Req {
   }
 }
 
-describe("App", function() {
-  it("verifyMessage() should return null if no items are passed in", function() {
-    let req = new SlackModule.SlackRequest(validSlackMessage);
+describe("App", function () {
+  it("verifyMessage() should return null if no items are passed in", function () {
+    const req = new SlackModule.SlackRequest(validSlackMessage);
 
     expect(
       VerifyMessage(null, [slackMessageFormatter, hipChatMessageFormatter])
@@ -42,63 +45,63 @@ describe("App", function() {
     expect(VerifyMessage(req, null)).to.equal(null);
   });
 
-  it("verifyMessage() should return slackMessageFormatter if valid slack message is passed", function() {
-    let req = new SlackModule.SlackRequest(validSlackMessage);
+  it("verifyMessage() should return slackMessageFormatter if valid slack message is passed", function () {
+    const req = new SlackModule.SlackRequest(validSlackMessage);
     expect(
       VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(slackMessageFormatter);
   });
 
-  it("verifyMessage() should return hipChatMessage if valid HipChat message is passed", function() {
-    let req = new HipChatModule.HipChatReq(validHipChatMessage);
+  it("verifyMessage() should return hipChatMessage if valid HipChat message is passed", function () {
+    const req = new HipChatModule.HipChatReq(validHipChatMessage);
     expect(
       VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(hipChatMessageFormatter);
   });
 
-  it("verifyMessage() should return null if invalid Slack message is passed", function() {
-    let req = new SlackModule.SlackRequest(slackInvalidMessage);
+  it("verifyMessage() should return null if invalid Slack message is passed", function () {
+    const req = new SlackModule.SlackRequest(slackInvalidMessage);
     expect(
       VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.be.an("undefined");
   });
 
-  it("verifyMessage() should return null if invalid HipChat message is passed", function() {
-    let req = new HipChatModule.HipChatReq(hipChatInvalidMessage);
+  it("verifyMessage() should return null if invalid HipChat message is passed", function () {
+    const req = new HipChatModule.HipChatReq(hipChatInvalidMessage);
     expect(
       VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.be.an("undefined");
   });
 
-  it("generateSearchRequest() should return a valid request", function() {
-    let generatedRequest: string = GenerateSearchRequest("Rest");
+  it("generateSearchRequest() should return a valid request", function () {
+    const generatedRequest: string = GenerateSearchRequest("Rest");
 
     expect(generatedRequest).not.to.equal(null);
     expect(generatedRequest.includes("searchPhrase=Rest")).to.equal(true);
   });
 
-  it("generateGetTotalOrdersRequest() should return a valid request", function() {
-    let generatedRequest: string = GenerateGetTotalOrdersRequest();
+  it("generateGetTotalOrdersRequest() should return a valid request", function () {
+    const generatedRequest: string = GenerateGetTotalOrdersRequest();
 
     expect(generatedRequest).not.to.equal(null);
     expect(generatedRequest.includes("deliveryMethod=Delivery")).to.equal(true);
   });
 
-  it("filterByRestaurantName() should filter restaurants with the same name", function() {
-    let restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
+  it("filterByRestaurantName() should filter restaurants with the same name", function () {
+    const restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(1)
       .build();
-    let restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest2")
       .setRestaurantId(2)
       .build();
-    let restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(3)
       .build();
 
-    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
+    const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       false,
       null
@@ -107,19 +110,19 @@ describe("App", function() {
     expect(restaurants).not.to.equal(null);
     expect(restaurants.length).to.equal(2);
     expect(
-      restaurants.some(function(element: Commons.Restaurant) {
+      restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant1.RestaurantName;
       })
     ).to.equal(true);
     expect(
-      restaurants.some(function(element: Commons.Restaurant) {
+      restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant2.RestaurantName;
       })
     ).to.equal(true);
   });
 
-  it("filterByRestaurantName() should be ok with an empty array", function() {
-    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
+  it("filterByRestaurantName() should be ok with an empty array", function () {
+    const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [],
       false,
       null
@@ -129,21 +132,21 @@ describe("App", function() {
     expect(restaurants.length).to.equal(0);
   });
 
-  it("filterByRestaurantName() should filter restaurants with the same name", function() {
-    let restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
+  it("filterByRestaurantName() should filter restaurants with the same name", function () {
+    const restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(1)
       .build();
-    let restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest2")
       .setRestaurantId(2)
       .build();
-    let restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(3)
       .build();
 
-    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
+    const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       false,
       null
@@ -152,32 +155,32 @@ describe("App", function() {
     expect(restaurants).not.to.equal(null);
     expect(restaurants.length).to.equal(2);
     expect(
-      restaurants.some(function(element: Commons.Restaurant) {
+      restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant1.RestaurantName;
       })
     ).to.equal(true);
     expect(
-      restaurants.some(function(element: Commons.Restaurant) {
+      restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant2.RestaurantName;
       })
     ).to.equal(true);
   });
 
-  it("filterByRestaurantName() should filter restaurants by the same name", function() {
-    let restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
+  it("filterByRestaurantName() should filter restaurants by the same name", function () {
+    const restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(1)
       .build();
-    let restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest2")
       .setRestaurantId(2)
       .build();
-    let restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(3)
       .build();
 
-    let restaurants: Commons.Restaurant[] = FilterByRestaurantName(
+    const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       true,
       "Rest1"
@@ -186,35 +189,35 @@ describe("App", function() {
     expect(restaurants).not.to.equal(null);
     expect(restaurants.length).to.equal(1);
     expect(
-      restaurants.some(function(element: Commons.Restaurant) {
+      restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant1.RestaurantName;
       })
     ).to.equal(true);
   });
 
-  it("sortRestaurantsByDistance() should sort restaurants by distance", function() {
-    let restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
+  it("sortRestaurantsByDistance() should sort restaurants by distance", function () {
+    const restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(1)
       .setDistanceFromUserInMeters(10)
       .build();
 
-    let restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest2")
       .setRestaurantId(2)
       .setDistanceFromUserInMeters(20)
       .build();
 
-    let restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest3")
       .setRestaurantId(1)
       .setDistanceFromUserInMeters(15)
       .build();
 
-    let restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
+    const restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
       restaurant1,
       restaurant2,
-      restaurant3
+      restaurant3,
     ]);
 
     expect(restaurants).not.to.equal(null);
@@ -230,34 +233,34 @@ describe("App", function() {
     );
   });
 
-  it("sortRestaurantsByDistance() should sort restaurants by distance even when there are bad distances", function() {
-    let restaurant4: Commons.Restaurant = new Commons.RestaurantBuilder()
+  it("sortRestaurantsByDistance() should sort restaurants by distance even when there are bad distances", function () {
+    const restaurant4: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest4")
       .setRestaurantId(4)
       .setDistanceFromUserInMeters(25)
       .build();
 
-    let restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(1)
       .build();
 
-    let restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest2")
       .setRestaurantId(2)
       .setDistanceFromUserInMeters(15)
       .build();
 
-    let restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest3")
       .setRestaurantId(1)
       .build();
 
-    let restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
+    const restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
       restaurant4,
       restaurant1,
       restaurant2,
-      restaurant3
+      restaurant3,
     ]);
 
     expect(restaurants).not.to.equal(null);
@@ -276,29 +279,29 @@ describe("App", function() {
     );
   });
 
-  it("sortRestaurantsByDistance() should do nothing when fields are equal", function() {
-    let restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
+  it("sortRestaurantsByDistance() should do nothing when fields are equal", function () {
+    const restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(1)
       .setDistanceFromUserInMeters(15)
       .build();
 
-    let restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest2")
       .setRestaurantId(2)
       .setDistanceFromUserInMeters(7)
       .build();
 
-    let restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest3")
       .setRestaurantId(3)
       .setDistanceFromUserInMeters(7)
       .build();
 
-    let restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
+    const restaurants: Commons.Restaurant[] = SortRestaurantsByDistance([
       restaurant1,
       restaurant2,
-      restaurant3
+      restaurant3,
     ]);
 
     expect(restaurants).not.to.equal(null);
@@ -314,24 +317,24 @@ describe("App", function() {
     );
   });
 
-  it("sortRestaurantsByDistance() should do nothing when no field", function() {
-    let restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
+  it("sortRestaurantsByDistance() should do nothing when no field", function () {
+    const restaurant1: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest1")
       .setRestaurantId(1)
       .build();
-    let restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant2: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest2")
       .setRestaurantId(2)
       .build();
-    let restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
+    const restaurant3: Commons.Restaurant = new Commons.RestaurantBuilder()
       .setRestaurantName("Rest3")
       .setRestaurantId(3)
       .build();
 
-    let restaurants = SortRestaurantsByDistance([
+    const restaurants = SortRestaurantsByDistance([
       restaurant1,
       restaurant2,
-      restaurant3
+      restaurant3,
     ]);
 
     expect(restaurants).not.to.equal(null);
@@ -347,14 +350,14 @@ describe("App", function() {
     );
   });
 
-  it("filterTotalOrders() should filter the restaurants correctly", function() {
-    let filteredRestaurants: Commons.Restaurant[] = restaurants.filter(
+  it("filterTotalOrders() should filter the restaurants correctly", function () {
+    const filteredRestaurants: Commons.Restaurant[] = restaurants.filter(
       FilterTotalOrders
     );
 
     expect(filteredRestaurants).not.to.equal(null);
     expect(filteredRestaurants.length).to.equal(2);
-    filteredRestaurants.forEach(function(restaurant: Commons.Restaurant) {
+    filteredRestaurants.forEach(function (restaurant: Commons.Restaurant) {
       expect(restaurant.PoolSumNumber > 0).to.be.equal(true);
       expect(restaurant.IsOverPoolMin).to.be.equal(
         restaurant.PoolSumNumber >= restaurant.MinimumPriceForOrder
@@ -362,69 +365,69 @@ describe("App", function() {
     });
   });
 
-  it("Restaurant setters should work", function() {
-    let RestaurantId = 13048;
-    let RestaurantName = "גוטה בריא ומהיר";
-    let RestaurantAddress = "תובל 19 רמת גן";
-    let RestaurantCityName = "רמת גן";
-    let RestaurantLogoUrl =
+  it("Restaurant setters should work", function () {
+    const RestaurantId = 13048;
+    const RestaurantName = "גוטה בריא ומהיר";
+    const RestaurantAddress = "תובל 19 רמת גן";
+    const RestaurantCityName = "רמת גן";
+    const RestaurantLogoUrl =
       "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif";
-    let RestaurantPhone = "03-5440053";
-    let RestaurantCuisineList = "אוכל ביתי) בשרים) סלטים/סנדוויצ`ים";
-    let NumOfReviews = 3490;
-    let ReviewsRank = 8;
-    let DistanceFromUser = "874.89 מטרים";
-    let DistanceFromUserInMeters = 874.8921943511485;
-    let IsOpenForDelivery = true;
-    let IsOpenForPickup = false;
-    let MinimumOrder = "₪140.00";
-    let MinimumPriceForOrder = 140;
-    let DeliveryPrice = "חינם";
-    let DeliveryPriceForOrder = 0;
-    let IsKosher = "כשר";
-    let RestaurantKosher = "המסעדה כשרה";
-    let DeliveryRemarks = "חלוקת משלוחים החל מ 11:30";
-    let ResGeoLocation_lon = 34.8021509;
-    let ResGeoLocation_lat = 32.0848375;
-    let HappyHourDiscount = "";
-    let HappyHourDiscountPercent = 0;
-    let DeliveryChargeValueType = 0;
-    let HappyHourDiscountValidityString = "תקף עד 00:00";
-    let StartOrderURL = null;
-    let ActivityHours = "08:00 - 16:00";
-    let PickupActivityHours = "00:00 - 00:00";
-    let DeliveryTime = "עד 75 דק'";
-    let ArrivalDeliveryTime = "11:32 - 11:17";
-    let EstimatedDeliveryTime = "עד 75 דק'";
-    let ArrivalEstimatedDeliveryTime = "11:32 - 11:17";
-    let ShowEstimatedDeliveryTimes = true;
-    let IsHappyHourActive = false;
-    let IsPromotionActive = false;
-    let CompanyFlag = false;
-    let IsOverPoolMin = false;
-    let PoolSum = "₪ 0.00";
-    let PoolSumNumber = 0;
-    let DeliveryEndTime = "16:00";
-    let IsTerminalActive = true;
-    let IsActiveForDelivery = true;
-    let IsActiveForPickup = true;
-    let Bookmarked = false;
-    let NumberOfBookmarked = 489;
-    let DiscountCouponPercent = 0;
-    let CouponHasRestrictions = false;
-    let HasLogo = true;
-    let ResWebsiteMode = 1;
-    let Priority = 6;
-    let KosherCertificateImgUrl = "";
-    let IsExpressRes = false;
-    let ShowSEOTagsForRes = false;
-    let HappyHourResRulesDescription = [];
-    let PhoneOrdersOnlyOnPortals = false;
-    let DeliveryStartTime = "08:00";
-    let PickupStartTime = "00:00";
-    let PickupEndTime = "00:00";
+    const RestaurantPhone = "03-5440053";
+    const RestaurantCuisineList = "אוכל ביתי) בשרים) סלטים/סנדוויצ`ים";
+    const NumOfReviews = 3490;
+    const ReviewsRank = 8;
+    const DistanceFromUser = "874.89 מטרים";
+    const DistanceFromUserInMeters = 874.8921943511485;
+    const IsOpenForDelivery = true;
+    const IsOpenForPickup = false;
+    const MinimumOrder = "₪140.00";
+    const MinimumPriceForOrder = 140;
+    const DeliveryPrice = "חינם";
+    const DeliveryPriceForOrder = 0;
+    const IsKosher = "כשר";
+    const RestaurantKosher = "המסעדה כשרה";
+    const DeliveryRemarks = "חלוקת משלוחים החל מ 11:30";
+    const ResGeoLocation_lon = 34.8021509;
+    const ResGeoLocation_lat = 32.0848375;
+    const HappyHourDiscount = "";
+    const HappyHourDiscountPercent = 0;
+    const DeliveryChargeValueType = 0;
+    const HappyHourDiscountValidityString = "תקף עד 00:00";
+    const StartOrderURL = null;
+    const ActivityHours = "08:00 - 16:00";
+    const PickupActivityHours = "00:00 - 00:00";
+    const DeliveryTime = "עד 75 דק'";
+    const ArrivalDeliveryTime = "11:32 - 11:17";
+    const EstimatedDeliveryTime = "עד 75 דק'";
+    const ArrivalEstimatedDeliveryTime = "11:32 - 11:17";
+    const ShowEstimatedDeliveryTimes = true;
+    const IsHappyHourActive = false;
+    const IsPromotionActive = false;
+    const CompanyFlag = false;
+    const IsOverPoolMin = false;
+    const PoolSum = "₪ 0.00";
+    const PoolSumNumber = 0;
+    const DeliveryEndTime = "16:00";
+    const IsTerminalActive = true;
+    const IsActiveForDelivery = true;
+    const IsActiveForPickup = true;
+    const Bookmarked = false;
+    const NumberOfBookmarked = 489;
+    const DiscountCouponPercent = 0;
+    const CouponHasRestrictions = false;
+    const HasLogo = true;
+    const ResWebsiteMode = 1;
+    const Priority = 6;
+    const KosherCertificateImgUrl = "";
+    const IsExpressRes = false;
+    const ShowSEOTagsForRes = false;
+    const HappyHourResRulesDescription = [];
+    const PhoneOrdersOnlyOnPortals = false;
+    const DeliveryStartTime = "08:00";
+    const PickupStartTime = "00:00";
+    const PickupEndTime = "00:00";
 
-    let restaurant = new Commons.Restaurant(new Commons.RestaurantBuilder());
+    const restaurant = new Commons.Restaurant(new Commons.RestaurantBuilder());
 
     restaurant.RestaurantId = RestaurantId;
     restaurant.RestaurantName = RestaurantName;

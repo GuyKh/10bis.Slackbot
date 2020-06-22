@@ -1,3 +1,4 @@
+/* eslint camelcase: "off" */
 import * as moment from "moment-timezone";
 import { Constants } from "./constants";
 import * as url from "url";
@@ -7,18 +8,18 @@ import { Response } from "express";
 const querystring = require("querystring");
 
 export function GetFormatedDateTime(): string {
-  let date: string = moment
+  const date: string = moment
     .tz(Constants.TIMEZONE)
     .format(Constants.DATE_FORMAT);
-  let time: string = moment
+  const time: string = moment
     .tz(Constants.TIMEZONE)
     .format(Constants.TIME_FORMAT);
   return date + "+" + time;
 }
 
 export function RequestGetWrapper(url: string): Promise<string> {
-  return new Promise(function(resolve: Function, reject: Function) {
-    request.get(url, function(error: Error, response: Response, body: string) {
+  return new Promise(function (resolve: Function, reject: Function) {
+    request.get(url, function (error: Error, response: Response, body: string) {
       if (!error && response.statusCode === 200) {
         resolve(body); // Succeess
       } else {
@@ -29,7 +30,7 @@ export function RequestGetWrapper(url: string): Promise<string> {
 }
 
 export function ErrorPromiseWrapper(errorString: string): Promise<void> {
-  return new Promise(function(resolve: Function, reject: Function) {
+  return new Promise(function (resolve: Function, reject: Function) {
     reject(errorString); // Failure
   });
 }
@@ -37,7 +38,7 @@ export function ErrorPromiseWrapper(errorString: string): Promise<void> {
 export function SortRestaurantsByDistance(
   restaurants: Commons.Restaurant[]
 ): Commons.Restaurant[] {
-  return restaurants.sort(function(
+  return restaurants.sort(function (
     objectA: Commons.Restaurant,
     objectB: Commons.Restaurant
   ) {
@@ -78,13 +79,13 @@ export function VerifyMessage(
     return null;
   }
 
-  return formatters.find(function(formatter: Commons.MessageFormatter) {
+  return formatters.find(function (formatter: Commons.MessageFormatter) {
     return formatter.isValidMessage(req);
   });
 }
 
 export function GenerateSearchRequest(restaurantName: string): string {
-  let queryParams = {
+  const queryParams = {
     deliveryMethod: "Delivery",
     ShowOnlyOpenForDelivery: false,
     id: Number.parseInt(process.env.USER_ID),
@@ -102,7 +103,7 @@ export function GenerateSearchRequest(restaurantName: string): string {
     Longitude: Number.parseInt(process.env.LONG),
     HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
     desiredDateAndTime: GetFormatedDateTime(),
-    timestamp: new Date().getTime()
+    timestamp: new Date().getTime(),
   };
 
   let parsedUrl: string = url.format(
@@ -117,7 +118,7 @@ export function GenerateSearchRequest(restaurantName: string): string {
 }
 
 export function GenerateGetTotalOrdersRequest(): string {
-  let queryParams = {
+  const queryParams = {
     deliveryMethod: "Delivery",
     ShowOnlyOpenForDelivery: false,
     id: Number.parseInt(process.env.USER_ID),
@@ -135,7 +136,7 @@ export function GenerateGetTotalOrdersRequest(): string {
     Longitude: Number.parseInt(process.env.LONG),
     HouseNumber: Number.parseInt(process.env.HOUSE_NUMBER),
     desiredDateAndTime: GetFormatedDateTime(),
-    timestamp: new Date().getTime()
+    timestamp: new Date().getTime(),
   };
 
   let parsedUrl: string = url.format(
@@ -153,22 +154,22 @@ export function FilterByRestaurantName(
   findExact: boolean,
   restarantName: string
 ): Commons.Restaurant[] {
-  let flags = {};
-  let filteredRestaurants: Commons.Restaurant[] = restaurants.filter(function(
-    restarant: Commons.Restaurant
-  ) {
-    if (flags[restarant.RestaurantName]) {
-      return false;
-    }
+  const flags = {};
+  const filteredRestaurants: Commons.Restaurant[] = restaurants.filter(
+    function (restarant: Commons.Restaurant) {
+      if (flags[restarant.RestaurantName]) {
+        return false;
+      }
 
-    flags[restarant.RestaurantName] = true;
-    return true;
-  });
+      flags[restarant.RestaurantName] = true;
+      return true;
+    }
+  );
 
   if (!findExact) {
     return filteredRestaurants;
   } else {
-    return filteredRestaurants.filter(function(restarant: Commons.Restaurant) {
+    return filteredRestaurants.filter(function (restarant: Commons.Restaurant) {
       return restarant.RestaurantName === restarantName;
     });
   }
@@ -848,22 +849,27 @@ export module Commons {
       this._restaurantName = value;
       return this;
     }
+
     setRestaurantAddress(value: string): RestaurantBuilder {
       this._restaurantAddress = value;
       return this;
     }
+
     setRestaurantCityName(value: string): RestaurantBuilder {
       this._restaurantCityName = value;
       return this;
     }
+
     setRestaurantLogoUrl(value: string): RestaurantBuilder {
       this._restaurantLogoUrl = value;
       return this;
     }
+
     setRestaurantPhone(value: string): RestaurantBuilder {
       this._restaurantPhone = value;
       return this;
     }
+
     setRestaurantCuisineList(value: string): RestaurantBuilder {
       this._restaurantCuisineList = value;
       return this;
@@ -873,62 +879,77 @@ export module Commons {
       this._numOfReviews = value;
       return this;
     }
+
     setReviewsRank(value: number): RestaurantBuilder {
       this._reviewsRank = value;
       return this;
     }
+
     setDistanceFromUser(value: string): RestaurantBuilder {
       this._distanceFromUser = value;
       return this;
     }
+
     setDistanceFromUserInMeters(value: number): RestaurantBuilder {
       this._distanceFromUserInMeters = value;
       return this;
     }
+
     setIsOpenForDelivery(value: boolean): RestaurantBuilder {
       this._isOpenForDelivery = value;
       return this;
     }
+
     setIsOpenForPickup(value: boolean): RestaurantBuilder {
       this._isOpenForPickup = value;
       return this;
     }
+
     setMinimumOrder(value: string): RestaurantBuilder {
       this._minimumOrder = value;
       return this;
     }
+
     setMinimumPriceForOrder(value: number): RestaurantBuilder {
       this._minimumPriceForOrder = value;
       return this;
     }
+
     setDeliveryPrice(value: string): RestaurantBuilder {
       this._deliveryPrice = value;
       return this;
     }
+
     setDeliveryPriceForOrder(value: number): RestaurantBuilder {
       this._deliveryPriceForOrder = value;
       return this;
     }
+
     setIsKosher(value: string): RestaurantBuilder {
       this._isKosher = value;
       return this;
     }
+
     setRestaurantKosher(value: string): RestaurantBuilder {
       this._restaurantKosher = value;
       return this;
     }
+
     setDeliveryRemarks(value: string): RestaurantBuilder {
       this._deliveryRemarks = value;
       return this;
     }
+
     setResGeoLocation_lon(value: number): RestaurantBuilder {
       this._resGeoLocation_lon = value;
       return this;
     }
+
     setResGeoLocation_lat(value: number): RestaurantBuilder {
       this._resGeoLocation_lat = value;
       return this;
     }
+
     setHappyHourDiscount(value: string): RestaurantBuilder {
       this._happyHourDiscount = value;
       return this;

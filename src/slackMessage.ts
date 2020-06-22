@@ -45,16 +45,19 @@ Response:
         ]
 }
 */
-let commandOperator: string = "/10bis";
-let MAX_RESTAURANT_CARDS: number = 5;
+const commandOperator: string = "/10bis";
+const MAX_RESTAURANT_CARDS: number = 5;
 
 export class SlackMessageFormatter implements Commons.MessageFormatter {
   public static GREEN_COLOR: string = "#36a64f";
+
   public static RED_COLOR: string = "#a53c2e";
 
   private static _instance: SlackMessageFormatter = new SlackMessageFormatter();
+
   public static INSTANTIATION_ERROR: string =
     "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
+
   constructor() {
     if (SlackMessageFormatter._instance) {
       throw new Error(SlackMessageFormatter.INSTANTIATION_ERROR);
@@ -73,13 +76,14 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
       null
     );
   }
+
   getErrorMessage(restaurantName: string): Commons.TenBisResponse {
     let restaurantString: string = "";
     if (restaurantName) {
       restaurantString = " for: " + restaurantName;
     }
 
-    let response: Commons.TenBisResponse = new SlackModule.SlackResponse(
+    const response: Commons.TenBisResponse = new SlackModule.SlackResponse(
       "ephemeral",
       Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString,
       null
@@ -95,23 +99,24 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
 
     return null;
   }
+
   generateSearchResponse(
     restaurants: Commons.Restaurant[]
   ): SlackModule.SlackResponse {
-    let title: string = "Found " + restaurants.length + " restaurants";
+    const title: string = "Found " + restaurants.length + " restaurants";
 
-    let attachments: SlackModule.SlackAttachment[] = [];
+    const attachments: SlackModule.SlackAttachment[] = [];
     if (restaurants.length > 0) {
       if (restaurants.length < MAX_RESTAURANT_CARDS) {
-        let generateRestaurantCard: Function = this.generateRestaurantCard;
+        const generateRestaurantCard: Function = this.generateRestaurantCard;
         // For up to 5 restaurants, create a card
-        restaurants.forEach(function(restaurant: Commons.Restaurant) {
+        restaurants.forEach(function (restaurant: Commons.Restaurant) {
           attachments.push(generateRestaurantCard(restaurant));
         });
       } else {
         let restaurantsString: string = "";
         // Create a list
-        restaurants.forEach(function(
+        restaurants.forEach(function (
           restaurant: Commons.Restaurant,
           index: number
         ) {
@@ -140,7 +145,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
       }
     }
 
-    let response = new SlackModule.SlackResponse("in_channel", title, null);
+    const response = new SlackModule.SlackResponse("in_channel", title, null);
 
     if (attachments.length > 0) {
       response.attachments = attachments;
@@ -148,19 +153,20 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
 
     return response;
   }
+
   generateTotalOrdersResponse(
     restaurants: Commons.Restaurant[]
   ): SlackModule.SlackResponse {
     let title: string = "Found " + restaurants.length + " restaurants";
 
-    let attachments: SlackModule.SlackAttachment[] = [];
+    const attachments: SlackModule.SlackAttachment[] = [];
     if (restaurants.length > 0) {
       if (restaurants.length < MAX_RESTAURANT_CARDS) {
-        let generateRestaurantTotalCard: Function = this
+        const generateRestaurantTotalCard: Function = this
           .generateRestaurantTotalCard;
 
         // For up to 5 restaurants, create a card
-        restaurants.forEach(function(restaurant: Commons.Restaurant) {
+        restaurants.forEach(function (restaurant: Commons.Restaurant) {
           attachments.push(generateRestaurantTotalCard(restaurant));
         });
       } else {
@@ -168,7 +174,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         let wasFirstUnderLimitRestaurantDone: boolean = false;
 
         // Create a list
-        restaurants.forEach(function(
+        restaurants.forEach(function (
           restaurant: Commons.Restaurant,
           index: number
         ) {
@@ -213,7 +219,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
       title = "No pool order restaurants found";
     }
 
-    let slackResponse = new SlackModule.SlackResponse(
+    const slackResponse = new SlackModule.SlackResponse(
       "in_channel",
       title,
       null
@@ -242,9 +248,9 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
   generateRestaurantCard(
     restaurant: Commons.Restaurant
   ): SlackModule.SlackAttachment {
-    let restaurantName: string = restaurant.RestaurantName;
+    const restaurantName: string = restaurant.RestaurantName;
 
-    let slackAttachment = new SlackModule.SlackAttachment(
+    const slackAttachment = new SlackModule.SlackAttachment(
       restaurantName +
         " : " +
         Constants.RESTAURANT_BASE_URL +
@@ -280,9 +286,9 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
   generateRestaurantTotalCard(
     restaurant: Commons.Restaurant
   ): SlackModule.SlackAttachment {
-    let restaurantName: string = restaurant.RestaurantName;
+    const restaurantName: string = restaurant.RestaurantName;
 
-    let slackAttachment = new SlackModule.SlackAttachment(
+    const slackAttachment = new SlackModule.SlackAttachment(
       restaurantName +
         " : " +
         Constants.RESTAURANT_BASE_URL +

@@ -7,12 +7,12 @@ export function deepCopy(o: Object) {
 }
 
 export function compareKeys(objectA: any, objectB: any): boolean {
-  let aKeys = Object.keys(objectA).sort();
-  let bKeys = Object.keys(objectB).sort();
+  const aKeys = Object.keys(objectA).sort();
+  const bKeys = Object.keys(objectB).sort();
   return JSON.stringify(aKeys) === JSON.stringify(bKeys);
 }
 
-export let validSlackMessage = new SlackModule.SlackMessage(
+export const validSlackMessage = new SlackModule.SlackMessage(
   "ItoB7oEyZIbNmHPfxHQ2GrbC",
   "T0001",
   "example",
@@ -24,7 +24,7 @@ export let validSlackMessage = new SlackModule.SlackMessage(
   "דיקסי"
 );
 
-export let validHipChatMessage = new HipChatModule.HipChatReqBody(
+export const validHipChatMessage = new HipChatModule.HipChatReqBody(
   "room_message",
   new HipChatModule.HipChatReqItem(
     new HipChatModule.HipChatReqItemMessage(
@@ -44,7 +44,7 @@ export let validHipChatMessage = new HipChatModule.HipChatReqBody(
   578829
 );
 
-export let slackInvalidMessage = new SlackModule.SlackMessage(
+export const slackInvalidMessage = new SlackModule.SlackMessage(
   "ItoB7oEyZIbNmHPfxHQ2GrbC",
   "T0001",
   "example",
@@ -56,7 +56,7 @@ export let slackInvalidMessage = new SlackModule.SlackMessage(
   null
 );
 
-export let hipChatInvalidMessage = new HipChatModule.HipChatReqBody(
+export const hipChatInvalidMessage = new HipChatModule.HipChatReqBody(
   "room_message",
   new HipChatModule.HipChatReqItem(
     new HipChatModule.HipChatReqItemMessage(
@@ -76,7 +76,7 @@ export let hipChatInvalidMessage = new HipChatModule.HipChatReqBody(
   578829
 );
 
-export let restaurants: Commons.Restaurant[] = [
+export const restaurants: Commons.Restaurant[] = [
   new Commons.RestaurantBuilder()
     .setRestaurantId(13048)
     .setRestaurantName("גוטה בריא ומהיר")
@@ -265,5 +265,5 @@ export let restaurants: Commons.Restaurant[] = [
     .setDeliveryStartTime("08:00")
     .setPickupStartTime("00:00")
     .setPickupEndTime("00:00")
-    .build()
+    .build(),
 ];

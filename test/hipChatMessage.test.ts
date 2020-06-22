@@ -1,3 +1,6 @@
+/* eslint-env node, mocha */
+/* eslint no-unused-expressions:"off" */
+
 import { deepCopy, restaurants, compareKeys } from "./testCommons";
 import { HipChatModule } from "../src/hipChatModule";
 import { HipChatMessageFormatter } from "../src/hipChatMessage";
@@ -7,9 +10,9 @@ import { Constants } from "../src/constants";
 import { Request } from "express";
 import { expect } from "chai";
 
-let hipChatMessage = HipChatMessageFormatter.getInstance();
+const hipChatMessage = HipChatMessageFormatter.getInstance();
 
-let message = new HipChatModule.HipChatReqBody(
+const message = new HipChatModule.HipChatReqBody(
   "room_message",
   new HipChatModule.HipChatReqItem(
     new HipChatModule.HipChatReqItemMessage(
@@ -29,7 +32,7 @@ let message = new HipChatModule.HipChatReqBody(
   578829
 );
 
-let badMessage = new HipChatModule.HipChatReqBody(
+const badMessage = new HipChatModule.HipChatReqBody(
   "room_message",
   new HipChatModule.HipChatReqItem(
     new HipChatModule.HipChatReqItemMessage(
@@ -49,21 +52,21 @@ let badMessage = new HipChatModule.HipChatReqBody(
   578829
 );
 
-let goodResponse = new HipChatModule.HipChatResponse(
+const goodResponse = new HipChatModule.HipChatResponse(
   "green",
   "Found 0 Restaurants",
   false,
   "text"
 );
 
-let errorResponse = new HipChatModule.HipChatResponse(
+const errorResponse = new HipChatModule.HipChatResponse(
   "red",
   Constants.NO_RESTAURANTS_FOUND_STRING,
   false,
   "text"
 );
 
-let validCard = new HipChatModule.HipChatCard(
+const validCard = new HipChatModule.HipChatCard(
   "link",
   Constants.RESTAURANT_BASE_URL + 123,
   "ce399a28-a35a-4561-9262-ca28ccebbd6b",
@@ -74,7 +77,7 @@ let validCard = new HipChatModule.HipChatCard(
   new HipChatModule.UrlObject("http://image.jpg")
 );
 
-let generateRestaurant = function(): Commons.Restaurant {
+const generateRestaurant = function (): Commons.Restaurant {
   return new Commons.RestaurantBuilder()
     .setRestaurantName("דיקסי")
     .setRestaurantId(123)
@@ -85,70 +88,70 @@ let generateRestaurant = function(): Commons.Restaurant {
     .build();
 };
 
-describe("HipChatMessage", function() {
-  describe("Basic methods and module", function() {
-    it("should have a generateSearchResponse Method", function() {
+describe("HipChatMessage", function () {
+  describe("Basic methods and module", function () {
+    it("should have a generateSearchResponse Method", function () {
       expect(typeof hipChatMessage).to.equal("object");
       expect(typeof hipChatMessage.generateSearchResponse).to.equal("function");
     });
-    it("should have a generateTotalOrdersResponse Method", function() {
+    it("should have a generateTotalOrdersResponse Method", function () {
       expect(typeof hipChatMessage).to.equal("object");
       expect(typeof hipChatMessage.generateTotalOrdersResponse).to.equal(
         "function"
       );
     });
-    it("should have a generateRestaurantCard Method", function() {
+    it("should have a generateRestaurantCard Method", function () {
       expect(typeof hipChatMessage).to.equal("object");
       expect(typeof hipChatMessage.generateRestaurantCard).to.equal("function");
     });
-    it("should have a getErrorMessage Method", function() {
+    it("should have a getErrorMessage Method", function () {
       expect(typeof hipChatMessage).to.equal("object");
       expect(typeof hipChatMessage.getErrorMessage).to.equal("function");
     });
-    it("should have a getRestaurantName Method", function() {
+    it("should have a getRestaurantName Method", function () {
       expect(typeof hipChatMessage).to.equal("object");
       expect(typeof hipChatMessage.getRestaurantName).to.equal("function");
     });
-    it("should have a isValidMessage Method", function() {
+    it("should have a isValidMessage Method", function () {
       expect(typeof hipChatMessage).to.equal("object");
       expect(typeof hipChatMessage.isValidMessage).to.equal("function");
     });
   });
 
-  it("isValidMessage() should return true if default format message is sent", function() {
-    let req = new HipChatModule.HipChatReq(deepCopy(message));
+  it("isValidMessage() should return true if default format message is sent", function () {
+    const req = new HipChatModule.HipChatReq(deepCopy(message));
     expect(hipChatMessage.isValidMessage(req)).to.equal(true);
   });
 
-  it("isValidMessage() should return false if message body is passing null", function() {
+  it("isValidMessage() should return false if message body is passing null", function () {
     expect(hipChatMessage.isValidMessage(null)).to.equal(false);
   });
 
-  it("isValidMessage() should return false if message body is missing", function() {
-    let req = new HipChatModule.HipChatReq(deepCopy(badMessage));
+  it("isValidMessage() should return false if message body is missing", function () {
+    const req = new HipChatModule.HipChatReq(deepCopy(badMessage));
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it("isValidMessage() should return false if request body is missing", function() {
-    let req: Request = null;
+  it("isValidMessage() should return false if request body is missing", function () {
+    const req: Request = null;
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it("isValidMessage() should return true if message body is only the command", function() {
-    let req = new HipChatModule.HipChatReq(deepCopy(message));
+  it("isValidMessage() should return true if message body is only the command", function () {
+    const req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = "/10bis";
     expect(hipChatMessage.isValidMessage(req)).to.equal(true);
   });
 
-  it("isValidMessage() should return false if message body doesn't start with the command", function() {
-    let req = new HipChatModule.HipChatReq(deepCopy(message));
+  it("isValidMessage() should return false if message body doesn't start with the command", function () {
+    const req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = "/test";
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
-  it("generateSearchResponse() should return a valid message without restaurant list", function() {
-    let expectedResponse = deepCopy(goodResponse);
-    let response = <HipChatModule.HipChatResponse>(
+  it("generateSearchResponse() should return a valid message without restaurant list", function () {
+    const expectedResponse = deepCopy(goodResponse);
+    const response = <HipChatModule.HipChatResponse>(
       hipChatMessage.generateSearchResponse([])
     );
 
@@ -158,9 +161,9 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it("generateSearchResponse() should return a valid message with restaurant list", function() {
-    let expectedResponse = deepCopy(goodResponse);
-    let response: HipChatModule.HipChatResponse = <
+  it("generateSearchResponse() should return a valid message with restaurant list", function () {
+    const expectedResponse = deepCopy(goodResponse);
+    const response: HipChatModule.HipChatResponse = <
       HipChatModule.HipChatResponse
     >hipChatMessage.generateSearchResponse(restaurants);
 
@@ -170,9 +173,9 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it("generateSearchResponse() should return a valid message with restaurant list of 1 restaurant", function() {
-    let expectedResponse = deepCopy(goodResponse);
-    let response: HipChatModule.HipChatResponse = <
+  it("generateSearchResponse() should return a valid message with restaurant list of 1 restaurant", function () {
+    const expectedResponse = deepCopy(goodResponse);
+    const response: HipChatModule.HipChatResponse = <
       HipChatModule.HipChatResponse
     >hipChatMessage.generateSearchResponse([restaurants[0]]);
 
@@ -182,32 +185,32 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it("getRestaurantName() should return right restaruant name from request", function() {
-    let req = new HipChatModule.HipChatReq(deepCopy(message));
-    let restaurantName: string = hipChatMessage.getRestaurantName(req);
+  it("getRestaurantName() should return right restaruant name from request", function () {
+    const req = new HipChatModule.HipChatReq(deepCopy(message));
+    const restaurantName: string = hipChatMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal("דיקסי");
   });
 
-  it("getRestaurantName() should return an empty restaruant name from request with only command", function() {
-    let req = new HipChatModule.HipChatReq(deepCopy(message));
+  it("getRestaurantName() should return an empty restaruant name from request with only command", function () {
+    const req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = "/10bis";
-    let restaurantName: string = hipChatMessage.getRestaurantName(req);
+    const restaurantName: string = hipChatMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal("");
   });
 
-  it("getRestaurantName() should return null with bad field", function() {
-    let req = new HipChatModule.HipChatReq(deepCopy(message));
+  it("getRestaurantName() should return null with bad field", function () {
+    const req = new HipChatModule.HipChatReq(deepCopy(message));
     req.body.item.message.message = null;
-    let restaurantName: string = hipChatMessage.getRestaurantName(req);
+    const restaurantName: string = hipChatMessage.getRestaurantName(req);
 
     expect(restaurantName).to.equal(null);
   });
 
-  it("getErrorMessage() should return a valid error message without restaurants name", function() {
-    let expectedResponse = deepCopy(errorResponse);
-    let response: HipChatModule.HipChatResponse = <
+  it("getErrorMessage() should return a valid error message without restaurants name", function () {
+    const expectedResponse = deepCopy(errorResponse);
+    const response: HipChatModule.HipChatResponse = <
       HipChatModule.HipChatResponse
     >hipChatMessage.getErrorMessage(null);
 
@@ -217,9 +220,9 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it("getErrorMessage() should return a valid error message with passed restaurants name", function() {
-    let expectedResponse = deepCopy(errorResponse);
-    let response: HipChatModule.HipChatResponse = <
+  it("getErrorMessage() should return a valid error message with passed restaurants name", function () {
+    const expectedResponse = deepCopy(errorResponse);
+    const response: HipChatModule.HipChatResponse = <
       HipChatModule.HipChatResponse
     >hipChatMessage.getErrorMessage("גוטה");
 
@@ -229,10 +232,10 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it("generateRestaurantCard() should return a valid card", function() {
-    let restaruant: Commons.Restaurant = generateRestaurant();
+  it("generateRestaurantCard() should return a valid card", function () {
+    const restaruant: Commons.Restaurant = generateRestaurant();
 
-    let response: HipChatModule.HipChatCard = hipChatMessage.generateRestaurantCard(
+    const response: HipChatModule.HipChatCard = hipChatMessage.generateRestaurantCard(
       restaruant
     );
 
@@ -248,11 +251,11 @@ describe("HipChatMessage", function() {
     expect(response.url).to.equal(validCard.url);
   });
 
-  it("generateTotalOrdersResponse() should return a valid message without restaurant list", function() {
-    let expectedResponse: HipChatModule.HipChatResponse = deepCopy(
+  it("generateTotalOrdersResponse() should return a valid message without restaurant list", function () {
+    const expectedResponse: HipChatModule.HipChatResponse = deepCopy(
       goodResponse
     );
-    let response: HipChatModule.HipChatResponse = hipChatMessage.generateTotalOrdersResponse(
+    const response: HipChatModule.HipChatResponse = hipChatMessage.generateTotalOrdersResponse(
       []
     );
 
@@ -262,11 +265,11 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it("generateTotalOrdersResponse() should return a valid message with restaurant list", function() {
-    let expectedResponse: HipChatModule.HipChatResponse = deepCopy(
+  it("generateTotalOrdersResponse() should return a valid message with restaurant list", function () {
+    const expectedResponse: HipChatModule.HipChatResponse = deepCopy(
       goodResponse
     );
-    let response: HipChatModule.HipChatResponse = hipChatMessage.generateTotalOrdersResponse(
+    const response: HipChatModule.HipChatResponse = hipChatMessage.generateTotalOrdersResponse(
       restaurants
     );
 
@@ -279,24 +282,24 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal(expectedResponse.message_format);
   });
 
-  it("constructor() should throw an exception if launched twice", function() {
-    //Already ran constructor for HipChatMessageFormatter
-    let hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
+  it("constructor() should throw an exception if launched twice", function () {
+    // Already ran constructor for HipChatMessageFormatter
+    const hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
 
     expect(hipChatMessageFormatter).not.to.equal(null);
     expect(HipChatMessageFormatter.getInstance()).not.to.equal(null);
     try {
-      new HipChatMessageFormatter();
+      new HipChatMessageFormatter(); // eslint-disable-line no-new
     } catch (err) {
       expect(err.toString()).to.equal(
         "Error: " + HipChatMessageFormatter.INITIALIZATION_EXCEPTION_STRING
       );
     }
   });
-  it("getDefaultResponse() should return a default response", function() {
-    let hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
+  it("getDefaultResponse() should return a default response", function () {
+    const hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
 
-    let response: HipChatModule.HipChatResponse = hipChatMessageFormatter.getDefaultResponse() as HipChatModule.HipChatResponse;
+    const response: HipChatModule.HipChatResponse = hipChatMessageFormatter.getDefaultResponse() as HipChatModule.HipChatResponse;
 
     expect(response.color).to.equal("green");
     // tslint:disable-next-line:no-unused-expression
@@ -305,11 +308,11 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal("text");
     expect(response.notify).to.equal(false);
   });
-  it("getSucessMessage() should return a good response without a restaurant", function() {
-    let hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+  it("getSucessMessage() should return a good response without a restaurant", function () {
+    const hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
 
-    let responseText: string = "Found 1 restaurant";
-    let response = hipChatMessageFormatter.getSuccessMessage(
+    const responseText: string = "Found 1 restaurant";
+    const response = hipChatMessageFormatter.getSuccessMessage(
       responseText,
       null
     ) as HipChatModule.HipChatResponse;
@@ -321,12 +324,12 @@ describe("HipChatMessage", function() {
     expect(response.message_format).to.equal("text");
     expect(response.notify).to.equal(false);
   });
-  it("getSucessMessage() should return a good response with a restaurant", function() {
-    let hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
+  it("getSucessMessage() should return a good response with a restaurant", function () {
+    const hipChatMessageFormatter = HipChatMessageFormatter.getInstance();
 
-    let responseText: string = "Found 1 restaurant";
-    let restaruant = generateRestaurant();
-    let response = hipChatMessageFormatter.getSuccessMessage(
+    const responseText: string = "Found 1 restaurant";
+    const restaruant = generateRestaurant();
+    const response = hipChatMessageFormatter.getSuccessMessage(
       responseText,
       restaruant
     ) as HipChatModule.HipChatResponse;
