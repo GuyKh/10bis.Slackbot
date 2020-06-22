@@ -1,3 +1,4 @@
+/* eslint camelcase: "off" */
 import { Commons } from "./commons";
 
 export module SlackModule {

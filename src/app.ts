@@ -9,7 +9,7 @@ import {
   ErrorPromiseWrapper,
   GenerateGetTotalOrdersRequest,
   RequestGetWrapper,
-  FilterTotalOrders
+  FilterTotalOrders,
 } from "./commons";
 import { Constants } from "./constants";
 import { HipChatMessageFormatter } from "./hipChatMessage";
@@ -20,7 +20,7 @@ const myCache = new ExpirationStrategy(new MemoryStorage());
 const cacheTTL: number = 60 * 60 * 24;
 winston.configure({
   level: process.env.LOG_LEVEL,
-  transports: [new winston.transports.Console()]
+  transports: [new winston.transports.Console()],
 });
 
 export class App {
@@ -30,12 +30,12 @@ export class App {
     winston.debug("Booting %s", Constants.APP_NAME);
     this.messageFormatters = [
       HipChatMessageFormatter.getInstance(),
-      SlackMessageFormatter.getInstance()
+      SlackMessageFormatter.getInstance(),
     ];
   }
 
   process(req: Commons.Request, res: Response): Promise<void> {
-    let messageFormatter = VerifyMessage(req, this.messageFormatters);
+    const messageFormatter = VerifyMessage(req, this.messageFormatters);
     if (!messageFormatter) {
       res.status(400).send(Constants.INVALID_MESSAGE_STRING);
       return ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
@@ -59,7 +59,7 @@ export class App {
     }
   }
 
-  //@Cache(myCache, { ttl: 60 * 60 * 24 }) //ttl = 24 hr
+  // @Cache(myCache, { ttl: 60 * 60 * 24 }) //ttl = 24 hr
   search(
     res: Response,
     messageFormatter: Commons.MessageFormatter,
@@ -68,14 +68,14 @@ export class App {
   ): Promise<void> {
     if (!restaurantName || restaurantName.length === 0) {
       // Behavior for empty command ("/10bis" with no content)
-      let body: Commons.TenBisResponse = messageFormatter.getDefaultResponse();
+      const body: Commons.TenBisResponse = messageFormatter.getDefaultResponse();
       res.status(400).send(body);
       return ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
     }
 
     let cleanRestaurantName: string = restaurantName;
     let useExactRestaurantName: boolean = false;
-    let exactRestaurantName: string = this.getExactRestaurantName(
+    const exactRestaurantName: string = this.getExactRestaurantName(
       restaurantName
     );
     if (exactRestaurantName) {
@@ -86,7 +86,7 @@ export class App {
     if (useCache) {
       return myCache
         .getItem<Commons.Restaurant[]>(cleanRestaurantName)
-        .then(cachedData => {
+        .then((cachedData) => {
           if (cachedData) {
             const resBody = messageFormatter.generateSearchResponse(
               FilterByRestaurantName(
@@ -96,7 +96,6 @@ export class App {
               )
             );
             res.json(resBody);
-            return;
           } else {
             return this.runSearch(
               res,
@@ -118,7 +117,7 @@ export class App {
     useCache: boolean
   ): Promise<void> {
     let useExactRestaurantName: boolean = false;
-    let exactRestaurantName: string = this.getExactRestaurantName(
+    const exactRestaurantName: string = this.getExactRestaurantName(
       restaurantName
     );
     if (exactRestaurantName) {
@@ -126,11 +125,11 @@ export class App {
       useExactRestaurantName = true;
     }
 
-    let parsed_url: string = GenerateSearchRequest(restaurantName);
+    const parsedUrl: string = GenerateSearchRequest(restaurantName);
 
-    return RequestGetWrapper(parsed_url)
-      .then(body => {
-        let data = JSON.parse(body);
+    return RequestGetWrapper(parsedUrl)
+      .then((body) => {
+        const data = JSON.parse(body);
 
         if (!data || !data.length || data.length < 1) {
           const badResBody = messageFormatter.getErrorMessage(restaurantName);
@@ -162,7 +161,7 @@ export class App {
           res.json(resBody);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (err) {
           winston.debug("Error in Search: " + err);
         } else {
@@ -176,13 +175,13 @@ export class App {
     res: Response,
     messageFormatter: Commons.MessageFormatter
   ): Promise<void> {
-    let parsed_url: string = GenerateGetTotalOrdersRequest();
-    winston.debug("Total Orders Url: " + parsed_url);
+    const parsedUrl: string = GenerateGetTotalOrdersRequest();
+    winston.debug("Total Orders Url: " + parsedUrl);
 
-    let requestPromise: Promise<string> = RequestGetWrapper(parsed_url);
+    const requestPromise: Promise<string> = RequestGetWrapper(parsedUrl);
     return requestPromise
-      .then(body => {
-        let data: Commons.Restaurant[] = JSON.parse(body);
+      .then((body) => {
+        const data: Commons.Restaurant[] = JSON.parse(body);
 
         if (!data || !(data instanceof Array)) {
           const resBody = messageFormatter.getErrorMessage(null);
@@ -190,14 +189,16 @@ export class App {
           return;
         }
 
-        let restaurants: Commons.Restaurant[] = data.filter(FilterTotalOrders);
+        const restaurants: Commons.Restaurant[] = data.filter(
+          FilterTotalOrders
+        );
 
         const resBody = messageFormatter.generateTotalOrdersResponse(
           FilterByRestaurantName(restaurants, false, null)
         );
         res.json(resBody);
       })
-      .catch(err => {
+      .catch((err) => {
         if (err) {
           winston.debug("Error in Get Total Orders: " + err);
         } else {

@@ -1,3 +1,6 @@
+/* eslint-env node, mocha */
+/* eslint no-unused-expressions:"off" */
+
 import { App } from "./../src/app";
 import { Commons } from "../src/commons";
 import { HipChatModule } from "../src/hipChatModule";
@@ -11,25 +14,27 @@ import {
   validHipChatMessage,
   slackInvalidMessage,
   hipChatInvalidMessage,
-  deepCopy
+  deepCopy,
 } from "./testCommons";
 import { Constants } from "../src/constants";
 import * as sinon from "sinon";
 import * as request from "request";
 
-let MockExpressResponse = require("mock-express-response");
-let app: App = new App();
-let slackReq: Commons.Request = new SlackModule.SlackRequest(validSlackMessage);
-let badSlackReq: Commons.Request = new SlackModule.SlackRequest(
+const MockExpressResponse = require("mock-express-response");
+const app: App = new App();
+const slackReq: Commons.Request = new SlackModule.SlackRequest(
+  validSlackMessage
+);
+const badSlackReq: Commons.Request = new SlackModule.SlackRequest(
   slackInvalidMessage
 );
-let hipChatReq: Commons.Request = new HipChatModule.HipChatReq(
+const hipChatReq: Commons.Request = new HipChatModule.HipChatReq(
   validHipChatMessage
 );
-let badHipChatReq: Commons.Request = new HipChatModule.HipChatReq(
+const badHipChatReq: Commons.Request = new HipChatModule.HipChatReq(
   hipChatInvalidMessage
 );
-let badRestaurantName: string = "BlaBlaBla";
+const badRestaurantName: string = "BlaBlaBla";
 
 class EmptyRequest implements Commons.Request {
   body: any;
@@ -42,13 +47,13 @@ class StaticMethodHolder {
 // tslint:disable:no-unused-expression
 describe("App", () => {
   it("process() should return one restaurant if valid Slack message", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
     return app.process(slackReq, res).then(() => {
       expect(res.statusCode).to.equal(200);
 
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -60,16 +65,16 @@ describe("App", () => {
     });
   });
   it('process() should return one restaurant if valid Slack message with quotes (") ', () => {
-    let res = new MockExpressResponse();
-    let req: SlackModule.SlackRequest = deepCopy(slackReq);
+    const res = new MockExpressResponse();
+    const req: SlackModule.SlackRequest = deepCopy(slackReq);
     req.body.text = '"ליב"'; // "ליב"
 
     return app.process(req, res).then(() => {
       expect(res.statusCode).to.equal(200);
 
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -79,16 +84,16 @@ describe("App", () => {
     });
   });
   it("process() should return one restaurant if valid Slack message with quotes (') ", () => {
-    let res = new MockExpressResponse();
-    let req: SlackModule.SlackRequest = deepCopy(slackReq);
+    const res = new MockExpressResponse();
+    const req: SlackModule.SlackRequest = deepCopy(slackReq);
     req.body.text = "'ליב'"; // "ליב"
 
     return app.process(req, res).then(() => {
       expect(res.statusCode).to.equal(200);
 
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -98,16 +103,16 @@ describe("App", () => {
     });
   });
   it("process() should return one restaurant if valid Slack message with quotes (״) ", () => {
-    let res = new MockExpressResponse();
-    let req: SlackModule.SlackRequest = deepCopy(slackReq);
+    const res = new MockExpressResponse();
+    const req: SlackModule.SlackRequest = deepCopy(slackReq);
     req.body.text = "״ליב״"; // "ליב"
 
     return app.process(req, res).then(() => {
       expect(res.statusCode).to.equal(200);
 
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -117,9 +122,9 @@ describe("App", () => {
     });
   });
   it("process() should return one restaurant if valid Slack message with quotes (״) and then cache return all ", () => {
-    let res = new MockExpressResponse();
-    let newRes = new MockExpressResponse();
-    let req: SlackModule.SlackRequest = deepCopy(slackReq);
+    const res = new MockExpressResponse();
+    const newRes = new MockExpressResponse();
+    const req: SlackModule.SlackRequest = deepCopy(slackReq);
     req.body.text = "״ליב״"; // "ליב"
 
     return app
@@ -127,9 +132,9 @@ describe("App", () => {
       .then(() => {
         expect(res.statusCode).to.equal(200);
 
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
 
         expect(slackRes).not.to.equal(null);
         expect(slackRes).not.to.be.undefined;
@@ -138,7 +143,7 @@ describe("App", () => {
         expect(slackRes.attachments.length).to.equal(1);
       })
       .then(() => {
-        let newReq: SlackModule.SlackRequest = deepCopy(slackReq);
+        const newReq: SlackModule.SlackRequest = deepCopy(slackReq);
         newReq.body.text = "ליב"; // "ליב"
 
         return app.process(newReq, newRes);
@@ -146,9 +151,9 @@ describe("App", () => {
       .then(() => {
         expect(newRes.statusCode).to.equal(200);
 
-        let body = newRes._getJSON();
+        const body = newRes._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
 
         expect(slackRes).not.to.equal(null);
         expect(slackRes).not.to.be.undefined;
@@ -156,9 +161,9 @@ describe("App", () => {
       });
   });
   it("process() should return all restaurants cache and then return one restaurant if valid Slack message with quotes (״) from cache", () => {
-    let res = new MockExpressResponse();
-    let newRes = new MockExpressResponse();
-    let req: SlackModule.SlackRequest = deepCopy(slackReq);
+    const res = new MockExpressResponse();
+    const newRes = new MockExpressResponse();
+    const req: SlackModule.SlackRequest = deepCopy(slackReq);
     req.body.text = "ליב"; // "ליב"
 
     return app
@@ -166,16 +171,16 @@ describe("App", () => {
       .then(() => {
         expect(res.statusCode).to.equal(200);
 
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
 
         expect(slackRes).not.to.equal(null);
         expect(slackRes).not.to.be.undefined;
         expect(slackRes.text).not.to.equal("Found 1 restaurants"); // Exactly one
       })
       .then(() => {
-        let newReq: SlackModule.SlackRequest = deepCopy(slackReq);
+        const newReq: SlackModule.SlackRequest = deepCopy(slackReq);
         newReq.body.text = "״ליב״"; // "ליב"
 
         return app.process(newReq, newRes);
@@ -183,9 +188,9 @@ describe("App", () => {
       .then(() => {
         expect(newRes.statusCode).to.equal(200);
 
-        let body = newRes._getJSON();
+        const body = newRes._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
 
         expect(slackRes).not.to.equal(null);
         expect(slackRes).not.to.be.undefined;
@@ -195,16 +200,16 @@ describe("App", () => {
       });
   });
   it("process() should return one restaurant if valid Slack message withoud quotes", () => {
-    let res = new MockExpressResponse();
-    let req: SlackModule.SlackRequest = deepCopy(slackReq);
+    const res = new MockExpressResponse();
+    const req: SlackModule.SlackRequest = deepCopy(slackReq);
     req.body.text = "ליב";
 
     return app.process(req, res).then(() => {
       expect(res.statusCode).to.equal(200);
 
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -213,13 +218,13 @@ describe("App", () => {
     });
   });
   it("process() should return one restaurant if valid HipChat message", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
     return app.process(hipChatReq, res).then(() => {
       expect(res.statusCode).to.equal(200);
 
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let hipChatRes: HipChatModule.HipChatResponse = body;
+      const hipChatRes: HipChatModule.HipChatResponse = body;
       expect(hipChatRes).not.to.equal(null);
       expect(hipChatRes).not.to.be.undefined;
 
@@ -239,51 +244,51 @@ describe("App", () => {
     });
   });
   it("process() should return default message if invalid Slack message", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app.process(badSlackReq, res).catch(() => {
       expect(res.statusCode).to.equal(400);
 
-      let body = res._getString();
+      const body = res._getString();
       expect(body).not.to.equal(null);
       expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
       expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
     });
   });
   it("process() should return default if invalid HipChat message", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     app.process(badHipChatReq, res).catch(() => {
       expect(res.statusCode).to.equal(400);
 
-      let body = res._getString();
+      const body = res._getString();
       expect(body).not.to.equal(null);
       expect(body).not.to.be.an.instanceof(HipChatModule.HipChatResponse);
       expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
     });
   });
   it("process() should return default if invalid message", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     app.process(new EmptyRequest(), res).catch(() => {
       expect(res.statusCode).to.equal(400);
 
-      let body = res._getString();
+      const body = res._getString();
 
       expect(body).not.to.equal(null);
       expect(body).to.equal(Constants.INVALID_MESSAGE_STRING);
     });
   });
   it("process() should return no restaurants if valid Slack message returns nothing", () => {
-    let slackEmptyReq: SlackModule.SlackRequest = deepCopy(slackReq);
+    const slackEmptyReq: SlackModule.SlackRequest = deepCopy(slackReq);
     slackEmptyReq.body.text = badRestaurantName;
 
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
     return app.process(slackEmptyReq, res).then(() => {
       expect(res.statusCode).to.be.equal(200);
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -296,16 +301,16 @@ describe("App", () => {
     });
   });
   it("process() should return no restaurants if valid HipChat message returns nothing", () => {
-    let hipChatEmptyReq: HipChatModule.HipChatReq = deepCopy(hipChatReq);
+    const hipChatEmptyReq: HipChatModule.HipChatReq = deepCopy(hipChatReq);
     hipChatEmptyReq.body.item.message.message =
       HipChatMessageFormatter.COMMAND_OPERATOR + " " + badRestaurantName;
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app.process(hipChatEmptyReq, res).then(() => {
       expect(res.statusCode).to.be.equal(200);
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let hipChatRes: HipChatModule.HipChatResponse = body;
+      const hipChatRes: HipChatModule.HipChatResponse = body;
       expect(hipChatRes).not.to.equal(null);
       expect(hipChatRes).not.to.be.undefined;
 
@@ -324,16 +329,16 @@ describe("App", () => {
     });
   });
   it("process() should return valid response if command is total", () => {
-    let slackTotalReq: SlackModule.SlackRequest = deepCopy(slackReq);
+    const slackTotalReq: SlackModule.SlackRequest = deepCopy(slackReq);
     slackTotalReq.body.text = Constants.TOTAL_KEYWORD;
 
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     app.process(slackTotalReq, res).then(() => {
       expect(res.statusCode).to.be.equal(200);
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -341,16 +346,16 @@ describe("App", () => {
     });
   });
   it("process() should return error if using empty restaurant name for slack", () => {
-    let slackTotalReq: SlackModule.SlackRequest = deepCopy(slackReq);
+    const slackTotalReq: SlackModule.SlackRequest = deepCopy(slackReq);
     slackTotalReq.body.text = "";
 
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     app.process(slackTotalReq, res).catch(() => {
       expect(res.statusCode).to.be.equal(400);
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let slackRes: SlackModule.SlackResponse = body;
+      const slackRes: SlackModule.SlackResponse = body;
 
       expect(slackRes).not.to.equal(null);
       expect(slackRes).not.to.be.undefined;
@@ -359,16 +364,16 @@ describe("App", () => {
     });
   });
   it("process() should return error if using empty restaurant name for hipchat", () => {
-    let hipChatRequest: HipChatModule.HipChatReq = deepCopy(hipChatReq);
+    const hipChatRequest: HipChatModule.HipChatReq = deepCopy(hipChatReq);
     hipChatRequest.body.item.message.message = "/10bis ";
 
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     app.process(hipChatRequest, res).catch(() => {
       expect(res.statusCode).to.be.equal(400);
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let hipChatResponse: HipChatModule.HipChatResponse = body;
+      const hipChatResponse: HipChatModule.HipChatResponse = body;
 
       expect(hipChatResponse).not.to.equal(null);
       expect(hipChatResponse.message_format).to.equal("text");
@@ -378,31 +383,31 @@ describe("App", () => {
     });
   });
   it("process() should return no restaurants if valid HipChat message returns nothing", () => {
-    let hipChatTotalReq: HipChatModule.HipChatReq = deepCopy(hipChatReq);
+    const hipChatTotalReq: HipChatModule.HipChatReq = deepCopy(hipChatReq);
     hipChatTotalReq.body.item.message.message =
       HipChatMessageFormatter.COMMAND_OPERATOR + " " + Constants.TOTAL_KEYWORD;
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app.process(hipChatTotalReq, res).then(() => {
       expect(res.statusCode).to.be.equal(200);
-      let body = res._getJSON();
+      const body = res._getJSON();
       expect(body).not.to.equal(null);
-      let hipChatRes: HipChatModule.HipChatResponse = body;
+      const hipChatRes: HipChatModule.HipChatResponse = body;
       expect(hipChatRes).not.to.equal(null);
       expect(hipChatRes).not.to.be.undefined;
       expect(hipChatRes.message_format).to.equal("text");
     });
   });
   it("getTotalOrders() should return valid response if command is total (slack)", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app
       .getTotalOrders(res, SlackMessageFormatter.getInstance())
       .then(() => {
         expect(res.statusCode).to.be.equal(200);
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
 
         expect(slackRes).not.to.equal(null);
         expect(slackRes).not.to.be.undefined;
@@ -410,30 +415,30 @@ describe("App", () => {
       });
   });
   it("getTotalOrders() should return valid response if command is total (HipChat)", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app
       .getTotalOrders(res, HipChatMessageFormatter.getInstance())
       .then(() => {
         expect(res.statusCode).to.be.equal(200);
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let hipChatRes: HipChatModule.HipChatResponse = body;
+        const hipChatRes: HipChatModule.HipChatResponse = body;
         expect(hipChatRes).not.to.equal(null);
         expect(hipChatRes).not.to.be.undefined;
         expect(hipChatRes.message_format).to.equal("text");
       });
   });
   it("search() with null restaurant name - Slack", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app
       .search(res, SlackMessageFormatter.getInstance(), null, false)
       .catch(() => {
         expect(res.statusCode).to.be.equal(400);
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
 
         expect(slackRes).not.to.equal(null);
         expect(slackRes).not.to.be.undefined;
@@ -442,15 +447,15 @@ describe("App", () => {
       });
   });
   it("search() with null restaurant name - HipChat", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app
       .search(res, HipChatMessageFormatter.getInstance(), null, false)
       .catch(() => {
         expect(res.statusCode).to.be.equal(400);
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let hipChatResponse: HipChatModule.HipChatResponse = body;
+        const hipChatResponse: HipChatModule.HipChatResponse = body;
 
         expect(hipChatResponse).not.to.equal(null);
         expect(hipChatResponse.message_format).to.equal("text");
@@ -458,15 +463,15 @@ describe("App", () => {
       });
   });
   it("search() with empty restaurant name - Slack", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app
       .search(res, SlackMessageFormatter.getInstance(), "", false)
       .catch(() => {
         expect(res.statusCode).to.be.equal(400);
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
 
         expect(slackRes).not.to.equal(null);
         expect(slackRes).not.to.be.undefined;
@@ -475,15 +480,15 @@ describe("App", () => {
       });
   });
   it("search() with empty restaurant name - HipChat", () => {
-    let res = new MockExpressResponse();
+    const res = new MockExpressResponse();
 
     return app
       .search(res, HipChatMessageFormatter.getInstance(), "", false)
       .catch(() => {
         expect(res.statusCode).to.be.equal(400);
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let hipChatResponse: HipChatModule.HipChatResponse = body;
+        const hipChatResponse: HipChatModule.HipChatResponse = body;
 
         expect(hipChatResponse).not.to.equal(null);
         expect(hipChatResponse.message_format).to.equal("text");
@@ -491,26 +496,26 @@ describe("App", () => {
       });
   });
   describe("Test Cache", () => {
-    beforeEach(function() {
+    beforeEach(function () {
       StaticMethodHolder.RequestGet = sinon.spy(request, "get");
     });
 
-    afterEach(function() {
+    afterEach(function () {
       (StaticMethodHolder.RequestGet as sinon.SinonStub).restore();
     });
 
     it("process() should use cache instead of calling individual calls every time", () => {
       let res = new MockExpressResponse();
 
-      let req: SlackModule.SlackRequest = deepCopy(slackReq);
+      const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = "ניני";
 
       return app.process(req, res).then(() => {
         expect(res.statusCode).to.equal(200);
 
-        let body = res._getJSON();
+        const body = res._getJSON();
         expect(body).not.to.equal(null);
-        let slackRes: SlackModule.SlackResponse = body;
+        const slackRes: SlackModule.SlackResponse = body;
         expect(slackRes).not.to.equal(null);
 
         res = new MockExpressResponse();
@@ -519,9 +524,9 @@ describe("App", () => {
           .then(() => {
             expect(res.statusCode).to.equal(200);
 
-            let body = res._getJSON();
+            const body = res._getJSON();
             expect(body).not.to.equal(null);
-            let slackRes: SlackModule.SlackResponse = body;
+            const slackRes: SlackModule.SlackResponse = body;
             expect(slackRes).not.to.equal(null);
           })
           .then(() => {
@@ -532,14 +537,14 @@ describe("App", () => {
 
     it("search() should use cache instead of calling individual calls every time", () => {
       let res = new MockExpressResponse();
-      let restName: string = "שף סלט";
+      const restName: string = "שף סלט";
       return app
         .search(res, SlackMessageFormatter.getInstance(), restName, true)
         .then(() => {
           expect(res.statusCode).to.be.equal(200);
-          let body = res._getJSON();
+          const body = res._getJSON();
           expect(body).not.to.equal(null);
-          let slackRes: SlackModule.SlackResponse = body;
+          const slackRes: SlackModule.SlackResponse = body;
           expect(slackRes).not.to.equal(null);
           res = new MockExpressResponse();
           return app
@@ -547,9 +552,9 @@ describe("App", () => {
             .then(() => {
               expect(res.statusCode).to.equal(200);
 
-              let body = res._getJSON();
+              const body = res._getJSON();
               expect(body).not.to.equal(null);
-              let slackRes: SlackModule.SlackResponse = body;
+              const slackRes: SlackModule.SlackResponse = body;
               expect(slackRes).not.to.equal(null);
             });
         })
@@ -559,14 +564,14 @@ describe("App", () => {
     });
     it("search() should not use cache if flag is off", () => {
       let res = new MockExpressResponse();
-      let restName: string = "שף סלט";
+      const restName: string = "שף סלט";
       return app
         .search(res, SlackMessageFormatter.getInstance(), restName, false)
         .then(() => {
           expect(res.statusCode).to.be.equal(200);
-          let body = res._getJSON();
+          const body = res._getJSON();
           expect(body).not.to.equal(null);
-          let slackRes: SlackModule.SlackResponse = body;
+          const slackRes: SlackModule.SlackResponse = body;
           expect(slackRes).not.to.equal(null);
 
           res = new MockExpressResponse();
@@ -575,9 +580,9 @@ describe("App", () => {
             .then(() => {
               expect(res.statusCode).to.equal(200);
 
-              let body = res._getJSON();
+              const body = res._getJSON();
               expect(body).not.to.equal(null);
-              let slackRes: SlackModule.SlackResponse = body;
+              const slackRes: SlackModule.SlackResponse = body;
               expect(slackRes).not.to.equal(null);
             });
         })
@@ -587,14 +592,14 @@ describe("App", () => {
     });
     it("search() should not cache restaurants which are not found", () => {
       let res = new MockExpressResponse();
-      let restName: string = "מממ";
+      const restName: string = "מממ";
       return app
         .search(res, SlackMessageFormatter.getInstance(), restName, true)
         .then(() => {
           expect(res.statusCode).to.be.equal(200);
-          let body = res._getJSON();
+          const body = res._getJSON();
           expect(body).not.to.equal(null);
-          let slackRes: SlackModule.SlackResponse = body;
+          const slackRes: SlackModule.SlackResponse = body;
           expect(slackRes).not.to.equal(null);
 
           res = new MockExpressResponse();
@@ -603,9 +608,9 @@ describe("App", () => {
             .then(() => {
               expect(res.statusCode).to.equal(200);
 
-              let body = res._getJSON();
+              const body = res._getJSON();
               expect(body).not.to.equal(null);
-              let slackRes: SlackModule.SlackResponse = body;
+              const slackRes: SlackModule.SlackResponse = body;
               expect(slackRes).not.to.equal(null);
             });
         })
@@ -616,22 +621,22 @@ describe("App", () => {
   });
 
   describe("ResponseCode from 10bis != 200", () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.get = sinon.stub(request, "get");
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
       res.statusCode = 201;
 
       this.get.yields(null, res, null);
     });
 
-    afterEach(function() {
+    afterEach(function () {
       (this.get as sinon.SinonStub).restore();
     });
 
     it("process() with other response than 200", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
 
-      let req: SlackModule.SlackRequest = deepCopy(slackReq);
+      const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = "ABCD";
 
       return app
@@ -641,7 +646,7 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(400);
-          let body = res._getString();
+          const body = res._getString();
 
           expect(body).not.to.equal(null);
           expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
@@ -649,7 +654,7 @@ describe("App", () => {
         });
     });
     it("search() with response code = 201", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
 
       return app
         .search(
@@ -663,7 +668,7 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(400);
-          let body = res._getString();
+          const body = res._getString();
 
           expect(body).not.to.equal(null);
           expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
@@ -671,7 +676,7 @@ describe("App", () => {
         });
     });
     it("getTotalOrders() with error = 201", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
         .then(() => {
@@ -679,7 +684,7 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(400);
-          let body = res._getString();
+          const body = res._getString();
 
           expect(body).not.to.equal(null);
           expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
@@ -689,22 +694,22 @@ describe("App", () => {
   });
 
   describe("ResponseCode from 10bis == 200 with empty response", () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.get = sinon.stub(request, "get");
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
       res.body = "";
       this.get.yields(null, res, null);
     });
 
-    afterEach(function() {
+    afterEach(function () {
       (this.get as sinon.SinonStub).restore();
     });
 
     it("process() with response == 200 with empty content", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
 
-      let restaurantName: string = "ABCDEF";
-      let req: SlackModule.SlackRequest = deepCopy(slackReq);
+      const restaurantName: string = "ABCDEF";
+      const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = restaurantName;
 
       return app
@@ -714,9 +719,9 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(200);
-          let body = res._getJSON();
+          const body = res._getJSON();
           expect(body).not.to.equal(null);
-          let slackRes: SlackModule.SlackResponse = body;
+          const slackRes: SlackModule.SlackResponse = body;
 
           expect(slackRes).not.to.equal(null);
           expect(slackRes).not.to.be.undefined;
@@ -728,7 +733,7 @@ describe("App", () => {
         });
     });
     it("search() with response == 200 with empty content", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
 
       return app
         .search(
@@ -742,9 +747,9 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(200);
-          let body = res._getJSON();
+          const body = res._getJSON();
           expect(body).not.to.equal(null);
-          let slackRes: SlackModule.SlackResponse = body;
+          const slackRes: SlackModule.SlackResponse = body;
 
           expect(slackRes).not.to.equal(null);
           expect(slackRes).not.to.be.undefined;
@@ -756,7 +761,7 @@ describe("App", () => {
         });
     });
     it("getTotalOrders() with response == 200 with empty content", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
         .then(() => {
@@ -764,9 +769,9 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(200);
-          let body = res._getJSON();
+          const body = res._getJSON();
           expect(body).not.to.equal(null);
-          let slackRes: SlackModule.SlackResponse = body;
+          const slackRes: SlackModule.SlackResponse = body;
 
           expect(slackRes).not.to.equal(null);
           expect(slackRes).not.to.be.undefined;
@@ -778,19 +783,19 @@ describe("App", () => {
   });
 
   describe("Response from 10bis is error (400)", () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.get = sinon.stub(request, "get");
       this.get.yields("error", null, null);
     });
 
-    afterEach(function() {
+    afterEach(function () {
       (this.get as sinon.SinonStub).restore();
     });
 
     it("process() with error (400)", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
 
-      let req: SlackModule.SlackRequest = deepCopy(slackReq);
+      const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = "Aaaa";
 
       return app
@@ -800,7 +805,7 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(400);
-          let body = res._getString();
+          const body = res._getString();
 
           expect(body).not.to.equal(null);
           expect(body).not.to.be.an.instanceof(SlackModule.SlackResponse);
@@ -808,7 +813,7 @@ describe("App", () => {
         });
     });
     it("search() with error (400)", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
 
       return app
         .search(
@@ -822,7 +827,7 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(400);
-          let body = res._getString();
+          const body = res._getString();
 
           expect(body).not.to.equal(null);
           expect(body).not.to.be.an.instanceof(HipChatModule.HipChatResponse);
@@ -830,7 +835,7 @@ describe("App", () => {
         });
     });
     it("getTotalOrders() with error (400)", () => {
-      let res = new MockExpressResponse();
+      const res = new MockExpressResponse();
 
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
@@ -839,7 +844,7 @@ describe("App", () => {
         })
         .catch(() => {
           expect(res.statusCode).to.be.equal(400);
-          let body = res._getString();
+          const body = res._getString();
 
           expect(body).not.to.equal(null);
           expect(body).not.to.be.an.instanceof(HipChatModule.HipChatResponse);

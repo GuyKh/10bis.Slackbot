@@ -3,7 +3,6 @@ import * as errorHandler from "errorhandler";
 import * as express from "express";
 import { Commons } from "./commons";
 import { App } from "./app";
-import { Request, Response, NextFunction } from "express";
 
 /**
  * The server.
@@ -32,16 +31,16 @@ export class Server {
    * @constructor
    */
   constructor() {
-    //create expressjs application
+    // create expressjs application
     this.app = express();
 
-    //configure application
+    // configure application
     this.config();
 
-    //add routes
+    // add routes
     this.routes();
 
-    //add api
+    // add api
     this.api();
   }
 
@@ -52,7 +51,7 @@ export class Server {
    * @method api
    */
   public api() {
-    //empty for now
+    // empty for now
   }
 
   /**
@@ -62,18 +61,18 @@ export class Server {
    * @method config
    */
   public config() {
-    //mount json form parser
+    // mount json form parser
     this.app.use(bodyParser.json());
 
-    //mount query string parser
+    // mount query string parser
     this.app.use(
       bodyParser.urlencoded({
-        extended: true
+        extended: true,
       })
     );
 
     // catch 404 and forward to error handler
-    this.app.use(function(
+    this.app.use(function (
       err: any,
       req: express.Request,
       res: express.Response,
@@ -83,7 +82,7 @@ export class Server {
       next(err);
     });
 
-    //error handling
+    // error handling
     this.app.use(errorHandler());
   }
 
@@ -98,18 +97,18 @@ export class Server {
     const router: express.Router = express.Router();
 
     const app = new App();
-    router.get("/", function(req: Commons.Request, res: Response) {
+    router.get("/", function (req: Commons.Request, res: Response) {
       res.send("Sanity passed!");
     });
 
-    router.post("/post", function(req: Commons.Request, res: Response) {
+    router.post("/post", function (req: Commons.Request, res: Response) {
       app.process(req, res);
     });
 
     this.app.use("/", router);
     this.app.use("/post", router);
 
-    //use router middleware
+    // use router middleware
     this.app.use(router);
   }
 }
