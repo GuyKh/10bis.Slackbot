@@ -3,6 +3,7 @@ import * as errorHandler from "errorhandler";
 import * as express from "express";
 import { Commons } from "./commons";
 import { App } from "./app";
+import { Request, Response, NextFunction } from "express";
 
 /**
  * The server.
