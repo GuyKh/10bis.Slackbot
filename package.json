@@ -17,7 +17,7 @@
     "snyk": "1.348.1",
     "typescript": "3.9.5",
     "uuid": "8.2.0",
-    "winston": "3.3.2"
+    "winston": "3.3.3"
   },
   "devDependencies": {
     "@types/chai": "4.2.11",
