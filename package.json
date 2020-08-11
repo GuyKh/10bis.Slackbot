@@ -35,7 +35,7 @@
     "mock-express-response": "0.2.2",
     "nyc": "15.1.0",
     "prettier": "2.0.5",
-    "sinon": "9.0.2",
+    "sinon": "9.0.3",
     "standardx": "5.0.0",
     "ts-node": "8.10.2"
   },
