@@ -7,6 +7,8 @@ import { HipChatModule } from "../src/hipChatModule";
 import { SlackModule } from "../src/slackModule";
 import { SlackMessageFormatter } from "../src/slackMessage";
 import { HipChatMessageFormatter } from "../src/hipChatMessage";
+import axios from "axios";
+import * as moxios from "moxios";
 import "mocha";
 import { expect } from "chai";
 import {
@@ -18,7 +20,6 @@ import {
 } from "./testCommons";
 import { Constants } from "../src/constants";
 import * as sinon from "sinon";
-import * as request from "request";
 
 const MockExpressResponse = require("mock-express-response");
 const app: App = new App();
@@ -44,7 +45,6 @@ class StaticMethodHolder {
   public static RequestGet;
 }
 
-// tslint:disable:no-unused-expression
 describe("App", () => {
   it("process() should return one restaurant if valid Slack message", () => {
     const res = new MockExpressResponse();
@@ -497,7 +497,7 @@ describe("App", () => {
   });
   describe("Test Cache", () => {
     beforeEach(function () {
-      StaticMethodHolder.RequestGet = sinon.spy(request, "get");
+      StaticMethodHolder.RequestGet = sinon.spy(axios, "get");
     });
 
     afterEach(function () {
@@ -622,15 +622,11 @@ describe("App", () => {
 
   describe("ResponseCode from 10bis != 200", () => {
     beforeEach(function () {
-      this.get = sinon.stub(request, "get");
-      const res = new MockExpressResponse();
-      res.statusCode = 201;
-
-      this.get.yields(null, res, null);
+      moxios.install();
     });
 
     afterEach(function () {
-      (this.get as sinon.SinonStub).restore();
+      moxios.uninstall();
     });
 
     it("process() with other response than 200", () => {
@@ -638,6 +634,14 @@ describe("App", () => {
 
       const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = "ABCD";
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.reject({
+          status: 201,
+          response: { message: "problem" },
+        });
+      });
 
       return app
         .process(req, res)
@@ -653,8 +657,17 @@ describe("App", () => {
           expect(body).to.be.equal(Constants.ERROR_STRING);
         });
     });
+
     it("search() with response code = 201", () => {
       const res = new MockExpressResponse();
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.reject({
+          status: 201,
+          response: { message: "problem" },
+        });
+      });
 
       return app
         .search(
@@ -677,6 +690,15 @@ describe("App", () => {
     });
     it("getTotalOrders() with error = 201", () => {
       const res = new MockExpressResponse();
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.reject({
+          status: 201,
+          response: { message: "problem" },
+        });
+      });
+
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
         .then(() => {
@@ -695,14 +717,11 @@ describe("App", () => {
 
   describe("ResponseCode from 10bis == 200 with empty response", () => {
     beforeEach(function () {
-      this.get = sinon.stub(request, "get");
-      const res = new MockExpressResponse();
-      res.body = "";
-      this.get.yields(null, res, null);
+      moxios.install();
     });
 
     afterEach(function () {
-      (this.get as sinon.SinonStub).restore();
+      moxios.uninstall();
     });
 
     it("process() with response == 200 with empty content", () => {
@@ -711,6 +730,14 @@ describe("App", () => {
       const restaurantName: string = "ABCDEF";
       const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = restaurantName;
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.respondWith({
+          status: 200,
+          response: "",
+        });
+      });
 
       return app
         .process(req, res)
@@ -734,6 +761,14 @@ describe("App", () => {
     });
     it("search() with response == 200 with empty content", () => {
       const res = new MockExpressResponse();
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.respondWith({
+          status: 200,
+          response: "",
+        });
+      });
 
       return app
         .search(
@@ -762,6 +797,15 @@ describe("App", () => {
     });
     it("getTotalOrders() with response == 200 with empty content", () => {
       const res = new MockExpressResponse();
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.respondWith({
+          status: 200,
+          response: "",
+        });
+      });
+
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
         .then(() => {
@@ -784,12 +828,11 @@ describe("App", () => {
 
   describe("Response from 10bis is error (400)", () => {
     beforeEach(function () {
-      this.get = sinon.stub(request, "get");
-      this.get.yields("error", null, null);
+      moxios.install();
     });
 
     afterEach(function () {
-      (this.get as sinon.SinonStub).restore();
+      moxios.uninstall();
     });
 
     it("process() with error (400)", () => {
@@ -797,6 +840,14 @@ describe("App", () => {
 
       const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = "Aaaa";
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.reject({
+          status: 400,
+          response: { message: "problem" },
+        });
+      });
 
       return app
         .process(req, res)
@@ -814,6 +865,14 @@ describe("App", () => {
     });
     it("search() with error (400)", () => {
       const res = new MockExpressResponse();
+
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.reject({
+          status: 400,
+          response: { message: "problem" },
+        });
+      });
 
       return app
         .search(
@@ -837,6 +896,14 @@ describe("App", () => {
     it("getTotalOrders() with error (400)", () => {
       const res = new MockExpressResponse();
 
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent();
+        request.reject({
+          status: 400,
+          response: { message: "problem" },
+        });
+      });
+
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
         .then(() => {
@@ -853,4 +920,3 @@ describe("App", () => {
     });
   });
 });
-// tslint:enable:no-unused-expression

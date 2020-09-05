@@ -8,13 +8,13 @@ import {
   VerifyMessage,
   ErrorPromiseWrapper,
   GenerateGetTotalOrdersRequest,
-  RequestGetWrapper,
   FilterTotalOrders,
 } from "./commons";
 import { Constants } from "./constants";
 import { HipChatMessageFormatter } from "./hipChatMessage";
 import { SlackMessageFormatter } from "./slackMessage";
 import { ExpirationStrategy, MemoryStorage } from "node-ts-cache";
+import axios from "axios";
 
 const myCache = new ExpirationStrategy(new MemoryStorage());
 const cacheTTL: number = 60 * 60 * 24;
@@ -127,9 +127,10 @@ export class App {
 
     const parsedUrl: string = GenerateSearchRequest(restaurantName);
 
-    return RequestGetWrapper(parsedUrl)
-      .then((body) => {
-        const data = JSON.parse(body);
+    return axios
+      .get(parsedUrl)
+      .then((resp) => {
+        const data = resp.data;
 
         if (!data || !data.length || data.length < 1) {
           const badResBody = messageFormatter.getErrorMessage(restaurantName);
@@ -162,11 +163,7 @@ export class App {
         }
       })
       .catch((err) => {
-        if (err) {
-          winston.debug("Error in Search: " + err);
-        } else {
-          winston.debug("Error in Search");
-        }
+        winston.debug("Error in Search: " + err);
         res.status(400).send(Constants.ERROR_STRING);
       });
   }
@@ -178,10 +175,10 @@ export class App {
     const parsedUrl: string = GenerateGetTotalOrdersRequest();
     winston.debug("Total Orders Url: " + parsedUrl);
 
-    const requestPromise: Promise<string> = RequestGetWrapper(parsedUrl);
-    return requestPromise
-      .then((body) => {
-        const data: Commons.Restaurant[] = JSON.parse(body);
+    return axios
+      .get(parsedUrl)
+      .then((resp) => {
+        const data: Commons.Restaurant[] = resp.data;
 
         if (!data || !(data instanceof Array)) {
           const resBody = messageFormatter.getErrorMessage(null);
@@ -199,11 +196,7 @@ export class App {
         res.json(resBody);
       })
       .catch((err) => {
-        if (err) {
-          winston.debug("Error in Get Total Orders: " + err);
-        } else {
-          winston.debug("Error in Get Total Orders");
-        }
+        winston.debug("Error in Get Total Orders: " + err);
         res.status(400).send(Constants.ERROR_STRING);
       });
   }

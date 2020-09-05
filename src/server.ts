@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import * as bodyParser from "body-parser";
 import * as errorHandler from "errorhandler";
 import * as express from "express";
