@@ -2,9 +2,6 @@
 import * as moment from "moment-timezone";
 import { Constants } from "./constants";
 import * as url from "url";
-import * as request from "request";
-import { Response } from "express";
-
 const querystring = require("querystring");
 
 export function GetFormatedDateTime(): string {
@@ -15,18 +12,6 @@ export function GetFormatedDateTime(): string {
     .tz(Constants.TIMEZONE)
     .format(Constants.TIME_FORMAT);
   return date + "+" + time;
-}
-
-export function RequestGetWrapper(url: string): Promise<string> {
-  return new Promise(function (resolve: Function, reject: Function) {
-    request.get(url, function (error: Error, response: Response, body: string) {
-      if (!error && response.statusCode === 200) {
-        resolve(body); // Succeess
-      } else {
-        reject(error); // Failure
-      }
-    });
-  });
 }
 
 export function ErrorPromiseWrapper(errorString: string): Promise<void> {
