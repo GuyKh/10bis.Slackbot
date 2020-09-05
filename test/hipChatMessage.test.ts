@@ -7,7 +7,6 @@ import { HipChatMessageFormatter } from "../src/hipChatMessage";
 import { Commons } from "../src/commons";
 import "mocha";
 import { Constants } from "../src/constants";
-import { Request } from "express";
 import { expect } from "chai";
 
 const hipChatMessage = HipChatMessageFormatter.getInstance();
@@ -133,7 +132,7 @@ describe("HipChatMessage", function () {
   });
 
   it("isValidMessage() should return false if request body is missing", function () {
-    const req: Request = null;
+    const req = null;
     expect(hipChatMessage.isValidMessage(req)).to.equal(false);
   });
 
@@ -302,7 +301,6 @@ describe("HipChatMessage", function () {
     const response: HipChatModule.HipChatResponse = hipChatMessageFormatter.getDefaultResponse() as HipChatModule.HipChatResponse;
 
     expect(response.color).to.equal("green");
-    // tslint:disable-next-line:no-unused-expression
     expect(response.card).to.be.undefined;
     expect(response.message).to.equal(Constants.DEFAULT_RESPONSE);
     expect(response.message_format).to.equal("text");
@@ -318,7 +316,6 @@ describe("HipChatMessage", function () {
     ) as HipChatModule.HipChatResponse;
 
     expect(response.color).to.equal("green");
-    // tslint:disable-next-line:no-unused-expression
     expect(response.card).to.be.undefined;
     expect(response.message).to.equal(responseText);
     expect(response.message_format).to.equal("text");

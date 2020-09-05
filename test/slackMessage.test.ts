@@ -411,7 +411,6 @@ describe("SlackMessage", function () {
     const response = slackMessageFormatter.getDefaultResponse() as SlackModule.SlackResponse;
 
     expect(response.response_type).to.equal("ephemeral");
-    // tslint:disable-next-line:no-unused-expression
     expect(response.attachments).to.be.null;
     expect(response.text).to.equal(Constants.DEFAULT_RESPONSE);
   });
