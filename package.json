@@ -47,7 +47,7 @@
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls",
     "coveralls": "./node_modules/.bin/nyc report --reporter=lcovonly && cat ./coverage/lcov.info | coveralls",
     "watch": "./node_modules/.bin/mocha-typescript-watch",
-    "prepare": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json",
+    "prepare": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json"
   },
   "engines": {
     "npm": "6.14.x",
