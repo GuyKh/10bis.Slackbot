@@ -33,7 +33,7 @@
     "mock-express-response": "0.2.2",
     "moxios": "0.4.0",
     "nyc": "15.1.0",
-    "prettier": "2.1.1",
+    "prettier": "2.1.2",
     "sinon": "9.0.3",
     "ts-node": "9.0.0"
   },
