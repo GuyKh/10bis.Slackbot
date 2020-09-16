@@ -37,6 +37,10 @@ jobs:
         npm install
         npm run test
 
+    - name: Snyk
+      uses: snyk/actions@0.2.0
+
+
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
