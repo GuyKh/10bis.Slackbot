@@ -8,9 +8,10 @@ node_js:
   - node
 install:
   - npm ci
-  - npm install
+  - npm install --only=dev
   - npm install typescript -g
   - npm install eslint -g
+  - npm install nyc -g
 script:
   - tsc -p ./tsconfig.json
   - npm run eslint
