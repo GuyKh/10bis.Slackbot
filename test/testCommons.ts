@@ -21,7 +21,7 @@ export const validSlackMessage = new SlackModule.SlackMessage(
   "U2147483697",
   "Steve",
   "/10bis",
-  "דיקסי"
+  "תאתא"
 );
 
 export const validHipChatMessage = new HipChatModule.HipChatReqBody(
@@ -36,7 +36,7 @@ export const validHipChatMessage = new HipChatModule.HipChatReqBody(
       ),
       "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
       [],
-      "/10bis דיקסי",
+      "/10bis תאתא",
       "message"
     ),
     new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")
@@ -142,7 +142,7 @@ export const restaurants: Commons.Restaurant[] = [
     .build(),
   new Commons.RestaurantBuilder()
     .setRestaurantId(1238)
-    .setRestaurantName("דיקסי")
+    .setRestaurantName("תאתא")
     .setRestaurantAddress("תובל 19 רמת גן")
     .setRestaurantCityName("רמת גן")
     .setRestaurantLogoUrl(
