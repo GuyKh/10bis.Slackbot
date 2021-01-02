@@ -1,5 +1,6 @@
 import { Response } from "express";
 import * as winston from "winston";
+import axios from "axios";
 import {
   Commons,
   FilterByRestaurantName,
@@ -13,10 +14,10 @@ import {
 import { Constants } from "./constants";
 import { HipChatMessageFormatter } from "./hipChatMessage";
 import { SlackMessageFormatter } from "./slackMessage";
-import { ExpirationStrategy, MemoryStorage } from "node-ts-cache";
-import axios from "axios";
+import { CacheContainer } from 'node-ts-cache';
+import { MemoryStorage } from 'node-ts-cache-storage-memory';
 
-const myCache = new ExpirationStrategy(new MemoryStorage());
+const myCache = new CacheContainer(new MemoryStorage())
 const cacheTTL: number = 60 * 60 * 24;
 winston.configure({
   level: process.env.LOG_LEVEL,
