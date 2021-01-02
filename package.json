@@ -9,7 +9,7 @@
     "errorhandler": "1.5.1",
     "express": "4.17.1",
     "moment-timezone": "0.5.32",
-    "node-ts-cache": "3.2.0",
+    "node-ts-cache": "4.2.3",
     "redis": "3.0.2",
     "typescript": "4.0.5",
     "uuid": "8.3.2",
