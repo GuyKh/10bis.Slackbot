@@ -8,7 +8,7 @@
     "body-parser": "1.19.0",
     "errorhandler": "1.5.1",
     "express": "4.17.1",
-    "moment-timezone": "0.5.32",
+    "moment-timezone": "0.5.33",
     "node-ts-cache": "4.2.3",
     "node-ts-cache-storage-memory": "4.2.3",
     "redis": "3.0.2",
