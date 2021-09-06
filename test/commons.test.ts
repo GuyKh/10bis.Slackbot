@@ -24,8 +24,10 @@ import {
   hipChatInvalidMessage,
 } from "./testCommons";
 
-const slackMessageFormatter: Commons.MessageFormatter = SlackMessageFormatter.getInstance();
-const hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
+const slackMessageFormatter: Commons.MessageFormatter =
+  SlackMessageFormatter.getInstance();
+const hipChatMessageFormatter: Commons.MessageFormatter =
+  HipChatMessageFormatter.getInstance();
 
 export class Req {
   body: string;
@@ -351,9 +353,8 @@ describe("App", function () {
   });
 
   it("filterTotalOrders() should filter the restaurants correctly", function () {
-    const filteredRestaurants: Commons.Restaurant[] = restaurants.filter(
-      FilterTotalOrders
-    );
+    const filteredRestaurants: Commons.Restaurant[] =
+      restaurants.filter(FilterTotalOrders);
 
     expect(filteredRestaurants).not.to.equal(null);
     expect(filteredRestaurants.length).to.equal(2);
@@ -454,7 +455,8 @@ describe("App", function () {
     restaurant.HappyHourDiscount = HappyHourDiscount;
     restaurant.HappyHourDiscountPercent = HappyHourDiscountPercent;
     restaurant.DeliveryChargeValueType = DeliveryChargeValueType;
-    restaurant.HappyHourDiscountValidityString = HappyHourDiscountValidityString;
+    restaurant.HappyHourDiscountValidityString =
+      HappyHourDiscountValidityString;
     restaurant.StartOrderURL = StartOrderURL;
     restaurant.ActivityHours = ActivityHours;
     restaurant.PickupActivityHours = PickupActivityHours;
