@@ -31,7 +31,6 @@ jobs:
       env:
         VALIDATE_ALL_CODEBASE: false
         VALIDATE_TYPESCRIPT_STANDARD: false
-        TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.js
         FILTER_REGEX_EXCLUDE: .*test/.*
         DEFAULT_BRANCH: master
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
