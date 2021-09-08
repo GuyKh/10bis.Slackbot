@@ -234,9 +234,8 @@ describe("HipChatMessage", function () {
   it("generateRestaurantCard() should return a valid card", function () {
     const restaruant: Commons.Restaurant = generateRestaurant();
 
-    const response: HipChatModule.HipChatCard = hipChatMessage.generateRestaurantCard(
-      restaruant
-    );
+    const response: HipChatModule.HipChatCard =
+      hipChatMessage.generateRestaurantCard(restaruant);
 
     // Can"t do the following due to on the spot generation of guid and time
     // expect(response).to.deep.equal(validCard);
@@ -251,12 +250,10 @@ describe("HipChatMessage", function () {
   });
 
   it("generateTotalOrdersResponse() should return a valid message without restaurant list", function () {
-    const expectedResponse: HipChatModule.HipChatResponse = deepCopy(
-      goodResponse
-    );
-    const response: HipChatModule.HipChatResponse = hipChatMessage.generateTotalOrdersResponse(
-      []
-    );
+    const expectedResponse: HipChatModule.HipChatResponse =
+      deepCopy(goodResponse);
+    const response: HipChatModule.HipChatResponse =
+      hipChatMessage.generateTotalOrdersResponse([]);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message).to.equal("No pool order restaurants found");
@@ -265,12 +262,10 @@ describe("HipChatMessage", function () {
   });
 
   it("generateTotalOrdersResponse() should return a valid message with restaurant list", function () {
-    const expectedResponse: HipChatModule.HipChatResponse = deepCopy(
-      goodResponse
-    );
-    const response: HipChatModule.HipChatResponse = hipChatMessage.generateTotalOrdersResponse(
-      restaurants
-    );
+    const expectedResponse: HipChatModule.HipChatResponse =
+      deepCopy(goodResponse);
+    const response: HipChatModule.HipChatResponse =
+      hipChatMessage.generateTotalOrdersResponse(restaurants);
 
     expect(response.color).to.equal(expectedResponse.color);
     expect(response.message.includes("[1]")).to.equal(true);
@@ -283,7 +278,8 @@ describe("HipChatMessage", function () {
 
   it("constructor() should throw an exception if launched twice", function () {
     // Already ran constructor for HipChatMessageFormatter
-    const hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
+    const hipChatMessageFormatter: Commons.MessageFormatter =
+      HipChatMessageFormatter.getInstance();
 
     expect(hipChatMessageFormatter).not.to.equal(null);
     expect(HipChatMessageFormatter.getInstance()).not.to.equal(null);
@@ -296,9 +292,11 @@ describe("HipChatMessage", function () {
     }
   });
   it("getDefaultResponse() should return a default response", function () {
-    const hipChatMessageFormatter: Commons.MessageFormatter = HipChatMessageFormatter.getInstance();
+    const hipChatMessageFormatter: Commons.MessageFormatter =
+      HipChatMessageFormatter.getInstance();
 
-    const response: HipChatModule.HipChatResponse = hipChatMessageFormatter.getDefaultResponse() as HipChatModule.HipChatResponse;
+    const response: HipChatModule.HipChatResponse =
+      hipChatMessageFormatter.getDefaultResponse() as HipChatModule.HipChatResponse;
 
     expect(response.color).to.equal("green");
     expect(response.card).to.be.undefined;

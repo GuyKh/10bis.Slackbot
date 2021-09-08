@@ -137,9 +137,8 @@ describe("SlackMessage", function () {
 
   it("generateSearchResponse() should return a valid message without restaurant list", function () {
     const expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
-    const response: SlackModule.SlackResponse = slackMessage.generateSearchResponse(
-      []
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateSearchResponse([]);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal(expectedResponse.text);
@@ -148,9 +147,8 @@ describe("SlackMessage", function () {
 
   it("generateSearchResponse() should return a valid message with restaurant list", function () {
     const expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
-    const response: SlackModule.SlackResponse = slackMessage.generateSearchResponse(
-      restaurants
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateSearchResponse(restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 3 restaurants");
@@ -175,9 +173,8 @@ describe("SlackMessage", function () {
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
 
-    const response: SlackModule.SlackResponse = slackMessage.generateSearchResponse(
-      bigAmountOfRestaurants
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateSearchResponse(bigAmountOfRestaurants);
 
     expect(response.response_type).to.equal(goodResponse.response_type);
     expect(response.text).to.equal(
@@ -252,9 +249,8 @@ describe("SlackMessage", function () {
       .setRestaurantLogoUrl("http://image.jpg")
       .build();
 
-    const attachment: SlackModule.SlackAttachment = slackMessage.generateRestaurantCard(
-      restaruant
-    );
+    const attachment: SlackModule.SlackAttachment =
+      slackMessage.generateRestaurantCard(restaruant);
 
     // Can"t do the following due to on the spot generation of guid and time
     // expect(response).to.deep.equal(validCard);
@@ -269,9 +265,8 @@ describe("SlackMessage", function () {
 
   it("generateTotalOrdersResponse() should return a valid message without restaurant list", function () {
     const expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
-    const response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
-      []
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateTotalOrdersResponse([]);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("No pool order restaurants found");
@@ -280,9 +275,8 @@ describe("SlackMessage", function () {
 
   it("generateTotalOrdersResponse() should return a valid message with restaurant list", function () {
     const expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
-    const response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
-      [restaurants[0]]
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateTotalOrdersResponse([restaurants[0]]);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 1 restaurants");
@@ -302,9 +296,8 @@ describe("SlackMessage", function () {
 
   it("generateTotalOrdersResponse() should return a valid message with restaurant list", function () {
     const expectedResponse: SlackModule.SlackResponse = deepCopy(goodResponse);
-    const response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
-      restaurants
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateTotalOrdersResponse(restaurants);
 
     expect(response.response_type).to.equal(expectedResponse.response_type);
     expect(response.text).to.equal("Found 3 restaurants");
@@ -324,9 +317,8 @@ describe("SlackMessage", function () {
   });
 
   it("generateTotalOrdersResponse() should paint the cards in Red and Green according to wether the minimum order sum is fulfilled", function () {
-    const response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
-      restaurants
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateTotalOrdersResponse(restaurants);
 
     expect(response.text).to.equal("Found 3 restaurants");
     expect(response.attachments).not.equal(null);
@@ -354,9 +346,8 @@ describe("SlackMessage", function () {
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
     bigAmountOfRestaurants = bigAmountOfRestaurants.concat(restaurants);
-    const response: SlackModule.SlackResponse = slackMessage.generateTotalOrdersResponse(
-      bigAmountOfRestaurants
-    );
+    const response: SlackModule.SlackResponse =
+      slackMessage.generateTotalOrdersResponse(bigAmountOfRestaurants);
 
     expect(response.response_type).to.equal(goodResponse.response_type);
     expect(response.text).to.equal(
@@ -377,9 +368,8 @@ describe("SlackMessage", function () {
       .setRestaurantLogoUrl("http://image.jpg")
       .build();
 
-    const attachment: SlackModule.SlackAttachment = slackMessage.generateRestaurantTotalCard(
-      restaruant
-    );
+    const attachment: SlackModule.SlackAttachment =
+      slackMessage.generateRestaurantTotalCard(restaruant);
 
     // Can"t do the following due to on the spot generation of guid and time
     // expect(response).to.deep.equal(validCard);
@@ -408,7 +398,8 @@ describe("SlackMessage", function () {
   it("getDefaultResponse() should return a default response", function () {
     const slackMessageFormatter = SlackMessageFormatter.getInstance();
 
-    const response = slackMessageFormatter.getDefaultResponse() as SlackModule.SlackResponse;
+    const response =
+      slackMessageFormatter.getDefaultResponse() as SlackModule.SlackResponse;
 
     expect(response.response_type).to.equal("ephemeral");
     expect(response.attachments).to.be.null;

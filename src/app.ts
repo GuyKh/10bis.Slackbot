@@ -69,16 +69,16 @@ export class App {
   ): Promise<void> {
     if (!restaurantName || restaurantName.length === 0) {
       // Behavior for empty command ("/10bis" with no content)
-      const body: Commons.TenBisResponse = messageFormatter.getDefaultResponse();
+      const body: Commons.TenBisResponse =
+        messageFormatter.getDefaultResponse();
       res.status(400).send(body);
       return ErrorPromiseWrapper(Constants.INVALID_MESSAGE_STRING);
     }
 
     let cleanRestaurantName: string = restaurantName;
     let useExactRestaurantName: boolean = false;
-    const exactRestaurantName: string = this.getExactRestaurantName(
-      restaurantName
-    );
+    const exactRestaurantName: string =
+      this.getExactRestaurantName(restaurantName);
     if (exactRestaurantName) {
       cleanRestaurantName = exactRestaurantName;
       useExactRestaurantName = true;
@@ -118,9 +118,8 @@ export class App {
     useCache: boolean
   ): Promise<void> {
     let useExactRestaurantName: boolean = false;
-    const exactRestaurantName: string = this.getExactRestaurantName(
-      restaurantName
-    );
+    const exactRestaurantName: string =
+      this.getExactRestaurantName(restaurantName);
     if (exactRestaurantName) {
       restaurantName = exactRestaurantName;
       useExactRestaurantName = true;
@@ -187,9 +186,8 @@ export class App {
           return;
         }
 
-        const restaurants: Commons.Restaurant[] = data.filter(
-          FilterTotalOrders
-        );
+        const restaurants: Commons.Restaurant[] =
+          data.filter(FilterTotalOrders);
 
         const resBody = messageFormatter.generateTotalOrdersResponse(
           FilterByRestaurantName(restaurants, false, null)

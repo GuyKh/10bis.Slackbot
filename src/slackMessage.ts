@@ -162,8 +162,8 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
     const attachments: SlackModule.SlackAttachment[] = [];
     if (restaurants.length > 0) {
       if (restaurants.length < MAX_RESTAURANT_CARDS) {
-        const generateRestaurantTotalCard: Function = this
-          .generateRestaurantTotalCard;
+        const generateRestaurantTotalCard: Function =
+          this.generateRestaurantTotalCard;
 
         // For up to 5 restaurants, create a card
         restaurants.forEach(function (restaurant: Commons.Restaurant) {

@@ -66,7 +66,8 @@ it.ly/1TmKuKQ",
 export class HipChatMessageFormatter implements Commons.MessageFormatter {
   public static COMMAND_OPERATOR: string = "/10bis";
 
-  private static _instance: HipChatMessageFormatter = new HipChatMessageFormatter();
+  private static _instance: HipChatMessageFormatter =
+    new HipChatMessageFormatter();
 
   public static INITIALIZATION_EXCEPTION_STRING: string =
     "Instantiation failed: Use HipChatMessageFormatter.getInstance() instead of new.";
@@ -241,12 +242,8 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
     text: string,
     restaurant: Commons.Restaurant
   ): HipChatModule.HipChatResponse {
-    const response: HipChatModule.HipChatResponse = new HipChatModule.HipChatResponse(
-      "green",
-      text,
-      false,
-      "text"
-    );
+    const response: HipChatModule.HipChatResponse =
+      new HipChatModule.HipChatResponse("green", text, false, "text");
 
     if (restaurant) {
       response.card = this.generateRestaurantCard(restaurant);

@@ -29,8 +29,9 @@ jobs:
     - name: Lint Code Base
       uses: github/super-linter@v4
       env:
-        #VALIDATE_ALL_CODEBASE: false
+        VALIDATE_ALL_CODEBASE: false
         VALIDATE_TYPESCRIPT_STANDARD: false
+        FILTER_REGEX_EXCLUDE: .*test/.*
         DEFAULT_BRANCH: master
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
