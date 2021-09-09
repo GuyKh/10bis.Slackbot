@@ -23,7 +23,7 @@ const message = new HipChatModule.HipChatReqBody(
       ),
       "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
       [],
-      "/10bis תאתא",
+      "/10bis אנסטסיה",
       "message"
     ),
     new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")
@@ -69,7 +69,7 @@ const validCard = new HipChatModule.HipChatCard(
   "link",
   Constants.RESTAURANT_BASE_URL + 123,
   "ce399a28-a35a-4561-9262-ca28ccebbd6b",
-  "תאתא",
+  "אנסטסיה",
   "מסעדה אמריקאית\nמינימום הזמנה: 26 שח",
   new HipChatModule.UrlObject("http://image.jpg"),
   new Date().getTime(),
@@ -78,7 +78,7 @@ const validCard = new HipChatModule.HipChatCard(
 
 const generateRestaurant = function (): Commons.Restaurant {
   return new Commons.RestaurantBuilder()
-    .setRestaurantName("תאתא")
+    .setRestaurantName("אנסטסיה")
     .setRestaurantId(123)
     .setMinimumOrder("26 שח")
     .setDeliveryPrice("10 שח")
@@ -188,7 +188,7 @@ describe("HipChatMessage", function () {
     const req = new HipChatModule.HipChatReq(deepCopy(message));
     const restaurantName: string = hipChatMessage.getRestaurantName(req);
 
-    expect(restaurantName).to.equal("תאתא");
+    expect(restaurantName).to.equal("אנסטסיה");
   });
 
   it("getRestaurantName() should return an empty restaruant name from request with only command", function () {

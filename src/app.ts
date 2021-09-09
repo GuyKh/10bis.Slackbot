@@ -43,6 +43,7 @@ export class App {
     }
 
     let restaurantName = messageFormatter.getRestaurantName(req);
+
     if (!restaurantName) {
       const body = messageFormatter.getErrorMessage(null);
       res.status(400).send(body);
@@ -50,6 +51,7 @@ export class App {
     }
 
     restaurantName = restaurantName.trim();
+    console.log("Restaurant Name : [" + restaurantName + "]");
 
     if (
       restaurantName.toLowerCase() === Constants.TOTAL_KEYWORD.toLowerCase()
