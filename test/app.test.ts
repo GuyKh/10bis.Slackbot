@@ -498,6 +498,7 @@ describe("App", () => {
   describe("Test Cache", () => {
     beforeEach(function () {
       StaticMethodHolder.RequestGet = sinon.spy(axios, "get");
+      app.clearCache();
     });
 
     afterEach(function () {
@@ -537,7 +538,7 @@ describe("App", () => {
 
     it("search() should use cache instead of calling individual calls every time", () => {
       let res = new MockExpressResponse();
-      const restName: string = "שף סלט";
+      const restName: string = "אנסטסיה";
       return app
         .search(res, SlackMessageFormatter.getInstance(), restName, true)
         .then(() => {
@@ -564,7 +565,7 @@ describe("App", () => {
     });
     it("search() should not use cache if flag is off", () => {
       let res = new MockExpressResponse();
-      const restName: string = "שף סלט";
+      const restName: string = "ליב";
       return app
         .search(res, SlackMessageFormatter.getInstance(), restName, false)
         .then(() => {
