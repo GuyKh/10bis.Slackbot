@@ -35,6 +35,11 @@ export class App {
     ];
   }
 
+  clearCache(): Promise<void> {
+    myCache.clear();
+    return new Promise<void>(resolve => resolve());
+  }
+
   process(req: Commons.Request, res: Response): Promise<void> {
     const messageFormatter = VerifyMessage(req, this.messageFormatters);
     if (!messageFormatter) {
@@ -43,6 +48,7 @@ export class App {
     }
 
     let restaurantName = messageFormatter.getRestaurantName(req);
+
     if (!restaurantName) {
       const body = messageFormatter.getErrorMessage(null);
       res.status(400).send(body);
@@ -50,7 +56,7 @@ export class App {
     }
 
     restaurantName = restaurantName.trim();
-
+    
     if (
       restaurantName.toLowerCase() === Constants.TOTAL_KEYWORD.toLowerCase()
     ) {

@@ -19,7 +19,7 @@ const message = new SlackModule.SlackMessage(
   "U2147483697",
   "Steve",
   "/10bis",
-  "תאתא"
+  "אנסטסיה"
 );
 
 const goodResponse = new SlackModule.SlackResponse(
@@ -32,8 +32,8 @@ goodResponse.attachments.push(
 );
 
 const validCard = new SlackModule.SlackAttachment(
-  "תאתא : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
-  "תאתא",
+  "אנסטסיה : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  "אנסטסיה",
   SlackMessageFormatter.GREEN_COLOR,
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
@@ -46,8 +46,8 @@ validCard.fields = [
 ];
 
 const validTotalCard = new SlackModule.SlackAttachment(
-  "תאתא : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
-  "תאתא",
+  "אנסטסיה : https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
+  "אנסטסיה",
   SlackMessageFormatter.GREEN_COLOR,
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
@@ -190,7 +190,7 @@ describe("SlackMessage", function () {
     );
     const restaurantName: string = slackMessage.getRestaurantName(req);
 
-    expect(restaurantName).to.equal("תאתא");
+    expect(restaurantName).to.equal("אנסטסיה");
   });
   it("getRestaurantName() should return null if no body exists", function () {
     const req: SlackModule.SlackRequest = new SlackModule.SlackRequest(
@@ -241,7 +241,7 @@ describe("SlackMessage", function () {
 
   it("generateRestaurantCard() should return a valid card", function () {
     const restaruant = new Commons.RestaurantBuilder()
-      .setRestaurantName("תאתא")
+      .setRestaurantName("אנסטסיה")
       .setRestaurantId(123)
       .setMinimumOrder("26 שח")
       .setDeliveryPrice("10 שח")
@@ -359,7 +359,7 @@ describe("SlackMessage", function () {
 
   it("generateRestaurantTotalCard() should return a valid card", function () {
     const restaruant = new Commons.RestaurantBuilder()
-      .setRestaurantName("תאתא")
+      .setRestaurantName("אנסטסיה")
       .setRestaurantId(123)
       .setMinimumOrder("₪70.00")
       .setPoolSum("₪ 90.00")
