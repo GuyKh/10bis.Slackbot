@@ -1,6 +1,6 @@
 import { Response } from "express";
 import * as winston from "winston";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   Commons,
   FilterByRestaurantName,
@@ -37,7 +37,7 @@ export class App {
 
   clearCache(): Promise<void> {
     myCache.clear();
-    return new Promise<void>(resolve => resolve());
+    return new Promise<void>((resolve) => resolve());
   }
 
   process(req: Commons.Request, res: Response): Promise<void> {
@@ -56,7 +56,7 @@ export class App {
     }
 
     restaurantName = restaurantName.trim();
-    
+
     if (
       restaurantName.toLowerCase() === Constants.TOTAL_KEYWORD.toLowerCase()
     ) {
@@ -135,8 +135,8 @@ export class App {
 
     return axios
       .get(parsedUrl)
-      .then((resp) => {
-        const data = resp.data;
+      .then((resp: AxiosResponse<unknown, Commons.Restaurant[]>) => {
+        const data = resp.data as Commons.Restaurant[];
 
         if (!data || !data.length || data.length < 1) {
           const badResBody = messageFormatter.getErrorMessage(restaurantName);
@@ -184,21 +184,21 @@ export class App {
     return axios
       .get(parsedUrl)
       .then((resp) => {
-        const data: Commons.Restaurant[] = resp.data;
+        const data: Commons.Restaurant[] = resp.data as Commons.Restaurant[];
 
         if (!data || !(data instanceof Array)) {
-          const resBody = messageFormatter.getErrorMessage(null);
-          res.json(resBody);
+          const errorMessage = messageFormatter.getErrorMessage(null);
+          res.json(errorMessage);
           return;
         }
 
         const restaurants: Commons.Restaurant[] =
           data.filter(FilterTotalOrders);
 
-        const resBody = messageFormatter.generateTotalOrdersResponse(
+        const totalOrderResponse = messageFormatter.generateTotalOrdersResponse(
           FilterByRestaurantName(restaurants, false, null)
         );
-        res.json(resBody);
+        res.json(totalOrderResponse);
       })
       .catch((err) => {
         winston.debug("Error in Get Total Orders: " + err);
