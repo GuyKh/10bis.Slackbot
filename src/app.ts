@@ -136,7 +136,8 @@ export class App {
     return axios
       .get(parsedUrl)
       .then((resp) => {
-        const data = resp.data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data = res.data as any ;
 
         if (!data || !data.length || data.length < 1) {
           const badResBody = messageFormatter.getErrorMessage(restaurantName);
@@ -184,7 +185,8 @@ export class App {
     return axios
       .get(parsedUrl)
       .then((resp) => {
-        const data: Commons.Restaurant[] = resp.data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data: Commons.Restaurant[] = resp.data as Commons.Restaurant[];
 
         if (!data || !(data instanceof Array)) {
           const resBody = messageFormatter.getErrorMessage(null);
