@@ -53,7 +53,7 @@
     "postinstall": "husky install"
   },
   "engines": {
-    "npm": "8.0.x",
+    "npm": "8.1.x",
     "node": "14.x"
   },
   "nyc": {
