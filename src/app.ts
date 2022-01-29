@@ -19,16 +19,40 @@ import { MemoryStorage } from "node-ts-cache-storage-memory";
 
 const myCache = new CacheContainer(new MemoryStorage());
 const cacheTTL: number = 60 * 60 * 24;
-winston.configure({
-  level: process.env.LOG_LEVEL,
-  transports: [new winston.transports.Console()],
+
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: '10bis.slackbot' },
+  transports: [
+    //
+    // - Write all logs with importance level of `error` or less to `error.log`
+    // - Write all logs with importance level of `info` or less to `combined.log`
+    //
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
 });
+
+//
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+    level: process.env.LOG_LEVEL
+  }));
+}
+
+
 
 export class App {
   public express;
   private messageFormatters: Commons.MessageFormatter[];
   constructor() {
-    winston.debug("Booting %s", Constants.APP_NAME);
+    logger.debug("Booting %s", Constants.APP_NAME);
     this.messageFormatters = [
       HipChatMessageFormatter.getInstance(),
       SlackMessageFormatter.getInstance(),
@@ -169,7 +193,7 @@ export class App {
         }
       })
       .catch((err) => {
-        winston.debug("Error in Search: " + err);
+        logger.debug("Error in Search: " + err);
         res.status(400).send(Constants.ERROR_STRING);
       });
   }
@@ -179,7 +203,7 @@ export class App {
     messageFormatter: Commons.MessageFormatter
   ): Promise<void> {
     const parsedUrl: string = GenerateGetTotalOrdersRequest();
-    winston.debug("Total Orders Url: " + parsedUrl);
+    logger.debug("Total Orders Url: " + parsedUrl);
 
     return axios
       .get(parsedUrl)
@@ -201,7 +225,7 @@ export class App {
         res.json(totalOrderResponse);
       })
       .catch((err) => {
-        winston.debug("Error in Get Total Orders: " + err);
+        logger.debug("Error in Get Total Orders: " + err);
         res.status(400).send(Constants.ERROR_STRING);
       });
   }
