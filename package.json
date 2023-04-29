@@ -13,7 +13,7 @@
     "moment-timezone": "0.5.43",
     "node-ts-cache": "4.4.0",
     "node-ts-cache-storage-memory": "4.4.0",
-    "redis": "4.6.5",
+    "redis": "4.6.6",
     "typescript": "5.0.4",
     "uuid": "9.0.0",
     "winston": "3.8.2"
