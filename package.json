@@ -16,7 +16,7 @@
     "redis": "4.6.7",
     "typescript": "5.1.6",
     "uuid": "9.0.0",
-    "winston": "3.9.0"
+    "winston": "3.10.0"
   },
   "devDependencies": {
     "@types/chai": "4.3.5",
