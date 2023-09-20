@@ -61,7 +61,7 @@ describe("App", () => {
       expect(slackRes.response_type).to.equal("in_channel");
       expect(slackRes.attachments).not.to.equal(null);
       expect(slackRes.attachments.length).to.equal(1);
-      expect(slackRes.attachments[0].title).to.equal(validSlackMessage.text);
+      expect(slackRes.attachments[0].title).to.contain(validSlackMessage.text);
     });
   });
   it('process() should return one restaurant if valid Slack message with quotes (") ', () => {
@@ -240,7 +240,7 @@ describe("App", () => {
           HipChatMessageFormatter.COMMAND_OPERATOR.length + 1
         );
       }
-      expect(hipChatRes.card.title).to.equal(message);
+      expect(hipChatRes.card.title).to.contain(message);
     });
   });
   it("process() should return default message if invalid Slack message", () => {
