@@ -15,7 +15,7 @@
     "node-ts-cache-storage-memory": "4.4.0",
     "redis": "4.6.7",
     "typescript": "5.1.6",
-    "uuid": "9.0.0",
+    "uuid": "9.0.1",
     "winston": "3.9.0"
   },
   "devDependencies": {
