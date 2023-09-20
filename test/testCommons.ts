@@ -142,7 +142,7 @@ export const restaurants: Commons.Restaurant[] = [
     .build(),
   new Commons.RestaurantBuilder()
     .setRestaurantId(1238)
-    .setRestaurantName("אנסטסיה")
+    .setRestaurantName("אנסטסיה בית קפה טבעוני")
     .setRestaurantAddress("תובל 19 רמת גן")
     .setRestaurantCityName("רמת גן")
     .setRestaurantLogoUrl(
