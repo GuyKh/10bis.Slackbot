@@ -88,7 +88,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       "green",
       Constants.DEFAULT_RESPONSE,
       false,
-      "text"
+      "text",
     );
   }
 
@@ -102,7 +102,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       "red",
       Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString,
       false,
-      "text"
+      "text",
     );
   }
 
@@ -117,7 +117,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       let message: string = req.body.item.message.message;
 
       message = message.slice(
-        HipChatMessageFormatter.COMMAND_OPERATOR.length + 1
+        HipChatMessageFormatter.COMMAND_OPERATOR.length + 1,
       ); // get the value
 
       return message;
@@ -127,7 +127,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
   }
 
   generateSearchResponse(
-    restaurants: Commons.Restaurant[]
+    restaurants: Commons.Restaurant[],
   ): Commons.TenBisResponse {
     let title: string = "Found " + restaurants.length + " restaurants";
     let restaurantText: string = "";
@@ -136,7 +136,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       title += "\n";
       restaurants.forEach(function (
         restaurant: Commons.Restaurant,
-        index: number
+        index: number,
       ) {
         let suffix: string = "";
         if (index + 1 < restaurants.length) {
@@ -162,14 +162,14 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
   }
 
   generateTotalOrdersResponse(
-    restaurants: Commons.Restaurant[]
+    restaurants: Commons.Restaurant[],
   ): HipChatModule.HipChatResponse {
     let restaurantsString: string = "";
     if (restaurants.length > 0) {
       // Create a list
       restaurants.forEach(function (
         restaurant: Commons.Restaurant,
-        index: number
+        index: number,
       ) {
         restaurantsString +=
           "[" +
@@ -194,7 +194,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       "green",
       restaurantsString,
       false,
-      "text"
+      "text",
     );
 
     return response;
@@ -209,7 +209,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       req.body.item.message.message
     ) {
       return req.body.item.message.message.startsWith(
-        HipChatMessageFormatter.COMMAND_OPERATOR
+        HipChatMessageFormatter.COMMAND_OPERATOR,
       );
     }
 
@@ -224,7 +224,7 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
   }
 
   generateRestaurantCard(
-    restaurant: Commons.Restaurant
+    restaurant: Commons.Restaurant,
   ): HipChatModule.HipChatCard {
     return new HipChatModule.HipChatCard(
       "link",
@@ -234,13 +234,13 @@ export class HipChatMessageFormatter implements Commons.MessageFormatter {
       this.generateDescription(restaurant),
       new HipChatModule.UrlObject(restaurant.RestaurantLogoUrl),
       new Date().getTime(),
-      new HipChatModule.UrlObject(restaurant.RestaurantLogoUrl)
+      new HipChatModule.UrlObject(restaurant.RestaurantLogoUrl),
     );
   }
 
   getSuccessMessage(
     text: string,
-    restaurant: Commons.Restaurant
+    restaurant: Commons.Restaurant,
   ): HipChatModule.HipChatResponse {
     const response: HipChatModule.HipChatResponse =
       new HipChatModule.HipChatResponse("green", text, false, "text");

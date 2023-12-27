@@ -3,7 +3,7 @@
     "extension": ["ts"],
     "opts": false,
     "package": "./package.json",
-    "require": ["ts-node/register"],
+    "require": ["ts-node/register", "source-map-support/register"],
     "reporter": "spec",
     "slow": 75,
     "timeout": 2000,

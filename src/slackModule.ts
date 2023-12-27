@@ -19,7 +19,7 @@ export module SlackModule {
       titleLink: string,
       text: string,
       thumbUrl: string,
-      ts: Number
+      ts: Number,
     ) {
       this.fallback = fallback;
       this.title = title;
@@ -51,7 +51,7 @@ export module SlackModule {
     constructor(
       responseType: string,
       text: string,
-      attachments: SlackAttachment[]
+      attachments: SlackAttachment[],
     ) {
       this.response_type = responseType;
       this.text = text;
@@ -87,7 +87,7 @@ export module SlackModule {
       userId: string,
       userName: string,
       command: string,
-      text: string
+      text: string,
     ) {
       this.token = token;
       this.team_id = teamId;
