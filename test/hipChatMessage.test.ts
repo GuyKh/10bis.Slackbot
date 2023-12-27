@@ -19,16 +19,16 @@ const message = new HipChatModule.HipChatReqBody(
       new HipChatModule.HipChatReqItemMessageFrom(
         1661743,
         "Blinky",
-        "Blinky the Three Eyed Fish",
+        "Blinky the Three Eyed Fish"
       ),
       "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
       [],
       "/10bis אנסטסיה",
-      "message",
+      "message"
     ),
-    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel"),
+    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")
   ),
-  578829,
+  578829
 );
 
 const badMessage = new HipChatModule.HipChatReqBody(
@@ -39,30 +39,30 @@ const badMessage = new HipChatModule.HipChatReqBody(
       new HipChatModule.HipChatReqItemMessageFrom(
         1661743,
         "Blinky",
-        "Blinky the Three Eyed Fish",
+        "Blinky the Three Eyed Fish"
       ),
       "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
       [],
       null,
-      "message",
+      "message"
     ),
-    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel"),
+    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")
   ),
-  578829,
+  578829
 );
 
 const goodResponse = new HipChatModule.HipChatResponse(
   "green",
   "Found 0 Restaurants",
   false,
-  "text",
+  "text"
 );
 
 const errorResponse = new HipChatModule.HipChatResponse(
   "red",
   Constants.NO_RESTAURANTS_FOUND_STRING,
   false,
-  "text",
+  "text"
 );
 
 const validCard = new HipChatModule.HipChatCard(
@@ -73,7 +73,7 @@ const validCard = new HipChatModule.HipChatCard(
   "מסעדה אמריקאית\nמינימום הזמנה: 26 שח",
   new HipChatModule.UrlObject("http://image.jpg"),
   new Date().getTime(),
-  new HipChatModule.UrlObject("http://image.jpg"),
+  new HipChatModule.UrlObject("http://image.jpg")
 );
 
 const generateRestaurant = function (): Commons.Restaurant {
@@ -96,7 +96,7 @@ describe("HipChatMessage", function () {
     it("should have a generateTotalOrdersResponse Method", function () {
       expect(typeof hipChatMessage).to.equal("object");
       expect(typeof hipChatMessage.generateTotalOrdersResponse).to.equal(
-        "function",
+        "function"
       );
     });
     it("should have a generateRestaurantCard Method", function () {
@@ -287,7 +287,7 @@ describe("HipChatMessage", function () {
       new HipChatMessageFormatter(); // eslint-disable-line no-new
     } catch (err) {
       expect(err.toString()).to.equal(
-        "Error: " + HipChatMessageFormatter.INITIALIZATION_EXCEPTION_STRING,
+        "Error: " + HipChatMessageFormatter.INITIALIZATION_EXCEPTION_STRING
       );
     }
   });
@@ -310,7 +310,7 @@ describe("HipChatMessage", function () {
     const responseText: string = "Found 1 restaurant";
     const response = hipChatMessageFormatter.getSuccessMessage(
       responseText,
-      null,
+      null
     ) as HipChatModule.HipChatResponse;
 
     expect(response.color).to.equal("green");
@@ -326,7 +326,7 @@ describe("HipChatMessage", function () {
     const restaruant = generateRestaurant();
     const response = hipChatMessageFormatter.getSuccessMessage(
       responseText,
-      restaruant,
+      restaruant
     ) as HipChatModule.HipChatResponse;
 
     expect(response.color).to.equal("green");

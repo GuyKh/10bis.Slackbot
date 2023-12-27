@@ -42,7 +42,7 @@ describe("App", function () {
     const req = new SlackModule.SlackRequest(validSlackMessage);
 
     expect(
-      VerifyMessage(null, [slackMessageFormatter, hipChatMessageFormatter]),
+      VerifyMessage(null, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(null);
     expect(VerifyMessage(req, null)).to.equal(null);
   });
@@ -50,28 +50,28 @@ describe("App", function () {
   it("verifyMessage() should return slackMessageFormatter if valid slack message is passed", function () {
     const req = new SlackModule.SlackRequest(validSlackMessage);
     expect(
-      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter]),
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(slackMessageFormatter);
   });
 
   it("verifyMessage() should return hipChatMessage if valid HipChat message is passed", function () {
     const req = new HipChatModule.HipChatReq(validHipChatMessage);
     expect(
-      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter]),
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.equal(hipChatMessageFormatter);
   });
 
   it("verifyMessage() should return null if invalid Slack message is passed", function () {
     const req = new SlackModule.SlackRequest(slackInvalidMessage);
     expect(
-      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter]),
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.be.an("undefined");
   });
 
   it("verifyMessage() should return null if invalid HipChat message is passed", function () {
     const req = new HipChatModule.HipChatReq(hipChatInvalidMessage);
     expect(
-      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter]),
+      VerifyMessage(req, [slackMessageFormatter, hipChatMessageFormatter])
     ).to.be.an("undefined");
   });
 
@@ -106,7 +106,7 @@ describe("App", function () {
     const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       false,
-      null,
+      null
     );
 
     expect(restaurants).not.to.equal(null);
@@ -114,12 +114,12 @@ describe("App", function () {
     expect(
       restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant1.RestaurantName;
-      }),
+      })
     ).to.equal(true);
     expect(
       restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant2.RestaurantName;
-      }),
+      })
     ).to.equal(true);
   });
 
@@ -127,7 +127,7 @@ describe("App", function () {
     const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [],
       false,
-      null,
+      null
     );
 
     expect(restaurants).not.to.equal(null);
@@ -151,7 +151,7 @@ describe("App", function () {
     const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       false,
-      null,
+      null
     );
 
     expect(restaurants).not.to.equal(null);
@@ -159,12 +159,12 @@ describe("App", function () {
     expect(
       restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant1.RestaurantName;
-      }),
+      })
     ).to.equal(true);
     expect(
       restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant2.RestaurantName;
-      }),
+      })
     ).to.equal(true);
   });
 
@@ -185,7 +185,7 @@ describe("App", function () {
     const restaurants: Commons.Restaurant[] = FilterByRestaurantName(
       [restaurant1, restaurant2, restaurant3],
       true,
-      "Rest1",
+      "Rest1"
     );
 
     expect(restaurants).not.to.equal(null);
@@ -193,7 +193,7 @@ describe("App", function () {
     expect(
       restaurants.some(function (element: Commons.Restaurant) {
         return element.RestaurantName === restaurant1.RestaurantName;
-      }),
+      })
     ).to.equal(true);
   });
 
@@ -225,13 +225,13 @@ describe("App", function () {
     expect(restaurants).not.to.equal(null);
     expect(restaurants.length).to.equal(3);
     expect(restaurants[0].RestaurantName).to.be.equal(
-      restaurant1.RestaurantName,
+      restaurant1.RestaurantName
     );
     expect(restaurants[1].RestaurantName).to.be.equal(
-      restaurant3.RestaurantName,
+      restaurant3.RestaurantName
     );
     expect(restaurants[2].RestaurantName).to.be.equal(
-      restaurant2.RestaurantName,
+      restaurant2.RestaurantName
     );
   });
 
@@ -268,16 +268,16 @@ describe("App", function () {
     expect(restaurants).not.to.equal(null);
     expect(restaurants.length).to.equal(4);
     expect(restaurants[0].RestaurantName).to.be.equal(
-      restaurant2.RestaurantName,
+      restaurant2.RestaurantName
     );
     expect(restaurants[1].RestaurantName).to.be.equal(
-      restaurant4.RestaurantName,
+      restaurant4.RestaurantName
     );
     expect(restaurants[2].RestaurantName).to.be.equal(
-      restaurant1.RestaurantName,
+      restaurant1.RestaurantName
     );
     expect(restaurants[3].RestaurantName).to.be.equal(
-      restaurant3.RestaurantName,
+      restaurant3.RestaurantName
     );
   });
 
@@ -309,13 +309,13 @@ describe("App", function () {
     expect(restaurants).not.to.equal(null);
     expect(restaurants.length).to.equal(3);
     expect(restaurants[0].RestaurantName).to.be.equal(
-      restaurant2.RestaurantName,
+      restaurant2.RestaurantName
     );
     expect(restaurants[1].RestaurantName).to.be.equal(
-      restaurant3.RestaurantName,
+      restaurant3.RestaurantName
     );
     expect(restaurants[2].RestaurantName).to.be.equal(
-      restaurant1.RestaurantName,
+      restaurant1.RestaurantName
     );
   });
 
@@ -342,13 +342,13 @@ describe("App", function () {
     expect(restaurants).not.to.equal(null);
     expect(restaurants.length).to.equal(3);
     expect(restaurants[0].RestaurantName).to.be.equal(
-      restaurant1.RestaurantName,
+      restaurant1.RestaurantName
     );
     expect(restaurants[1].RestaurantName).to.be.equal(
-      restaurant2.RestaurantName,
+      restaurant2.RestaurantName
     );
     expect(restaurants[2].RestaurantName).to.be.equal(
-      restaurant3.RestaurantName,
+      restaurant3.RestaurantName
     );
   });
 
@@ -361,7 +361,7 @@ describe("App", function () {
     filteredRestaurants.forEach(function (restaurant: Commons.Restaurant) {
       expect(restaurant.PoolSumNumber > 0).to.be.equal(true);
       expect(restaurant.IsOverPoolMin).to.be.equal(
-        restaurant.PoolSumNumber >= restaurant.MinimumPriceForOrder,
+        restaurant.PoolSumNumber >= restaurant.MinimumPriceForOrder
       );
     });
   });
@@ -503,7 +503,7 @@ describe("App", function () {
     expect(restaurant.ReviewsRank).to.be.equal(ReviewsRank);
     expect(restaurant.DistanceFromUser).to.be.equal(DistanceFromUser);
     expect(restaurant.DistanceFromUserInMeters).to.be.equal(
-      DistanceFromUserInMeters,
+      DistanceFromUserInMeters
     );
     expect(restaurant.IsOpenForDelivery).to.be.equal(IsOpenForDelivery);
     expect(restaurant.IsOpenForPickup).to.be.equal(IsOpenForPickup);
@@ -518,13 +518,13 @@ describe("App", function () {
     expect(restaurant.ResGeoLocation_lon).to.be.equal(ResGeoLocation_lon);
     expect(restaurant.HappyHourDiscount).to.be.equal(HappyHourDiscount);
     expect(restaurant.HappyHourDiscountPercent).to.be.equal(
-      HappyHourDiscountPercent,
+      HappyHourDiscountPercent
     );
     expect(restaurant.DeliveryChargeValueType).to.be.equal(
-      DeliveryChargeValueType,
+      DeliveryChargeValueType
     );
     expect(restaurant.HappyHourDiscountValidityString).to.be.equal(
-      HappyHourDiscountValidityString,
+      HappyHourDiscountValidityString
     );
     expect(restaurant.StartOrderURL).to.be.equal(StartOrderURL);
     expect(restaurant.ActivityHours).to.be.equal(ActivityHours);
@@ -533,10 +533,10 @@ describe("App", function () {
     expect(restaurant.ArrivalDeliveryTime).to.be.equal(ArrivalDeliveryTime);
     expect(restaurant.EstimatedDeliveryTime).to.be.equal(EstimatedDeliveryTime);
     expect(restaurant.ArrivalEstimatedDeliveryTime).to.be.equal(
-      ArrivalEstimatedDeliveryTime,
+      ArrivalEstimatedDeliveryTime
     );
     expect(restaurant.ShowEstimatedDeliveryTimes).to.be.equal(
-      ShowEstimatedDeliveryTimes,
+      ShowEstimatedDeliveryTimes
     );
     expect(restaurant.IsHappyHourActive).to.be.equal(IsHappyHourActive);
     expect(restaurant.IsPromotionActive).to.be.equal(IsPromotionActive);
@@ -556,15 +556,15 @@ describe("App", function () {
     expect(restaurant.ResWebsiteMode).to.be.equal(ResWebsiteMode);
     expect(restaurant.Priority).to.be.equal(Priority);
     expect(restaurant.KosherCertificateImgUrl).to.be.equal(
-      KosherCertificateImgUrl,
+      KosherCertificateImgUrl
     );
     expect(restaurant.IsExpressRes).to.be.equal(IsExpressRes);
     expect(restaurant.ShowSEOTagsForRes).to.be.equal(ShowSEOTagsForRes);
     expect(restaurant.HappyHourResRulesDescription).to.be.equal(
-      HappyHourResRulesDescription,
+      HappyHourResRulesDescription
     );
     expect(restaurant.PhoneOrdersOnlyOnPortals).to.be.equal(
-      PhoneOrdersOnlyOnPortals,
+      PhoneOrdersOnlyOnPortals
     );
     expect(restaurant.DeliveryStartTime).to.be.equal(DeliveryStartTime);
     expect(restaurant.PickupStartTime).to.be.equal(PickupStartTime);

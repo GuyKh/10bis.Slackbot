@@ -20,17 +20,18 @@ import { MemoryStorage } from "node-ts-cache-storage-memory";
 const myCache = new CacheContainer(new MemoryStorage());
 const cacheTTL: number = 60 * 60 * 24;
 
+
 const logger = winston.createLogger({
-  level: "info",
+  level: 'info',
   format: winston.format.json(),
-  defaultMeta: { service: "10bis.slackbot" },
+  defaultMeta: { service: '10bis.slackbot' },
   transports: [
     //
     // - Write all logs with importance level of `error` or less to `error.log`
     // - Write all logs with importance level of `info` or less to `combined.log`
     //
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.File({ filename: "combined.log" }),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
   ],
 });
 
@@ -38,14 +39,14 @@ const logger = winston.createLogger({
 // If we're not in production then log to the `console` with the format:
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 //
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple(),
-      level: process.env.LOG_LEVEL,
-    }),
-  );
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+    level: process.env.LOG_LEVEL
+  }));
 }
+
+
 
 export class App {
   public express;
@@ -94,7 +95,7 @@ export class App {
     res: Response,
     messageFormatter: Commons.MessageFormatter,
     restaurantName: string,
-    useCache?: boolean,
+    useCache?: boolean
   ): Promise<void> {
     if (!restaurantName || restaurantName.length === 0) {
       // Behavior for empty command ("/10bis" with no content)
@@ -122,8 +123,8 @@ export class App {
               FilterByRestaurantName(
                 SortRestaurantsByDistance(cachedData),
                 useExactRestaurantName,
-                cleanRestaurantName,
-              ),
+                cleanRestaurantName
+              )
             );
             res.json(resBody);
           } else {
@@ -131,7 +132,7 @@ export class App {
               res,
               messageFormatter,
               restaurantName,
-              useCache,
+              useCache
             );
           }
         });
@@ -144,7 +145,7 @@ export class App {
     res: Response,
     messageFormatter: Commons.MessageFormatter,
     restaurantName: string,
-    useCache: boolean,
+    useCache: boolean
   ): Promise<void> {
     let useExactRestaurantName: boolean = false;
     const exactRestaurantName: string =
@@ -175,8 +176,8 @@ export class App {
                 FilterByRestaurantName(
                   SortRestaurantsByDistance(data),
                   useExactRestaurantName,
-                  restaurantName,
-                ),
+                  restaurantName
+                )
               );
               res.json(resBody);
             });
@@ -185,8 +186,8 @@ export class App {
             FilterByRestaurantName(
               SortRestaurantsByDistance(data),
               useExactRestaurantName,
-              restaurantName,
-            ),
+              restaurantName
+            )
           );
           res.json(resBody);
         }
@@ -199,7 +200,7 @@ export class App {
 
   getTotalOrders(
     res: Response,
-    messageFormatter: Commons.MessageFormatter,
+    messageFormatter: Commons.MessageFormatter
   ): Promise<void> {
     const parsedUrl: string = GenerateGetTotalOrdersRequest();
     logger.debug("Total Orders Url: " + parsedUrl);
@@ -219,7 +220,7 @@ export class App {
           data.filter(FilterTotalOrders);
 
         const totalOrderResponse = messageFormatter.generateTotalOrdersResponse(
-          FilterByRestaurantName(restaurants, false, null),
+          FilterByRestaurantName(restaurants, false, null)
         );
         res.json(totalOrderResponse);
       })

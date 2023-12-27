@@ -47,7 +47,7 @@ export module HipChatModule {
       id: string,
       mentions: Array<Object>,
       message: string,
-      type: string,
+      type: string
     ) {
       this.date = date;
       this.from = from;
@@ -91,7 +91,7 @@ export module HipChatModule {
       color: string,
       message: string,
       notify: boolean,
-      message_format: string,
+      message_format: string
     ) {
       this.color = color;
       this.message = message;
@@ -118,7 +118,7 @@ export module HipChatModule {
       description: string,
       icon: UrlObject,
       date: number,
-      thumbnail: UrlObject,
+      thumbnail: UrlObject
     ) {
       this.style = style;
       this.url = url;

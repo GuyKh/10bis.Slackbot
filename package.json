@@ -19,7 +19,6 @@
     "winston": "3.11.0"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/chai": "4.3.11",
     "@types/mocha": "10.0.6",
     "@typescript-eslint/eslint-plugin": "6.16.0",
@@ -35,19 +34,17 @@
     "mocha": "10.2.0",
     "mock-express-response": "0.3.0",
     "moxios": "0.4.0",
-    "nyc": "^15.1.0",
+    "nyc": "15.1.0",
     "prettier": "3.1.1",
     "sinon": "17.0.1",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.2"
+    "ts-node": "10.9.2"
   },
   "scripts": {
     "precommit": "./node_modules/.bin/eslint `git diff --name-only | grep .ts` --fix",
     "eslint": "./node_modules/.bin/eslint --ext .ts src/*.ts test/*.ts --fix",
     "start": "./tsc --module commonjs --sourceMap --target ES6 -p ./tsconfig.json && node ./bin/www",
     "pretest": "./node_modules/.bin/tsc --module commonjs --sourceMap --target ES6 -p ./tsconfigTest.json",
-    "covtest": "./node_modules/.bin/nyc mocha --recursive",
-    "test": "mocha --recursive",
+    "test": "./node_modules/.bin/nyc mocha --recursive",
     "mocha": "mocha --recursive",
     "cover": "./node_modules/.bin/nyc npm t",
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls",
