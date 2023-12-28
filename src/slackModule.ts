@@ -1,6 +1,7 @@
 /* eslint camelcase: "off" */
 import { Commons } from "./commons";
-
+import { SlackMessageFormatter } from "./slackMessage";
+import { Constants } from "./constants";
 export module SlackModule {
   export class SlackAttachment {
     fallback: string;
@@ -28,6 +29,25 @@ export module SlackModule {
       this.text = text;
       this.thumb_url = thumbUrl;
       this.ts = ts;
+    }
+
+    static fromRestaurant(
+      restaurant: Commons.Restaurant,
+      colorOverride: string = null,
+    ) {
+      return new SlackAttachment(
+        `${restaurant.RestaurantName} : ${Constants.RESTAURANT_BASE_URL}${restaurant.RestaurantId}`,
+        restaurant.RestaurantName,
+        colorOverride
+          ? colorOverride
+          : restaurant.IsOverPoolMin
+            ? SlackMessageFormatter.GREEN_COLOR
+            : SlackMessageFormatter.RED_COLOR,
+        `${Constants.RESTAURANT_BASE_URL}${restaurant.RestaurantId}`,
+        restaurant.RestaurantCuisineList,
+        restaurant.RestaurantLogoUrl,
+        Math.floor(Date.now() / 1000),
+      );
     }
   }
 

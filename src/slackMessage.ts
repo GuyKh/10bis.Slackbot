@@ -248,19 +248,9 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
   generateRestaurantCard(
     restaurant: Commons.Restaurant,
   ): SlackModule.SlackAttachment {
-    const restaurantName: string = restaurant.RestaurantName;
-
-    const slackAttachment = new SlackModule.SlackAttachment(
-      restaurantName +
-        " : " +
-        Constants.RESTAURANT_BASE_URL +
-        restaurant.RestaurantId,
-      restaurantName,
+    const slackAttachment = SlackModule.SlackAttachment.fromRestaurant(
+      restaurant,
       "#36a64f",
-      Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-      restaurant.RestaurantCuisineList,
-      restaurant.RestaurantLogoUrl,
-      Math.floor(Date.now() / 1000),
     );
 
     slackAttachment.fields = [];
@@ -286,22 +276,8 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
   generateRestaurantTotalCard(
     restaurant: Commons.Restaurant,
   ): SlackModule.SlackAttachment {
-    const restaurantName: string = restaurant.RestaurantName;
-
-    const slackAttachment = new SlackModule.SlackAttachment(
-      restaurantName +
-        " : " +
-        Constants.RESTAURANT_BASE_URL +
-        restaurant.RestaurantId,
-      restaurantName,
-      restaurant.IsOverPoolMin
-        ? SlackMessageFormatter.GREEN_COLOR
-        : SlackMessageFormatter.RED_COLOR,
-      Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-      restaurant.RestaurantCuisineList,
-      restaurant.RestaurantLogoUrl,
-      Math.floor(Date.now() / 1000),
-    );
+    const slackAttachment =
+      SlackModule.SlackAttachment.fromRestaurant(restaurant);
 
     slackAttachment.fields = [];
     slackAttachment.fields.push(
