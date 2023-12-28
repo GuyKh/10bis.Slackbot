@@ -21,7 +21,7 @@ export const validSlackMessage = new SlackModule.SlackMessage(
   "U2147483697",
   "Steve",
   "/10bis",
-  "אנסטסיה"
+  "אנסטסיה",
 );
 
 export const validHipChatMessage = new HipChatModule.HipChatReqBody(
@@ -32,16 +32,16 @@ export const validHipChatMessage = new HipChatModule.HipChatReqBody(
       new HipChatModule.HipChatReqItemMessageFrom(
         1661743,
         "Blinky",
-        "Blinky the Three Eyed Fish"
+        "Blinky the Three Eyed Fish",
       ),
       "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
       [],
       "/10bis אנסטסיה",
-      "message"
+      "message",
     ),
-    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")
+    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel"),
   ),
-  578829
+  578829,
 );
 
 export const slackInvalidMessage = new SlackModule.SlackMessage(
@@ -53,7 +53,7 @@ export const slackInvalidMessage = new SlackModule.SlackMessage(
   "U2147483697",
   "Steve",
   null,
-  null
+  null,
 );
 
 export const hipChatInvalidMessage = new HipChatModule.HipChatReqBody(
@@ -64,16 +64,16 @@ export const hipChatInvalidMessage = new HipChatModule.HipChatReqBody(
       new HipChatModule.HipChatReqItemMessageFrom(
         1661743,
         "Blinky",
-        "Blinky the Three Eyed Fish"
+        "Blinky the Three Eyed Fish",
       ),
       "00a3eb7f-fac5-496a-8d64-a9050c712ca1",
       [],
       null,
-      "message"
+      "message",
     ),
-    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel")
+    new HipChatModule.HipChatReqItemRoom(1147567, "The Weather Channel"),
   ),
-  578829
+  578829,
 );
 
 export const restaurants: Commons.Restaurant[] = [
@@ -83,7 +83,7 @@ export const restaurants: Commons.Restaurant[] = [
     .setRestaurantAddress("תובל 19 רמת גן")
     .setRestaurantCityName("רמת גן")
     .setRestaurantLogoUrl(
-      "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif"
+      "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif",
     )
     .setRestaurantPhone("03-5440053")
     .setRestaurantCuisineList("אוכל ביתי) בשרים) סלטים/סנדוויצ`ים")
@@ -146,7 +146,7 @@ export const restaurants: Commons.Restaurant[] = [
     .setRestaurantAddress("תובל 19 רמת גן")
     .setRestaurantCityName("רמת גן")
     .setRestaurantLogoUrl(
-      "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif"
+      "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif",
     )
     .setRestaurantPhone("03-5440053")
     .setRestaurantCuisineList("אוכל ביתי) בשרים) סלטים/סנדוויצ`ים")
@@ -209,7 +209,7 @@ export const restaurants: Commons.Restaurant[] = [
     .setRestaurantAddress("תובל 19 רמת גן")
     .setRestaurantCityName("רמת גן")
     .setRestaurantLogoUrl(
-      "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif"
+      "https://d25t2285lxl5rf.cloudfront.net/images/shops/13048.gif",
     )
     .setRestaurantPhone("03-5440053")
     .setRestaurantCuisineList("אוכל ביתי) בשרים) סלטים/סנדוויצ`ים")

@@ -19,16 +19,16 @@ const message = new SlackModule.SlackMessage(
   "U2147483697",
   "Steve",
   "/10bis",
-  "אנסטסיה"
+  "אנסטסיה",
 );
 
 const goodResponse = new SlackModule.SlackResponse(
   "in_channel",
   "Found 0 restaurants",
-  []
+  [],
 );
 goodResponse.attachments.push(
-  new SlackModule.SlackAttachment(null, null, null, null, "List", null, null)
+  new SlackModule.SlackAttachment(null, null, null, null, "List", null, null),
 );
 
 const validCard = new SlackModule.SlackAttachment(
@@ -38,7 +38,7 @@ const validCard = new SlackModule.SlackAttachment(
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
   "http://image.jpg",
-  Math.floor(Date.now() / 1000)
+  Math.floor(Date.now() / 1000),
 );
 validCard.fields = [
   new SlackModule.SlackAttachmentField("מינימום הזמנה", "26 שח", true),
@@ -52,7 +52,7 @@ const validTotalCard = new SlackModule.SlackAttachment(
   "https://www.10bis.co.il/Restaurants/Menu/Delivery?ResId=123",
   "מסעדה אמריקאית",
   "http://image.jpg",
-  Math.floor(Date.now() / 1000)
+  Math.floor(Date.now() / 1000),
 );
 
 validTotalCard.fields = [
@@ -63,7 +63,7 @@ validTotalCard.fields = [
 const errorResponse = new SlackModule.SlackResponse(
   "ephemeral",
   Constants.NO_RESTAURANTS_FOUND_STRING,
-  null
+  null,
 );
 
 describe("SlackMessage", function () {
@@ -75,7 +75,7 @@ describe("SlackMessage", function () {
     it("should have a generateTotalOrdersResponse Method", function () {
       expect(typeof slackMessage).to.equal("object");
       expect(typeof slackMessage.generateTotalOrdersResponse).to.equal(
-        "function"
+        "function",
       );
     });
     it("should have a generateRestaurantCard Method", function () {
@@ -85,7 +85,7 @@ describe("SlackMessage", function () {
     it("should have a generateRestaurantTotalCard Method", function () {
       expect(typeof slackMessage).to.equal("object");
       expect(typeof slackMessage.generateRestaurantTotalCard).to.equal(
-        "function"
+        "function",
       );
     });
     it("should have a getErrorMessage Method", function () {
@@ -178,7 +178,7 @@ describe("SlackMessage", function () {
 
     expect(response.response_type).to.equal(goodResponse.response_type);
     expect(response.text).to.equal(
-      "Found " + bigAmountOfRestaurants.length + " restaurants"
+      "Found " + bigAmountOfRestaurants.length + " restaurants",
     );
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(1);
@@ -186,7 +186,7 @@ describe("SlackMessage", function () {
 
   it("getRestaurantName() should return right restaruant name from request", function () {
     const req: SlackModule.SlackRequest = new SlackModule.SlackRequest(
-      deepCopy(message)
+      deepCopy(message),
     );
     const restaurantName: string = slackMessage.getRestaurantName(req);
 
@@ -194,7 +194,7 @@ describe("SlackMessage", function () {
   });
   it("getRestaurantName() should return null if no body exists", function () {
     const req: SlackModule.SlackRequest = new SlackModule.SlackRequest(
-      deepCopy(message)
+      deepCopy(message),
     );
     req.body = null;
     const restaurantName: string = slackMessage.getRestaurantName(req);
@@ -286,11 +286,11 @@ describe("SlackMessage", function () {
     expect(response.attachments[0].fields.length).to.equal(2);
     expect(response.attachments[0].fields[0].title).to.equal("הוזמן עד כה");
     expect(response.attachments[0].fields[0].value).to.equal(
-      restaurants[0].PoolSum
+      restaurants[0].PoolSum,
     );
     expect(response.attachments[0].fields[1].title).to.equal("מינימום הזמנה");
     expect(response.attachments[0].fields[1].value).to.equal(
-      restaurants[0].MinimumOrder
+      restaurants[0].MinimumOrder,
     );
   });
 
@@ -351,7 +351,7 @@ describe("SlackMessage", function () {
 
     expect(response.response_type).to.equal(goodResponse.response_type);
     expect(response.text).to.equal(
-      "Found " + bigAmountOfRestaurants.length + " restaurants"
+      "Found " + bigAmountOfRestaurants.length + " restaurants",
     );
     expect(response.attachments).not.equal(null);
     expect(response.attachments.length).to.equal(1);
@@ -391,7 +391,7 @@ describe("SlackMessage", function () {
       new SlackMessageFormatter(); // eslint-disable-line no-new
     } catch (err) {
       expect(err.toString()).to.equal(
-        "Error: " + SlackMessageFormatter.INSTANTIATION_ERROR
+        "Error: " + SlackMessageFormatter.INSTANTIATION_ERROR,
       );
     }
   });
