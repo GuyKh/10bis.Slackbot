@@ -5,7 +5,7 @@ import { Constants } from "./constants";
 /*
 Request:
 {
-    "token"="ItoB7oEyZIbNmHPfxHQ2GrbC",
+    "token"="...",
     "team_id"="T0001",
     "team_domain"="example",
     "channel_id"="C2147483705",
@@ -260,7 +260,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
       Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
       restaurant.RestaurantCuisineList,
       restaurant.RestaurantLogoUrl,
-      Math.floor(Date.now() / 1000)
+      Math.floor(Date.now() / 1000),
     );
 
     slackAttachment.fields = [];
