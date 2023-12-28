@@ -5,7 +5,7 @@ import { Constants } from "./constants";
 /*
 Request:
 {
-    "token"="ItoB7oEyZIbNmHPfxHQ2GrbC",
+    "token"="...",
     "team_id"="T0001",
     "team_domain"="example",
     "channel_id"="C2147483705",
@@ -73,7 +73,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
     return new SlackModule.SlackResponse(
       "ephemeral",
       Constants.DEFAULT_RESPONSE,
-      null
+      null,
     );
   }
 
@@ -86,7 +86,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
     const response: Commons.TenBisResponse = new SlackModule.SlackResponse(
       "ephemeral",
       Constants.NO_RESTAURANTS_FOUND_STRING + restaurantString,
-      null
+      null,
     );
 
     return response;
@@ -101,7 +101,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
   }
 
   generateSearchResponse(
-    restaurants: Commons.Restaurant[]
+    restaurants: Commons.Restaurant[],
   ): SlackModule.SlackResponse {
     const title: string = "Found " + restaurants.length + " restaurants";
 
@@ -118,7 +118,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         // Create a list
         restaurants.forEach(function (
           restaurant: Commons.Restaurant,
-          index: number
+          index: number,
         ) {
           restaurantsString +=
             "[" +
@@ -139,8 +139,8 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
             null,
             restaurantsString,
             null,
-            null
-          )
+            null,
+          ),
         );
       }
     }
@@ -155,7 +155,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
   }
 
   generateTotalOrdersResponse(
-    restaurants: Commons.Restaurant[]
+    restaurants: Commons.Restaurant[],
   ): SlackModule.SlackResponse {
     let title: string = "Found " + restaurants.length + " restaurants";
 
@@ -176,7 +176,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
         // Create a list
         restaurants.forEach(function (
           restaurant: Commons.Restaurant,
-          index: number
+          index: number,
         ) {
           if (
             (!restaurant.IsOverPoolMin ||
@@ -211,8 +211,8 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
             null,
             restaurantsString,
             null,
-            null
-          )
+            null,
+          ),
         );
       }
     } else {
@@ -222,7 +222,7 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
     const slackResponse = new SlackModule.SlackResponse(
       "in_channel",
       title,
-      null
+      null,
     );
 
     if (attachments.length > 0) {
@@ -246,21 +246,11 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
   }
 
   generateRestaurantCard(
-    restaurant: Commons.Restaurant
+    restaurant: Commons.Restaurant,
   ): SlackModule.SlackAttachment {
-    const restaurantName: string = restaurant.RestaurantName;
-
-    const slackAttachment = new SlackModule.SlackAttachment(
-      restaurantName +
-        " : " +
-        Constants.RESTAURANT_BASE_URL +
-        restaurant.RestaurantId,
-      restaurantName,
+    const slackAttachment = SlackModule.SlackAttachment.fromRestaurant(
+      restaurant,
       "#36a64f",
-      Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-      restaurant.RestaurantCuisineList,
-      restaurant.RestaurantLogoUrl,
-      Math.floor(Date.now() / 1000)
     );
 
     slackAttachment.fields = [];
@@ -268,56 +258,42 @@ export class SlackMessageFormatter implements Commons.MessageFormatter {
       new SlackModule.SlackAttachmentField(
         "מינימום הזמנה",
         restaurant.MinimumOrder,
-        true
-      )
+        true,
+      ),
     );
 
     slackAttachment.fields.push(
       new SlackModule.SlackAttachmentField(
         "דמי משלוח",
         restaurant.DeliveryPrice,
-        true
-      )
+        true,
+      ),
     );
 
     return slackAttachment;
   }
 
   generateRestaurantTotalCard(
-    restaurant: Commons.Restaurant
+    restaurant: Commons.Restaurant,
   ): SlackModule.SlackAttachment {
-    const restaurantName: string = restaurant.RestaurantName;
-
-    const slackAttachment = new SlackModule.SlackAttachment(
-      restaurantName +
-        " : " +
-        Constants.RESTAURANT_BASE_URL +
-        restaurant.RestaurantId,
-      restaurantName,
-      restaurant.IsOverPoolMin
-        ? SlackMessageFormatter.GREEN_COLOR
-        : SlackMessageFormatter.RED_COLOR,
-      Constants.RESTAURANT_BASE_URL + restaurant.RestaurantId,
-      restaurant.RestaurantCuisineList,
-      restaurant.RestaurantLogoUrl,
-      Math.floor(Date.now() / 1000)
-    );
+    const slackAttachment =
+      SlackModule.SlackAttachment.fromRestaurant(restaurant);
 
     slackAttachment.fields = [];
     slackAttachment.fields.push(
       new SlackModule.SlackAttachmentField(
         "הוזמן עד כה",
         restaurant.PoolSum,
-        true
-      )
+        true,
+      ),
     );
 
     slackAttachment.fields.push(
       new SlackModule.SlackAttachmentField(
         "מינימום הזמנה",
         restaurant.MinimumOrder,
-        true
-      )
+        true,
+      ),
     );
 
     return slackAttachment;

@@ -24,16 +24,16 @@ import * as sinon from "sinon";
 const MockExpressResponse = require("mock-express-response");
 const app: App = new App();
 const slackReq: Commons.Request = new SlackModule.SlackRequest(
-  validSlackMessage
+  validSlackMessage,
 );
 const badSlackReq: Commons.Request = new SlackModule.SlackRequest(
-  slackInvalidMessage
+  slackInvalidMessage,
 );
 const hipChatReq: Commons.Request = new HipChatModule.HipChatReq(
-  validHipChatMessage
+  validHipChatMessage,
 );
 const badHipChatReq: Commons.Request = new HipChatModule.HipChatReq(
-  hipChatInvalidMessage
+  hipChatInvalidMessage,
 );
 const badRestaurantName: string = "BlaBlaBla";
 
@@ -229,7 +229,7 @@ describe("App", () => {
       expect(hipChatRes).not.to.be.undefined;
 
       expect(hipChatRes.message.replace(/^\s+|\s+$/g, "")).to.equal(
-        "Found 1 restaurants"
+        "Found 1 restaurants",
       );
       expect(hipChatRes.message_format).to.equal("text");
       expect(hipChatRes.card).not.to.equal(null);
@@ -237,7 +237,7 @@ describe("App", () => {
       let message = validHipChatMessage.item.message.message;
       if (message.indexOf(HipChatMessageFormatter.COMMAND_OPERATOR) === 0) {
         message = message.slice(
-          HipChatMessageFormatter.COMMAND_OPERATOR.length + 1
+          HipChatMessageFormatter.COMMAND_OPERATOR.length + 1,
         );
       }
       expect(hipChatRes.card.title).to.contain(message);
@@ -294,7 +294,7 @@ describe("App", () => {
       expect(slackRes).not.to.be.undefined;
 
       expect(slackRes.text).to.equal(
-        Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName
+        Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName,
       );
       expect(slackRes.response_type).to.equal("ephemeral");
       expect(slackRes.attachments).to.equal(null);
@@ -315,7 +315,7 @@ describe("App", () => {
       expect(hipChatRes).not.to.be.undefined;
 
       expect(hipChatRes.message.replace(/^\s+|\s+$/g, "")).to.equal(
-        Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName
+        Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName,
       );
       expect(hipChatRes.message_format).to.equal("text");
       expect(hipChatRes.card).not.to.equal(null);
@@ -323,7 +323,7 @@ describe("App", () => {
       let message = validHipChatMessage.item.message.message;
       if (message.indexOf(HipChatMessageFormatter.COMMAND_OPERATOR) === 0) {
         message = message.slice(
-          HipChatMessageFormatter.COMMAND_OPERATOR.length + 1
+          HipChatMessageFormatter.COMMAND_OPERATOR.length + 1,
         );
       }
     });
@@ -378,7 +378,7 @@ describe("App", () => {
       expect(hipChatResponse).not.to.equal(null);
       expect(hipChatResponse.message_format).to.equal("text");
       expect(hipChatResponse.message).to.equal(
-        Constants.NO_RESTAURANTS_FOUND_STRING
+        Constants.NO_RESTAURANTS_FOUND_STRING,
       );
     });
   });
@@ -675,7 +675,7 @@ describe("App", () => {
           res,
           SlackMessageFormatter.getInstance(),
           badRestaurantName,
-          false
+          false,
         )
         .then(() => {
           throw new Error("I shouldn't be here");
@@ -754,7 +754,7 @@ describe("App", () => {
           expect(slackRes).not.to.equal(null);
           expect(slackRes).not.to.be.undefined;
           expect(slackRes.text).to.equal(
-            Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + restaurantName
+            Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + restaurantName,
           );
           expect(slackRes.response_type).to.equal("ephemeral");
           expect(slackRes.attachments).to.equal(null);
@@ -776,7 +776,7 @@ describe("App", () => {
           res,
           SlackMessageFormatter.getInstance(),
           badRestaurantName,
-          false
+          false,
         )
         .then(() => {
           throw new Error("I shouldn't be here");
@@ -790,7 +790,9 @@ describe("App", () => {
           expect(slackRes).not.to.equal(null);
           expect(slackRes).not.to.be.undefined;
           expect(slackRes.text).to.equal(
-            Constants.NO_RESTAURANTS_FOUND_STRING + " for: " + badRestaurantName
+            Constants.NO_RESTAURANTS_FOUND_STRING +
+              " for: " +
+              badRestaurantName,
           );
           expect(slackRes.response_type).to.equal("ephemeral");
           expect(slackRes.attachments).to.equal(null);
@@ -880,7 +882,7 @@ describe("App", () => {
           res,
           SlackMessageFormatter.getInstance(),
           badRestaurantName,
-          false
+          false,
         )
         .then(() => {
           throw new Error("I shouldn't be here");
