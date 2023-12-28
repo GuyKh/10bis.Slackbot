@@ -21,11 +21,11 @@ export function ErrorPromiseWrapper(errorString: string): Promise<void> {
 }
 
 export function SortRestaurantsByDistance(
-  restaurants: Commons.Restaurant[]
+  restaurants: Commons.Restaurant[],
 ): Commons.Restaurant[] {
   return restaurants.sort(function (
     objectA: Commons.Restaurant,
-    objectB: Commons.Restaurant
+    objectB: Commons.Restaurant,
   ) {
     if (!objectA.DistanceFromUserInMeters && objectB.DistanceFromUserInMeters) {
       return 1;
@@ -58,7 +58,7 @@ export function FilterTotalOrders(restarant: Commons.Restaurant): boolean {
 
 export function VerifyMessage(
   req: Commons.Request,
-  formatters: Commons.MessageFormatter[]
+  formatters: Commons.MessageFormatter[],
 ): Commons.MessageFormatter {
   if (!req || !formatters || formatters.constructor !== Array) {
     return null;
@@ -94,8 +94,8 @@ export function GenerateSearchRequest(restaurantName: string): string {
   let parsedUrl: string = url.format(
     new URL(
       "https://www.10bis.co.il/Restaurants/SearchRestaurants?" +
-        querystring.stringify(queryParams)
-    )
+        querystring.stringify(queryParams),
+    ),
   );
   parsedUrl = parsedUrl.replace("%2B", "+");
 
@@ -127,8 +127,8 @@ export function GenerateGetTotalOrdersRequest(): string {
   let parsedUrl: string = url.format(
     new URL(
       "https://www.10bis.co.il/Restaurants/SearchRestaurants?" +
-        querystring.stringify(queryParams)
-    )
+        querystring.stringify(queryParams),
+    ),
   );
   parsedUrl = parsedUrl.replace("%2B", "+");
   return parsedUrl;
@@ -137,7 +137,7 @@ export function GenerateGetTotalOrdersRequest(): string {
 export function FilterByRestaurantName(
   restaurants: Commons.Restaurant[],
   findExact: boolean,
-  restarantName: string
+  restarantName: string,
 ): Commons.Restaurant[] {
   const flags = {};
   const filteredRestaurants: Commons.Restaurant[] = restaurants.filter(
@@ -148,7 +148,7 @@ export function FilterByRestaurantName(
 
       flags[restarant.RestaurantName] = true;
       return true;
-    }
+    },
   );
 
   if (!findExact) {
@@ -1365,10 +1365,10 @@ export module Commons {
     getErrorMessage(restaurantName: string): Commons.TenBisResponse;
     getRestaurantName(req: Commons.Request): string;
     generateSearchResponse(
-      restaurants: Commons.Restaurant[]
+      restaurants: Commons.Restaurant[],
     ): Commons.TenBisResponse;
     generateTotalOrdersResponse(
-      restaurants: Commons.Restaurant[]
+      restaurants: Commons.Restaurant[],
     ): Commons.TenBisResponse;
     isValidMessage(req: Commons.Request): boolean;
   }
