@@ -49,8 +49,8 @@ jobs:
 
     - name: npm install, npm run test
       run: |
-        npm install
-        npm run test
+        npm ci
+        npm test
 
 #    - name: Coveralls
 #      uses: coverallsapp/github-action@master
