@@ -55,7 +55,7 @@
     "postinstall": "husky install"
   },
   "engines": {
-    "npm": "10.3.x",
+    "npm": "10.4.x",
     "node": "20.x"
   },
   "nyc": {
