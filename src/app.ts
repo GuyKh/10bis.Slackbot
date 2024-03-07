@@ -10,10 +10,10 @@ import {
   ErrorPromiseWrapper,
   GenerateGetTotalOrdersRequest,
   FilterTotalOrders,
-} from "./commons";
-import { Constants } from "./constants";
-import { HipChatMessageFormatter } from "./hipChatMessage";
-import { SlackMessageFormatter } from "./slackMessage";
+} from "./commons.js";
+import { Constants } from "./constants.js";
+import { HipChatMessageFormatter } from "./hipChatMessage.js";
+import { SlackMessageFormatter } from "./slackMessage.js";
 import { CacheContainer } from "node-ts-cache";
 import { MemoryStorage } from "node-ts-cache-storage-memory";
 

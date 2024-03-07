@@ -1,5 +1,6 @@
 {
     "diff": true,
+    "loader": "ts-node/esm",
     "extension": ["ts"],
     "opts": false,
     "package": "./package.json",

@@ -1,11 +1,11 @@
 /* eslint-env node, mocha */
 /* eslint no-unused-expressions:"off" */
 
-import { Constants } from "../src/constants";
-import { SlackModule } from "../src/slackModule";
-import { deepCopy, restaurants } from "./testCommons";
-import { SlackMessageFormatter } from "../src/slackMessage";
-import { Commons } from "../src/commons";
+import { Constants } from "../src/constants.js";
+import { SlackModule } from "../src/slackModule.js";
+import { deepCopy, restaurants } from "./testCommons.js";
+import { SlackMessageFormatter } from "../src/slackMessage.js";
+import { Commons } from "../src/commons.js";
 import { expect } from "chai";
 
 const slackMessage = SlackMessageFormatter.getInstance();

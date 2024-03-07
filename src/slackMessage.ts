@@ -1,6 +1,6 @@
-import { SlackModule } from "../src/slackModule";
-import { Commons } from "./commons";
-import { Constants } from "./constants";
+import { SlackModule } from "../src/slackModule.js";
+import { Commons } from "./commons.js";
+import { Constants } from "./constants.js";
 
 /*
 Request:

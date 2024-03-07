@@ -1,7 +1,7 @@
 /* eslint camelcase: "off" */
-import { Commons } from "./commons";
-import { SlackMessageFormatter } from "./slackMessage";
-import { Constants } from "./constants";
+import { Commons } from "./commons.js";
+import { SlackMessageFormatter } from "./slackMessage.js";
+import { Constants } from "./constants.js";
 export module SlackModule {
   export class SlackAttachment {
     fallback: string;

@@ -1,14 +1,14 @@
 /* eslint camelcase: "off" */
-import * as moment from "moment-timezone";
-import { Constants } from "./constants";
+import moment from "moment-timezone";
+import { Constants } from "./constants.js";
 import * as url from "url";
-const querystring = require("querystring");
+import * as querystring from "querystring";
 
 export function GetFormatedDateTime(): string {
-  const date: string = moment
+  const date: string = moment()
     .tz(Constants.TIMEZONE)
     .format(Constants.DATE_FORMAT);
-  const time: string = moment
+  const time: string = moment()
     .tz(Constants.TIMEZONE)
     .format(Constants.TIME_FORMAT);
   return date + "+" + time;

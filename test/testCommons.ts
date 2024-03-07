@@ -1,6 +1,6 @@
-import { Commons } from "../src/commons";
-import { SlackModule } from "../src/slackModule";
-import { HipChatModule } from "../src/hipChatModule";
+import { Commons } from "../src/commons.js";
+import { SlackModule } from "../src/slackModule.js";
+import { HipChatModule } from "../src/hipChatModule.js";
 
 export function deepCopy(o: Object) {
   return JSON.parse(JSON.stringify(o));
