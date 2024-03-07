@@ -1,8 +1,9 @@
 {
     
     "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
+        "target": "esnext",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "sourceMap": true,
         "typeRoots": ["node_modules/@types"],
         "types": [ "node" ],

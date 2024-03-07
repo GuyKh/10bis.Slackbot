@@ -1,6 +1,6 @@
-import { Commons } from "./commons";
-import { HipChatModule } from "./hipChatModule";
-import { Constants } from "./constants";
+import { Commons } from "./commons.js";
+import { HipChatModule } from "./hipChatModule.js";
+import { Constants } from "./constants.js";
 import { v4 as uuid } from "uuid";
 
 // hipChatMessage.js

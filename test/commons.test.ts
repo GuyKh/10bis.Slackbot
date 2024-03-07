@@ -9,11 +9,11 @@ import {
   FilterByRestaurantName,
   FilterTotalOrders,
   SortRestaurantsByDistance,
-} from "../src/commons";
-import { HipChatModule } from "../src/hipChatModule";
-import { SlackModule } from "../src/slackModule";
-import { SlackMessageFormatter } from "../src/slackMessage";
-import { HipChatMessageFormatter } from "../src/hipChatMessage";
+} from "../src/commons.js";
+import { HipChatModule } from "../src/hipChatModule.js";
+import { SlackModule } from "../src/slackModule.js";
+import { SlackMessageFormatter } from "../src/slackMessage.js";
+import { HipChatMessageFormatter } from "../src/hipChatMessage.js";
 import "mocha";
 import { expect } from "chai";
 import {
@@ -22,7 +22,7 @@ import {
   validHipChatMessage,
   slackInvalidMessage,
   hipChatInvalidMessage,
-} from "./testCommons";
+} from "./testCommons.js";
 
 const slackMessageFormatter: Commons.MessageFormatter =
   SlackMessageFormatter.getInstance();

@@ -1,10 +1,10 @@
 /* istanbul ignore file */
 import * as bodyParser from "body-parser";
 import * as errorHandler from "errorhandler";
-import * as express from "express";
-import { Commons } from "./commons";
-import { App } from "./app";
-import { Response } from "express";
+import { Commons } from "./commons.js";
+import { App } from "./app.js";
+import express, { Request, Response } from 'express';
+import { rateLimit } from "express-rate-limit";
 
 /**
  * The server.
@@ -64,8 +64,7 @@ export class Server {
    */
   public config() {
     // set up rate limiter: maximum of five requests per minute
-    const RateLimit = require("express-rate-limit");
-    const limiter = new RateLimit({
+    const limiter = rateLimit({
       windowMs: 1 * 60 * 1000, // 1 minute
       max: 5,
     });

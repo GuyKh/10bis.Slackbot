@@ -1,12 +1,12 @@
 /* eslint-env node, mocha */
 /* eslint no-unused-expressions:"off" */
 
-import { deepCopy, restaurants, compareKeys } from "./testCommons";
-import { HipChatModule } from "../src/hipChatModule";
-import { HipChatMessageFormatter } from "../src/hipChatMessage";
-import { Commons } from "../src/commons";
+import { deepCopy, restaurants, compareKeys } from "./testCommons.js";
+import { HipChatModule } from "../src/hipChatModule.js";
+import { HipChatMessageFormatter } from "../src/hipChatMessage.js";
+import { Commons } from "../src/commons.js";
 import "mocha";
-import { Constants } from "../src/constants";
+import { Constants } from "../src/constants.js";
 import { expect } from "chai";
 
 const hipChatMessage = HipChatMessageFormatter.getInstance();

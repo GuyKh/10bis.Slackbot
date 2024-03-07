@@ -1,6 +1,6 @@
 /* eslint camelcase: "off" */
 
-import { Commons } from "./commons";
+import { Commons } from "./commons.js";
 
 export module HipChatModule {
   export class HipChatReq implements Commons.Request {
