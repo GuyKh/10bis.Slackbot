@@ -22,7 +22,6 @@ import * as sinon from "sinon";
 import httpMocks from "node-mocks-http";
 import nock from "nock";
 
-
 const app: App = new App();
 const slackReq: Commons.Request = new SlackModule.SlackRequest(
   validSlackMessage,
@@ -46,10 +45,10 @@ class StaticMethodHolder {
   public static RequestGet;
 }
 
-axios.defaults.adapter = 'http'
+axios.defaults.adapter = "http";
 
 describe("App", () => {
-  var res;
+  let res;
   beforeEach(function () {
     res = httpMocks.createResponse();
   });
@@ -244,7 +243,6 @@ describe("App", () => {
     });
   });
   it("process() should return default message if invalid Slack message", () => {
-
     return app.process(badSlackReq, res).catch(() => {
       expect(res.statusCode).to.equal(400);
 
@@ -255,7 +253,6 @@ describe("App", () => {
     });
   });
   it("process() should return default if invalid HipChat message", () => {
-
     app.process(badHipChatReq, res).catch(() => {
       expect(res.statusCode).to.equal(400);
 
@@ -266,7 +263,6 @@ describe("App", () => {
     });
   });
   it("process() should return default if invalid message", () => {
-
     app.process(new EmptyRequest(), res).catch(() => {
       expect(res.statusCode).to.equal(400);
 
@@ -327,7 +323,6 @@ describe("App", () => {
     const slackTotalReq: SlackModule.SlackRequest = deepCopy(slackReq);
     slackTotalReq.body.text = Constants.TOTAL_KEYWORD;
 
-
     app.process(slackTotalReq, res).then(() => {
       expect(res.statusCode).to.be.equal(200);
       const body = res._getJSONData();
@@ -342,7 +337,6 @@ describe("App", () => {
   it("process() should return error if using empty restaurant name for slack", () => {
     const slackTotalReq: SlackModule.SlackRequest = deepCopy(slackReq);
     slackTotalReq.body.text = "";
-
 
     app.process(slackTotalReq, res).catch(() => {
       expect(res.statusCode).to.be.equal(400);
@@ -387,7 +381,6 @@ describe("App", () => {
     });
   });
   it("getTotalOrders() should return valid response if command is total (slack)", () => {
-
     return app
       .getTotalOrders(res, SlackMessageFormatter.getInstance())
       .then(() => {
@@ -402,7 +395,6 @@ describe("App", () => {
       });
   });
   it("getTotalOrders() should return valid response if command is total (HipChat)", () => {
-
     return app
       .getTotalOrders(res, HipChatMessageFormatter.getInstance())
       .then(() => {
@@ -416,7 +408,6 @@ describe("App", () => {
       });
   });
   it("search() with null restaurant name - Slack", () => {
-
     return app
       .search(res, SlackMessageFormatter.getInstance(), null, false)
       .catch(() => {
@@ -432,7 +423,6 @@ describe("App", () => {
       });
   });
   it("search() with null restaurant name - HipChat", () => {
-
     return app
       .search(res, HipChatMessageFormatter.getInstance(), null, false)
       .catch(() => {
@@ -447,7 +437,6 @@ describe("App", () => {
       });
   });
   it("search() with empty restaurant name - Slack", () => {
-
     return app
       .search(res, SlackMessageFormatter.getInstance(), "", false)
       .catch(() => {
@@ -463,7 +452,6 @@ describe("App", () => {
       });
   });
   it("search() with empty restaurant name - HipChat", () => {
-
     return app
       .search(res, HipChatMessageFormatter.getInstance(), "", false)
       .catch(() => {
@@ -605,13 +593,13 @@ describe("App", () => {
 
   // describe("ResponseCode from 10bis != 200", () => {
   //   it("process() with other response than 200", () => {
-  
+
   //     const req: SlackModule.SlackRequest = deepCopy(slackReq);
   //     req.body.text = "ABCD";
 
   //     const scope = nock('https://www.10bis.co.il')
   //     .get('/Restaurants/SearchRestaurants')
-  //     .query(actualQueryObject => {
+  //     .query(() => {
   //       // return true for matched
   //       return true
   //     })
@@ -635,10 +623,10 @@ describe("App", () => {
   //   });
 
   //   it("search() with response code = 201", () => {
-  
+
   //     const scope = nock('https://www.10bis.co.il')
   //     .get('/Restaurants/SearchRestaurants')
-  //     .query(actualQueryObject => {
+  //     .query(() => {
   //       // return true for matched
   //       return true
   //     })
@@ -666,10 +654,10 @@ describe("App", () => {
   //       });;
   //   });
   //   it("getTotalOrders() with error = 201", () => {
-  
+
   //     const scope = nock('https://www.10bis.co.il')
   //     .get('/Restaurants/SearchRestaurants')
-  //     .query(actualQueryObject => {
+  //     .query(() => {
   //       // return true for matched
   //       return true
   //     })
@@ -694,15 +682,15 @@ describe("App", () => {
   // });
 
   describe("ResponseCode from 10bis == 200 with empty response", () => {
-    var scope;
+    let scope;
     beforeEach(function () {
-       scope = nock('https://www.10bis.co.il')
-      .get('/Restaurants/SearchRestaurants')
-      .query(actualQueryObject => {
-        // return true for matched
-        return true
-      })
-      .reply(200, "")
+      scope = nock("https://www.10bis.co.il")
+        .get("/Restaurants/SearchRestaurants")
+        .query(() => {
+          // return true for matched
+          return true;
+        })
+        .reply(200, "");
     });
 
     afterEach(function () {
@@ -710,7 +698,6 @@ describe("App", () => {
     });
 
     it("process() with response == 200 with empty content", () => {
-  
       const restaurantName: string = "ABCDEF";
       const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = restaurantName;
@@ -736,7 +723,6 @@ describe("App", () => {
         });
     });
     it("search() with response == 200 with empty content", () => {
-
       return app
         .search(
           res,
@@ -765,7 +751,6 @@ describe("App", () => {
         });
     });
     it("getTotalOrders() with response == 200 with empty content", () => {
-  
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
         .then(() => {
@@ -787,15 +772,15 @@ describe("App", () => {
   });
 
   describe("Response from 10bis is error (400)", () => {
-    var scope;
+    let scope;
     beforeEach(function () {
-      scope = nock('https://www.10bis.co.il')
-      .get('/Restaurants/SearchRestaurants')
-      .query(actualQueryObject => {
-        // return true for matched
-        return true
-      })
-      .reply(400, { message: "problem" })
+      scope = nock("https://www.10bis.co.il")
+        .get("/Restaurants/SearchRestaurants")
+        .query(() => {
+          // return true for matched
+          return true;
+        })
+        .reply(400, { message: "problem" });
     });
 
     afterEach(function () {
@@ -803,7 +788,6 @@ describe("App", () => {
     });
 
     it("process() with error (400)", () => {
-  
       const req: SlackModule.SlackRequest = deepCopy(slackReq);
       req.body.text = "Aaaa";
 
@@ -822,7 +806,6 @@ describe("App", () => {
         });
     });
     it("search() with error (400)", () => {
-
       return app
         .search(
           res,
@@ -843,7 +826,6 @@ describe("App", () => {
         });
     });
     it("getTotalOrders() with error (400)", () => {
-
       return app
         .getTotalOrders(res, SlackMessageFormatter.getInstance())
         .then(() => {

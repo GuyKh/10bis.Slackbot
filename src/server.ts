@@ -3,7 +3,7 @@ import * as bodyParser from "body-parser";
 import * as errorHandler from "errorhandler";
 import { Commons } from "./commons.js";
 import { App } from "./app.js";
-import express, { Request, Response } from 'express';
+import express, { Response } from "express";
 import { rateLimit } from "express-rate-limit";
 
 /**
