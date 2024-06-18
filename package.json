@@ -36,7 +36,7 @@
     "mock-express-response": "0.3.0",
     "nock": "^14.0.0-beta.5",
     "node-mocks-http": "^1.14.1",
-    "nyc": "15.1.0",
+    "nyc": "17.0.0",
     "prettier": "3.3.2",
     "sinon": "18.0.0",
     "ts-node": "10.9.2"
