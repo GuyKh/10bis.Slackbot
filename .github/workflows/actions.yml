@@ -32,6 +32,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_TYPESCRIPT_STANDARD: false
           FILTER_REGEX_EXCLUDE: .*test/.*
+          VALIDATE_JSCPD: false # since the one above doesn't work for tests
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
