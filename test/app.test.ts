@@ -1,5 +1,6 @@
 /* eslint-env node, mocha */
 /* eslint no-unused-expressions:"off" */
+/* jscpd:ignore-file */
 
 import { App } from "./../src/app.js";
 import { Commons } from "../src/commons.js";
