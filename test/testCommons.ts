@@ -1,3 +1,5 @@
+/* jscpd:ignore-file */
+
 import { Commons } from "../src/commons.js";
 import { SlackModule } from "../src/slackModule.js";
 import { HipChatModule } from "../src/hipChatModule.js";
