@@ -58,7 +58,7 @@
   },
   "engines": {
     "npm": "10.9.x",
-    "node": "20.x"
+    "node": "22.x"
   },
   "nyc": {
     "include": [
