@@ -38,7 +38,7 @@
     "node-mocks-http": "^1.14.1",
     "nyc": "17.1.0",
     "prettier": "3.5.3",
-    "sinon": "19.0.2",
+    "sinon": "19.0.4",
     "ts-node": "10.9.2"
   },
   "scripts": {
