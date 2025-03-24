@@ -30,7 +30,7 @@
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-chai-expect": "3.1.0",
     "eslint-plugin-mocha": "10.5.0",
-    "eslint-plugin-prettier": "5.2.3",
+    "eslint-plugin-prettier": "5.2.4",
     "husky": "9.1.7",
     "mocha": "11.1.0",
     "mock-express-response": "0.3.0",
