@@ -32,7 +32,7 @@
     "eslint-plugin-mocha": "10.5.0",
     "eslint-plugin-prettier": "5.4.0",
     "husky": "9.1.7",
-    "mocha": "11.3.0",
+    "mocha": "11.4.0",
     "mock-express-response": "0.3.0",
     "nock": "^14.0.0-beta.5",
     "node-mocks-http": "^1.14.1",
