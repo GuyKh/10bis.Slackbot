@@ -26,7 +26,7 @@
     "@typescript-eslint/parser": "8.33.0",
     "chai": "5.2.0",
     "coveralls": "3.1.1",
-    "eslint": "9.27.0",
+    "eslint": "9.28.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-chai-expect": "3.1.0",
     "eslint-plugin-mocha": "10.5.0",
