@@ -29,7 +29,7 @@
     "eslint": "9.28.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-chai-expect": "3.1.0",
-    "eslint-plugin-mocha": "10.5.0",
+    "eslint-plugin-mocha": "11.1.0",
     "eslint-plugin-prettier": "5.4.1",
     "husky": "9.1.7",
     "mocha": "11.5.0",
